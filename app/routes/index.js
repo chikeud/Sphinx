@@ -3,10 +3,16 @@
  * @since 10/20/17
  */
 
+let moduleId = "routes/index";
+
 let express = require("express");
+let response = require("../../utils/response");
+let http = require("../../utils/HttpStats");
 
 let apiRouter = module.exports = express.Router();
 
 apiRouter.all("*", (req, res) => {
-  res.send("Hello World");
+  let respond = response.success(res);
+
+  respond(http.OK, "Hello World");
 });

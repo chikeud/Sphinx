@@ -8,4 +8,7 @@ let response = require("../../../utils/response");
 exports.createUser = async (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
+  //name, home address,DOB, ssn, photo
+  let userProps = ["name", "home-address", "ssn",""]
+
 };

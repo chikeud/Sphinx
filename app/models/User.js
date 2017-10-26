@@ -25,17 +25,30 @@ let UserSchema = new Schema({
 });
 
 UserSchema.pre("save", async function(next){
-    let doc = this;
+    let user = this;
     try{
-        if (doc.isModified("password")){
+        if (user.isModified("password")){
             let saltRounds = 10;
-            doc.password = await bcrypt.hash(doc.password, saltRounds);
+            user.password = await bcrypt.hash(user.password, saltRounds);
         }
         next();
     }
     catch(err){
         next(err);
     }
+});
+UserSchema.post("save",async function(err,doc,next){
+    if(!(err.name ===config.MONGO_ERR && err.code === config.DUP_ERR))
+        return next(err);
+
+    let User = this.constructor;
+    let field;
+
+    let user = await User.findOne({email: doc.email}).exec();
+    if(user && user._id !== doc._id) field = "email";
+    else field = "alias";
+
+    next(new Error('Sorry, the given ${field} has been taken'));
 });
 
 let User = mongoose.model("User", UserSchema);

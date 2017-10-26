@@ -53,4 +53,4 @@ UserSchema.post("save",async function(err,doc,next){
 
 let User = mongoose.model("User", UserSchema);
 
-module.exports = User;
+exports.User = mongoose.model('User', userSchema);

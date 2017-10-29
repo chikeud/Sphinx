@@ -3,7 +3,7 @@
  * @since 10/20/17
  */
 
-let moduleId = "routes/index";
+let moduleId = "routes/api";
 
 let express = require("express");
 
@@ -18,5 +18,5 @@ apiRouter.use("/u", userRouter);
 apiRouter.all("*", (req, res) => {
   let respond = response.success(res);
 
-  respond(http.OK, "Hello Worlds");
+  respond(http.OK, "Hello World");
 });

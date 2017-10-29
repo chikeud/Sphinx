@@ -9,7 +9,7 @@ let mongoose = require('mongoose');
 mongoose.Promise = global.Promise = require("bluebird");
 
 let {url, port} = require('./config/index.js');
-let apiRouter = require('./app/routes');
+let apiRouter = require('./app/routes/api');
 
 mongoose.Promise = Promise;
 mongoose.connect(url, {useMongoClient: true,});

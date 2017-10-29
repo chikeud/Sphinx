@@ -17,6 +17,7 @@
     "mongodb": "2.2.31",
     "mongoose": "4.11.12",
     "morgan": "~1.8.1",
+    "multer-gridfs-storage": "^2.1.0",
     "validator": "8.1.0"
   },
   "devDependencies": {

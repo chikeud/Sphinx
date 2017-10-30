@@ -5,7 +5,6 @@
  */
 let moduleId = "routes/user/user";
 let response = require("../../../utils/response");
-let multer = require('multer');
 let User = require("../../models/UserModel").User;
 
 /**
@@ -95,7 +94,7 @@ exports.getUsers = async function(req, res){
  * @param req request
  * @param res response
  */
-exports .editUser = async function(req, res){
+exports.editUser = async function(req, res){
   let respond = response.success(res);
   let respondErr = response.failure(res,moduleId);
   let userProps = ["alias","firstName","lastName","email","password","address", "ssn","isRenter"];
@@ -127,7 +126,7 @@ exports .editUser = async function(req, res){
    let query = User.findOneAndRemove({_id: req.user._id});
 
    try{
-     let  user = await.query.exec();
+     let  user = await query.exec();
 
      if(!user){
        return respondErr(http.NOT_FOUND, "User not found");
@@ -140,3 +139,4 @@ exports .editUser = async function(req, res){
    }
 
  };
+ exports.addImage = async

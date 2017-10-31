@@ -25,6 +25,7 @@ exports.createUser = async function (req, res){
     user[prop] = req.body[prop];
   }
   try{
+    addImage(req,user);
     user = await user.save();
     user = user.toObject();
     delete user.password;

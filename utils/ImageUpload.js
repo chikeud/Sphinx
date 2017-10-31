@@ -5,6 +5,7 @@
 let multer = require('multer');
 let Grid = require('gridfs');
 
-async function addImage(req, res){
-
+async function addImage(req, user){
 }
+
+module.exports = addImage();

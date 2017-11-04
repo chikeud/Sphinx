@@ -9,7 +9,7 @@ let express = require("express");
 
 let response = require("../../utils/response");
 let http = require("../../utils/HttpStats");
-let userRouter = require("./user.auths.routes");
+let userRouter = require("./user/user.auth.routes");
 
 let apiRouter = express.Router();
 

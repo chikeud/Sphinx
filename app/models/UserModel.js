@@ -7,6 +7,8 @@ let validator = require("validator");
 let bcrypt = require("bcrypt");
 let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
+let config = require("../../config/index");
+
 
 let UserSchema = new Schema({
     alias: {type: String, required: true, unique: true, minlength: 2, maxlength: 15}
@@ -36,21 +38,28 @@ UserSchema.pre("save", async function(next){
     catch(err){
         next(err);
     }
+
 });
 UserSchema.post("save",async function(err,doc,next){
-    if(!(err.name ===config.MONGO_ERR && err.code === config.DUP_ERR))
+    if(!(err.name === config.MONGO_ERR && err.code === config.DUP_ERR))
         return next(err);
 
-    let User = this.constructor;
-    let field;
+    try{
+        let User = this.constructor;
+        let field;
+        console.log("Your Uncle");
 
-    let user = await User.findOne({email: doc.email}).exec();
-    if(user && user._id !== doc._id) field = "email";
-    else field = "alias";
+        let user = await User.findOne({email: doc.email}).exec();
+        if(user && user._id !== doc._id) field = "email";
+        else field = "alias";
+        next(new Error(`Sorry, the given ${field} has been taken`));
+    }
+    catch(err){
+        next(err);
+    }
 
-    next(new Error('Sorry, the given ${field} has been taken'));
 });
 
 let User = mongoose.model("User", UserSchema);
 
-exports.User = mongoose.model('User', userSchema);
+exports.User = mongoose.model('User', UserSchema);

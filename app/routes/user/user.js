@@ -6,7 +6,11 @@
 let moduleId = "routes/user/user";
 let response = require("../../../utils/response");
 let User = require("../../models/UserModel").User;
-
+let {createToken} = require("../../../utils/authToken");
+let multer = require('multer');
+let Grid = require('gridfs');
+let config = require("../../../config/index");
+let http = require("../../../utils/HttpStats");
 /**
  * Creates a User and returns a jwt in the response
  *
@@ -25,18 +29,19 @@ exports.createUser = async function (req, res){
     user[prop] = req.body[prop];
   }
   try{
-    addImage(req,user);
+    console.log("It is working");
     user = await user.save();
+
     user = user.toObject();
     delete user.password;
+
 
     let token = await createToken(user);
 
     respond(http.CREATED, "User Created", {user,token});
   }
   catch(err){
-    let msg = err.code === config.DUP_ERR ? "Given alias has been taken" : err.msg;
-    respondErr(http.BAD_REQUEST,msg,err);
+    respondErr(http.BAD_REQUEST,err.message,err);
   }
 };
 
@@ -140,4 +145,3 @@ exports.editUser = async function(req, res){
    }
 
  };
- exports.addImage = async

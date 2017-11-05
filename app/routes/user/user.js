@@ -23,13 +23,14 @@ exports.createUser = async function (req, res){
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   //name, home address,DOB, ssn, photo
-  let userProps = ["alias","firstName","lastName","email","password","address", "ssn","isRenter"];
+  let userProps = ["_id","alias","firstName","lastName","email","password","address", "ssn","isRenter"];
   let user = new User();
   for(let prop of userProps){
     user[prop] = req.body[prop];
   }
+  console.log("this is from the request " + req.body["email"]);
   try{
-    console.log("It is working");
+
     user = await user.save();
 
     user = user.toObject();

@@ -41,12 +41,15 @@ module.exports = describe("User", () => {
         });
         it("should return an error for duplicate email", async () => {
             try {
+                console.log(user1Email.email);
                 userRes = await request.post("/api/u/new").send(user1Email);
+                console.log(user1Email.email);
             }
             catch(err){
                 let parts = err.response.body.message.split(" ");
                 expect(err.status).to.equal(http.BAD_REQUEST);
                 expect(parts.indexOf("email")).to.be.above(-1);
+
             }
         });
     });

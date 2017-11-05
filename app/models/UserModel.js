@@ -47,12 +47,13 @@ UserSchema.post("save",async function(err,doc,next){
     try{
         let User = this.constructor;
         let field;
-        console.log("Your Uncle");
 
         let user = await User.findOne({email: doc.email}).exec();
+
         if(user && user._id !== doc._id) field = "email";
         else field = "alias";
         next(new Error(`Sorry, the given ${field} has been taken`));
+
     }
     catch(err){
         next(err);

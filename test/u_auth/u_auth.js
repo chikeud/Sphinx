@@ -57,6 +57,5 @@ module.exports = describe("User", () => {
         expect(parts.indexOf("email")).to.be.above(-1);
       }
     });
-
   });
 });

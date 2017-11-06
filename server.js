@@ -50,8 +50,6 @@ if (app.get('env') === 'development') {
 // =======================
 let server = app.listen(port);
 
-server.timeout = 100000000000;
-
 server.on("close", async err => {
   if(err) throw err;
 

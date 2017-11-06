@@ -18,5 +18,4 @@ services: mongodb
 script:
   - npm install nodemon
   - npm start &
-  - sleep 10
   - npm test

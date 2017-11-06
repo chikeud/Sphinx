@@ -52,6 +52,7 @@ module.exports = describe("User", () => {
       }
       catch(err){
         let parts = err.response.body.message.split(" ");
+
         expect(err.status).to.equal(http.BAD_REQUEST);
         expect(parts.indexOf("email")).to.be.above(-1);
       }

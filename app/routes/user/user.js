@@ -28,14 +28,12 @@ exports.createUser = async function (req, res){
   for(let prop of userProps){
     user[prop] = req.body[prop];
   }
-  console.log("this is from the request " + req.body["email"]);
   try{
 
     user = await user.save();
 
     user = user.toObject();
     delete user.password;
-
 
     let token = await createToken(user);
 

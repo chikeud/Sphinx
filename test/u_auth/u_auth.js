@@ -43,9 +43,7 @@ module.exports = describe("User", () => {
         });
         it("should return an error for duplicate email", async () => {
             try {
-                console.log(user1Email.email);
                 userRes = await request.post("/api/u/new").send(user1Email);
-                console.log(user1Email.email);
             }
             catch(err){
                 let parts = err.response.body.message.split(" ");

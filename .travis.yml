@@ -1,0 +1,22 @@
+language: node_js
+
+node_js:
+  - "node"
+  - "8"
+
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.2-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
+
+services: mongodb
+
+script:
+  - npm install nodemon
+  - npm start &
+  - sleep 5
+  - npm test

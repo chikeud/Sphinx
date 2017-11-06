@@ -15,7 +15,7 @@ exports.user1 = {
     ,isRenter: true
 };
 exports.user1Email = {
-    alias: "c-doug2-error-check"
+    alias: "c-doug2"
     , email: exports.user1.email
     ,firstName: "Chike"
     ,lastName: "Udenze"

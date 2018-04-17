@@ -11,6 +11,10 @@ const REQUIRED = "{PATH} is required";
 
 let Schema = new mongoose.Schema({
     alias: {type: String, unique: true, required: REQUIRED}
+    , profile_img: {
+        data: {type: String, required: ERR_REQUIRED},
+        mimetype: {type: String, required: ERR_REQUIRED},
+      }
     , admin: {type: Boolean, default: false}
     , isRenter: {type: Boolean, default: false}
     , isHost: {type: Boolean, default: false}

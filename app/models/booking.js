@@ -17,8 +17,7 @@ let BookingSchema = new Schema({
   , host: { type: Schema.Types.ObjectId, ref: "Hosts", required: ERR_REQUIRED }
   , items: {
     type: [{
-      name: { type: String, required: ERR_REQUIRED }
-      , description: { type: String, required: true }
+      item: { type: Schema.Types.ObjectId, ref: "Item", required: ERR_REQUIRED }
     }]
     , required: ERR_REQUIRED
   }

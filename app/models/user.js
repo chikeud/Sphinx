@@ -30,7 +30,7 @@ let Schema = new mongoose.Schema({
   }
   , password: {type: String, required: REQUIRED, select: false}
 , first_name: {type: String, required: REQUIRED}
-, ssn_encrypted: {type: String, required: REQUIRED}
+, ssn_encrypted: {type: String}
 , stripe_customer_id: {type: String, required: REQUIRED}
 , last_name: {type: String, required: REQUIRED}
 , phone: {

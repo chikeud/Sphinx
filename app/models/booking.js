@@ -9,8 +9,8 @@ const ERR_REQUIRED = `required`;
 let Schema = mongoose.Schema;
 
 let BookingSchema = new Schema({
-  pickup: { type: Schema.Types.ObjectId, ref: "Pickups", required: ERR_REQUIRED }
-  , delivery: { type: Schema.Types.ObjectId, ref: "Deliveries", required: ERR_REQUIRED }
+  pickup: { type: Date, required: ERR_REQUIRED }
+  , delivery: { type: Date, required: ERR_REQUIRED }
   , booking_description: {type: String }
   , size: { type: String, required: ERR_REQUIRED}
   , user: { type: Schema.Types.ObjectId, ref: "Users", required: ERR_REQUIRED }

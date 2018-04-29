@@ -15,10 +15,10 @@ let Schema = new mongoose.Schema({
         data: {type: String, required: ERR_REQUIRED},
         mimetype: {type: String, required: ERR_REQUIRED},
       }
-    , admin: {type: Boolean, default: false}
-    , isRenter: {type: Boolean, default: false}
-    , isHost: {type: Boolean, default: false}
-    , isVerified: {type: Boolean, default: false}
+    , admin: { type: Boolean, default: false }
+    , isRenter: { type: Boolean, default: false }
+    , isHost: { type: Boolean, default: false }
+    , isVerified: { type: Boolean, default: false }
     , email: {
       type: String
       , required: REQUIRED

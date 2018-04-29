@@ -5,6 +5,8 @@
 let mongoose = require("mongoose");
 let bcrypt = require("bcrypt");
 let validator = require("validator");
+let passport = require("passport") , LocalStrategy = require('passport-local').Strategy;
+
 
 
 const REQUIRED = "{PATH} is required";
@@ -12,8 +14,8 @@ const REQUIRED = "{PATH} is required";
 let Schema = new mongoose.Schema({
     alias: {type: String, unique: true, required: REQUIRED}
     , profile_img: {
-        data: {type: String, required: ERR_REQUIRED},
-        mimetype: {type: String, required: ERR_REQUIRED},
+        data: {type: String, required: REQUIRED},
+        mimetype: {type: String, required: REQUIRED},
       }
     , admin: { type: Boolean, default: false }
     , isRenter: { type: Boolean, default: false }
@@ -60,4 +62,20 @@ Schema.pre("save", async function(next){
   next();
 });
 
+Schema.statics.authLocal = async function (){
+  passport.use(new LocalStrategy(
+    function(username, password) {
+      this.findOne({ username: username }, function (err, user) {
+        if (err) { throw err;}
+        if (!user) {
+          throw new Error('Incorrect username.');
+        }
+        if (!user.validPassword(password)) {
+          throw new Error('Incorrect password.');
+        }
+        return user;
+      });
+    }
+  ));
+};
 exports.User = mongoose.model("User", Schema);

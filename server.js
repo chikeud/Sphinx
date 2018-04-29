@@ -5,6 +5,7 @@ let path = require('path');
 let logger = require('morgan');
 let bodyParser = require('body-parser');
 let compress = require("compression");
+let passport = require("passport");
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise = require("bluebird");
 
@@ -19,6 +20,8 @@ let app = express();
 app.use(compress());
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS

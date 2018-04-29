@@ -20,3 +20,5 @@ apiRouter.all("*", (req, res) => {
 
   respond(http.OK, "Hello Worlds");
 });
+
+module.exports = apiRouter;

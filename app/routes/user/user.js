@@ -94,6 +94,7 @@ exports.login = async (req, res) => {
   const respond = response.success(res);
   const respondErr = response.failure(res, moduleId);
   const { alias, password } = req.body;
+  const type = req.authType;
 
   try{
     const user = await User.findOne({alias}).select("+password").exec();

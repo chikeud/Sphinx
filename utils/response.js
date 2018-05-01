@@ -29,7 +29,7 @@ function success(res){
       , message: message
       , result: result
     });
-  }
+  };
 }
 
 module.exports = {

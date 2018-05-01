@@ -5,8 +5,6 @@
 
 let moduleId = "users/user";
 
-let bcrypt = require("bcrypt");
-
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
 let User = require("../../models/User").User;
@@ -50,15 +48,15 @@ exports.createUser = async (req, res) => {
   const respondErr = response.failure(res, moduleId);
   let user = new User();
   const props = [
-    'alias', 'email', 'password', 'first_name', 'last_name', 'phone', 'address', 'isHost', 'isRenter'
+    "alias", "email", "password", "first_name", "last_name", "phone", "address", "isHost", "isRenter"
   ];
 
   for(const prop of props){
     user[prop] = req.body[prop];
   }
   // ssn field should me made required for Host for sign-up from the Front End
-  if (req.body['isHost']) {
-    user['ssn'] = req.body['ssn']
+  if (req.body["isHost"]) {
+    user["ssn"] = req.body["ssn"];
   }
 
   const noUserExists = ! await User.findOne().exec();
@@ -93,25 +91,10 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   const respond = response.success(res);
   const respondErr = response.failure(res, moduleId);
-  const { alias, password } = req.body;
-  const type = req.authType;
 
   try{
-    const user = await User.findOne({alias}).select("+password").exec();
-
-    if(!user){
-      return respondErr(http.BAD_REQUEST, "Incorrect Username");
-    }
-
-    const authorized = await bcrypt.compare(password, user.password);
-
-    if(!authorized){
-      return respondErr(http.BAD_REQUEST, "Incorrect Password");
-    }
-
+    let user = req.user;
     const token = await auth.createToken(user);
-
-    delete user.password;
 
     respond(http.OK, "Logged In!", {token, user});
   }
@@ -135,7 +118,7 @@ exports.editUser = async (req, res) => {
   try{
     let user = req.user;
     let props = [
-      'alias', 'email', 'password', 'first_name', 'last_name', 'phone', 'address'
+      "alias", "email", "password", "first_name", "last_name", "phone", "address"
     ];
 
     for(let prop of props){

@@ -66,10 +66,12 @@ Schema.pre("save", async function(next){
   next();
 });
 
-Schema.statics.authLocal = async function (){
+Schema.statics.authLocal = function (){
   passport.use(new LocalStrategy(
     function(username, password) {
-      this.findOne({ username: username }, function (err, user) {
+      let _user;
+
+      this.findOne({ username }, function (err, user) {
         if (err) { throw err;}
         if (!user) {
           throw new Error('Incorrect username.');
@@ -77,7 +79,7 @@ Schema.statics.authLocal = async function (){
         if (!user.validPassword(password)) {
           throw new Error('Incorrect password.');
         }
-        return user;
+        _user =  user;
       });
     }
   ));

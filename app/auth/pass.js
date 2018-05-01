@@ -8,7 +8,7 @@ const findOrCreate = require("mongoose-findorcreate");
 const passport = require("passport"),
   LocalStrategy = require("passport-local").Strategy,
   FacebookStrategy = require("passport-facebook").Strategy;
-  // GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+  GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 let User = require("../models/user").User;
 
@@ -47,7 +47,7 @@ passport.use(new FacebookStrategy({
 passport.use(new GoogleStrategy({
   clientID: "146856721457-pv5vmqe1iptmtv0vf416lo5tvl5a0ip6.apps.googleusercontent.com", // TODO add to .env file
   clientSecret: "u8AWTeoVuwWQh58AxZyAPYmg", // TODO add to .env file
-    callbackURL: "http://localhost:8787/auth/google/callback"
+  callbackURL: "http://localhost:8787/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     this.findOrCreate({ googleId: profile.id }, function (err, user) {

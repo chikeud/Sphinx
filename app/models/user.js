@@ -5,7 +5,10 @@
 let mongoose = require("mongoose");
 let bcrypt = require("bcrypt");
 let validator = require("validator");
-let passport = require("passport") , LocalStrategy = require('passport-local').Strategy;
+let findOrCreate = require('mongoose-find-or-create');
+let passport = require("passport") ,
+  LocalStrategy = require('passport-local').Strategy ,
+  FacebookStrategy = require('passport-facebook').Strategy;
 
 
 
@@ -77,5 +80,23 @@ Schema.statics.authLocal = async function (){
       });
     }
   ));
+};
+
+Schema.statics.authFacebook = async function () {
+  passport.use(new FacebookStrategy({
+      clientID: 1097633663710306,
+      clientSecret: 'edc22e0ea7e1de98964a35c222191248',
+      callbackURL: "http://localhost:8787/auth/facebook/callback"
+    },
+    function(accessToken, refreshToken, profile) {
+      this.findOrCreate({ facebookId: profile.id }, function (err, user) {
+        return cb(err, user);
+      });
+    }
+  ));
+};
+
+Schema.statics.authGoogle = async function () {
+
 };
 exports.User = mongoose.model("User", Schema);

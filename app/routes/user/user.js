@@ -96,7 +96,7 @@ exports.login = async (req, res) => {
     let user = req.user;
     const token = await auth.createToken(user);
 
-    respond(http.OK, "Logged In!", {token, user});
+    respond(http.OK, "Logged In!", { token, user });
   }
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);

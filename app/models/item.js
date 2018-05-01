@@ -3,9 +3,9 @@
  * @since 04/08/18 MM/DD/YY
  */
 
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-let ItemSchema = new mongoose.Schema({
+const ItemSchema = new mongoose.Schema({
   name: { type: String, required: true }
   , description: { type: Boolean, default: false }
   , dimensions: {

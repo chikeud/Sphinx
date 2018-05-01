@@ -2,10 +2,10 @@
  * @author Chike Udenze
  * @since 04/08/18 MM/DD/YY
  */
-let mongoose = require("mongoose");
-let bcrypt = require("bcrypt");
-let validator = require("validator");
-// let findOrCreate = require("mongoose-find-or-create");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const validator = require("validator");
+
 
 const REQUIRED = "{PATH} is required";
 
@@ -63,34 +63,5 @@ Schema.pre("save", async function(next){
 Schema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);
 };
-
-// Schema.statics.authFacebook = async function () {
-//   passport.use(new FacebookStrategy({
-//     clientID: 1097633663710306,
-//     clientSecret: "edc22e0ea7e1de98964a35c222191248", // TODO add to .env file
-//     callbackURL: "http://localhost:8787/auth/facebook/callback" // TODO add to .env file
-//   },
-//   function(accessToken, refreshToken, profile) {
-//     this.findOrCreate({ facebookId: profile.id }, function (err, user) {
-//       return cb(err, user);
-//     });
-//   }
-//   ));
-// };
-//
-// Schema.statics.authGoogle = async function () {
-//   passport.use(new GoogleStrategy({
-//     clientID: "146856721457-pv5vmqe1iptmtv0vf416lo5tvl5a0ip6.apps.googleusercontent.com", // TODO add to .env file
-//     clientSecret: "u8AWTeoVuwWQh58AxZyAPYmg", // TODO add to .env file
-//     callbackURL: "http://localhost:8787/auth/google/callback"
-//   },
-//   function(accessToken, refreshToken, profile, done) {
-//     this.findOrCreate({ googleId: profile.id }, function (err, user) {
-//       return done(err, user);
-//     });
-//   }
-//   ));
-//
-// };
 
 exports.User = mongoose.model("User", Schema);

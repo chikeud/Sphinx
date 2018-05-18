@@ -2,10 +2,10 @@
  * @author Chike Udenze
  * @since 04/08/18 MM/DD/YY
  */
-let mongoose = require("mongoose");
-let bcrypt = require("bcrypt");
-let validator = require("validator");
-// let findOrCreate = require("mongoose-find-or-create");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const validator = require("validator");
+
 
 const REQUIRED = "{PATH} is required";
 

@@ -4,9 +4,9 @@
  * @since 04/08/18 MM/DD/YY
  */
 
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const ERR_REQUIRED = `required`;
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 let BookingSchema = new Schema({
   pickup: { type: Date, required: ERR_REQUIRED }

@@ -1,4 +1,5 @@
 /**
+ *
  * @author Chike Udenze
  * @since 4/21/18
  */
@@ -76,10 +77,6 @@ exports.createUser = async (req, res) => {
   }
 
   try{
-    let noUserExists = ! await User.findOne().exec();
-
-    if(noUserExists){user.admin = true;}
-
     if(req.file){
       let fileId = mongoose.Types.ObjectId();
       let task = Fawn.Task();

@@ -7,6 +7,7 @@ let bodyParser = require("body-parser");
 let compress = require("compression");
 let passport = require("passport");
 let mongoose = require("mongoose");
+let Fawn = require("fawn");
 mongoose.Promise = global.Promise = require("bluebird");
 
 let {url, port} = require("./config/index.js");
@@ -14,14 +15,17 @@ let apiRouter = require("./app/routes");
 
 mongoose.Promise = Promise;
 mongoose.connect(url, {useMongoClient: true,});
+Fawn.init(mongoose);
 
 let app = express();
 
 app.use(compress());
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
+
+// app.use(passport.initialize());
+// app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // CORS
@@ -47,9 +51,10 @@ if (app.get("env") === "development") {
   });
 }
 
-// =======================
-// start the server ======
-// =======================
+// rollback fawn tasks
+(async () => await Fawn.Roller.roll())();
+
+// start the server
 let server = app.listen(port);
 
 server.on("close", async err => {

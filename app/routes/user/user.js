@@ -5,11 +5,18 @@
 
 let moduleId = "users/user";
 
+let bcrypt = require("bcrypt");
+let Fawn = require("fawn");
+let mongoose = require("mongoose");
+let Grid = require("gridfs-stream");
+let fs = Promise.promisifyAll(require("fs"));
+
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
 let User = require("../../models/User").User;
 let auth = require("../../../utils/authToken");
 
+Grid.mongo = mongoose.mongo;
 
 /**
  * Route handler to get users
@@ -44,29 +51,52 @@ exports.getUser = async (req, res) => {
  * @returns {Promise.<void>}
  */
 exports.createUser = async (req, res) => {
-  const respond = response.success(res);
-  const respondErr = response.failure(res, moduleId);
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
   let user = new User();
-  const props = [
-    "alias", "email", "password", "first_name", "last_name", "phone", "address", "isHost", "isRenter"
+  let props = [
+    "alias",
+    "email",
+    "password",
+    "firstName",
+    "lastName",
+    "phone",
+    "address",
+    "isHost",
+    "isRenter"
   ];
 
-  for(const prop of props){
+  for(let prop of props){
     user[prop] = req.body[prop];
   }
-  // ssn field should me made required for Host for sign-up from the Front End
-  if (req.body["isHost"]) {
-    user["ssn"] = req.body["ssn"];
-  }
 
-  const noUserExists = ! await User.findOne().exec();
-
-  if(noUserExists){
-    user.admin = true;
+  // ssn field should me made required for Host
+  if (user.isHost && !user.ssn) {
+    return respondErr(http.BAD_REQUEST, "Missing Host SSN!");
   }
 
   try{
-    user = await user.save();
+    let noUserExists = ! await User.findOne().exec();
+
+    if(noUserExists){user.admin = true;}
+
+    if(req.file){
+      let fileId = mongoose.Types.ObjectId();
+      let task = Fawn.Task();
+
+      user.profileImg = fileId;
+
+      let result = await task
+        .saveFile(req.file.path, {_id: fileId})
+        .save(user)
+        .run({useMongoose: true});
+
+      await fs.unlinkAsync(req.file.path);
+
+      user = result[1];
+    }
+    else {user = await user.save();}
+
     user = user.toObject();
     let token = await auth.createToken(user);
 
@@ -91,12 +121,18 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   const respond = response.success(res);
   const respondErr = response.failure(res, moduleId);
+  let {alias, password} = req.body;
+  let fail = () => respondErr(http.UNAUTHORIZED, "Invalid User");
 
   try{
-    let user = req.user;
-    const token = await auth.createToken(user);
+    let user = await User.findOne({alias}).exec();
+    if(!user) return fail();
 
-    respond(http.OK, "Logged In!", {token, user});
+    let validPass = await bcrypt.compare(password, user.password);
+    if(!validPass) return fail();
+
+    let token = await auth.createToken(user);
+    return respond(http.OK, "Logged In!", {token});
   }
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);

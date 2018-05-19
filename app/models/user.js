@@ -8,10 +8,11 @@ const validator = require("validator");
 
 
 const REQUIRED = "{PATH} is required";
+let Schema = mongoose.Schema;
 
-let Schema = new mongoose.Schema({
+let UserSchema = new Schema({
   alias: {type: String, unique: true, required: REQUIRED},
-  profileImg: {type: Schema.Types.ObjectId},
+  profileImg: Schema.Types.ObjectId,
   admin: { type: Boolean, default: false },
   isRenter: { type: Boolean, required: REQUIRED},
   isHost: { type: Boolean, required: REQUIRED},
@@ -38,10 +39,16 @@ let Schema = new mongoose.Schema({
       message: "Invalid Phone Number",
     }
   },
-  address: {type: String, required: REQUIRED}
+  address: {
+    city: {type: String, required: REQUIRED},
+    state: {type: String, required: REQUIRED},
+    zip: {type: String, required: REQUIRED},
+    street: {type: String, required: REQUIRED},
+    houseNum: {type: String, required: REQUIRED}
+  }
 });
 
-Schema.pre("save", async function(next){
+UserSchema.pre("save", async function(next){
   let doc = this;
 
   try{
@@ -62,8 +69,8 @@ Schema.pre("save", async function(next){
   next();
 });
 
-Schema.methods.validPass = async function(pass){
+UserSchema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);
 };
 
-exports.User = mongoose.model("User", Schema);
+exports.User = mongoose.model("User", UserSchema);

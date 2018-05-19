@@ -62,9 +62,9 @@ exports.createUser = async (req, res) => {
     "firstName",
     "lastName",
     "phone",
-    "address",
     "isHost",
-    "isRenter"
+    "isRenter",
+    "address"
   ];
 
   for(let prop of props){
@@ -76,6 +76,8 @@ exports.createUser = async (req, res) => {
     return respondErr(http.BAD_REQUEST, "Missing Host SSN!");
   }
 
+  console.log(req.body);
+  console.log(user);
   try{
     if(req.file){
       let fileId = mongoose.Types.ObjectId();
@@ -97,7 +99,7 @@ exports.createUser = async (req, res) => {
     user = user.toObject();
     let token = await auth.createToken(user);
 
-    delete user.password;
+    // delete user.password;
 
     respond(http.CREATED, "User Created", {user, token});
   }

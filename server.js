@@ -10,11 +10,11 @@ let mongoose = require("mongoose");
 let Fawn = require("fawn");
 mongoose.Promise = global.Promise = require("bluebird");
 
-let {url, port} = require("./config/index.js");
+let {DB_URL, PORT} = require("./config/index.js");
 let apiRouter = require("./app/routes");
 
 mongoose.Promise = Promise;
-mongoose.connect(url, {useMongoClient: true,});
+mongoose.connect(DB_URL);
 Fawn.init(mongoose);
 
 let app = express();
@@ -52,10 +52,13 @@ if (app.get("env") === "development") {
 }
 
 // rollback fawn tasks
-(async () => await Fawn.Roller.roll())();
+(async () => {
+  try{await Fawn.Roller().roll();}
+  catch(err){console.log(err);}
+})();
 
 // start the server
-let server = app.listen(port);
+let server = app.listen(PORT);
 
 server.on("close", async err => {
   if(err) throw err;
@@ -67,4 +70,4 @@ server.on("close", async err => {
 
 process.on("SIGINT", () => server.close());
 
-console.log("Magic happens at http://localhost:" + port);
+console.log("Magic happens at http://localhost:" + PORT);

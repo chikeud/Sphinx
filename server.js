@@ -12,6 +12,7 @@ mongoose.Promise = global.Promise = require("bluebird");
 
 let {DB_URL, PORT} = require("./config/index.js");
 let apiRouter = require("./app/api");
+const STATIC = path.join(__dirname, "public");
 
 mongoose.Promise = Promise;
 mongoose.connect(DB_URL);
@@ -26,7 +27,7 @@ app.use(bodyParser.json());
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(STATIC));
 
 // CORS
 app.use((req, res, next) => {
@@ -38,6 +39,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/api",apiRouter);
+
+app.use("*", (req, res) => {
+  res.sendFile(`${STATIC}/index.html`);
+});
 
 if (app.get("env") === "development") {
   app.use(function(err, req, res, next) {

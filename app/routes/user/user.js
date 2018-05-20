@@ -76,8 +76,6 @@ exports.createUser = async (req, res) => {
     return respondErr(http.BAD_REQUEST, "Missing Host SSN!");
   }
 
-  console.log(req.body);
-  console.log(user);
   try{
     if(req.file){
       let fileId = mongoose.Types.ObjectId();

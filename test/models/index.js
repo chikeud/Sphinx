@@ -1,6 +1,6 @@
 /**
- * @author ChikeUdenze
- * @since 11/4/2017
+ * @author EmmanuelOlaojo
+ * @since 5/18/18
  */
 
-exports.User = require("../../app/models/UserModel").User;
+exports.User = require("../../app/models/user").User;

@@ -23,12 +23,12 @@ let moduleId = "authToken";
  */
 async function checkToken(req, res, next){
   let respondErr = response.failure(res, moduleId);
-  let authToken = req.get(config.authToken);
+  let authToken = req.get(config.AUTH_TOKEN);
 
   if(!authToken) return respondErr(http.UNAUTHORIZED, "Missing u_auth token");
 
   try {
-    req.user = await jwt.verifyAsync(authToken, config.secret);
+    req.user = await jwt.verifyAsync(authToken, config.SECRET);
     next();
   }
   catch(err){
@@ -46,7 +46,7 @@ async function checkToken(req, res, next){
 async function createToken(user){
   let {_id, alias} = user;
 
-  return await jwt.signAsync({_id, alias}, config.secret, {expiresIn: "24h"});
+  return await jwt.signAsync({_id, alias}, config.SECRET, {expiresIn: "24h"});
 }
 
 module.exports = {checkToken, createToken};

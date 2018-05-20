@@ -8,7 +8,7 @@ let jwt = Promise.promisifyAll(require("jsonwebtoken"));
 let config = require("../config");
 let response = require("./response");
 let http = require("./HttpStats");
-let Users = require("../app/models/User").User;
+let Users = require("../app/models/user").User;
 
 let moduleId = "utils/authToken";
 

@@ -1,7 +1,6 @@
 language: node_js
 
 node_js:
-  - "node"
   - "8"
 
 addons:
@@ -17,6 +16,6 @@ services: mongodb
 
 script:
   - npm install nodemon
-  - npm start &
+  - PORT=8888 COLLECTION=Pharaoh npm start &
   - sleep 5
   - npm test

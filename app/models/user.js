@@ -1,4 +1,5 @@
 /**
+ * @author Emmanuel Olaojo
  * @author Chike Udenze
  * @since 04/08/18 MM/DD/YY
  */
@@ -12,7 +13,10 @@ let Schema = mongoose.Schema;
 
 let UserSchema = new Schema({
   alias: {type: String, unique: true, required: REQUIRED},
-  profileImg: Schema.Types.ObjectId,
+  profileImg: {
+    id: Schema.Types.ObjectId,
+    file: {}
+  },
   admin: { type: Boolean, default: false },
   isRenter: { type: Boolean, required: REQUIRED},
   isHost: { type: Boolean, required: REQUIRED},

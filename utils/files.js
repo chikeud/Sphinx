@@ -73,7 +73,7 @@ exports.uploadImage = async (file) => {
       let _id = mongoose.Types.ObjectId();
 
       result = await task
-        .saveFile(file.path, {_id})
+        .saveFile(file.path, {_id, metadata: file})
         .run();
 
       result = result[0];

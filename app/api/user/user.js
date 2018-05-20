@@ -7,10 +7,8 @@
 let moduleId = "users/user";
 
 let bcrypt = require("bcrypt");
-let Fawn = require("fawn");
 let mongoose = require("mongoose");
 let Grid = require("gridfs-stream");
-let fs = Promise.promisifyAll(require("fs"));
 
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
@@ -171,21 +169,23 @@ exports.setProfileImg = async (req, res) => {
 
   try{
     let result = await files.uploadImage(req.file);
-    let user = req.user();
+    let user = req.user;
 
     if(!result){
       return respondErr(http.BAD_REQUEST, "Invalid Image");
     }
 
     // remove pre-existing profile image
-    if(user.profileImg){
-      await removeFile({_id: user.profileImg});
+    if(user.profileImg && user.profileImg.id){
+      await removeFile({_id: user.profileImg.id});
     }
 
-    user.profileImg = result._id;
+    user.profileImg.file = result;
+    user.profileImg.id = result._id;
+
     user = await user.save();
 
-    respond(http.OK, "Profile Image saved", {user});
+    respond(http.CREATED, "Profile Image saved", {user});
   }
   catch(err){
     throw err;

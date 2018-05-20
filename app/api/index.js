@@ -3,8 +3,6 @@
  * @since 10/20/17
  */
 
-let moduleId = "routes/index";
-
 let express = require("express");
 
 let response = require("../../utils/response");

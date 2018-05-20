@@ -9,10 +9,13 @@ const MAX_DURATION = 20;
 
 let fs = Promise.promisifyAll(require("fs"));
 let mongoose = require("mongoose");
+let Fawn = require("fawn");
 let ffmpegStatic = require("ffmpeg-static");
 let ffprobeStatic = require("ffprobe-static");
 let ffmpeg = require("fluent-ffmpeg");
 let Grid = require("gridfs-stream");
+let readChunk = require("read-chunk");
+let fileType = require("file-type");
 
 let response = require("./response");
 let http = require("./HttpStats");
@@ -23,7 +26,22 @@ ffmpeg.setFfmpegPath(ffmpegStatic.path);
 ffmpeg.setFfprobePath(ffprobeStatic.path);
 
 /**
- * Gets an image with the specified _id
+ * Checks if a file is an image.
+ *
+ * @param file - to be checked
+ * @returns {Promise.<boolean>}
+ */
+async function isImage(file){
+  let buffer = await readChunk(file.path, 0, 4100);
+  let safeTypes = new Set(["jpg", "png", "gif", "webp"]);
+  let imgType = fileType(buffer);
+
+  return safeTypes.has(imgType.ext);
+}
+
+/**
+ * Route handler to get an
+ * image with the specified _id
  *
  * @param req the request
  * @param res the response
@@ -39,6 +57,37 @@ exports.getImg = async (req, res) => {
 
   readStream.pipe(res);
 };
+/**
+ * Uploads an image to the db. Returns
+ * null if the provided file is not an email
+ *
+ * @param file - to be uploaded
+ * @returns {Promise.<*>}
+ */
+exports.uploadImage = async (file) => {
+  let result = null;
+
+  try{
+    if(isImage(file)){
+      let task = Fawn.Task();
+      let _id = mongoose.Types.ObjectId();
+
+      result = await task
+        .saveFile(file.path, {_id, metadata: file})
+        .run();
+
+      result = result[0];
+    }
+
+    await fs.unlinkAsync(file.path);
+  }
+  catch(err){
+    throw err;
+  }
+
+  return result;
+};
+
 /**
  * Takes a video that's not longer than
  * maxDuration and uploads it to the db as

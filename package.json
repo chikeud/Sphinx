@@ -16,6 +16,7 @@
     "fawn": "2.1.5",
     "ffmpeg-static": "2.3.0",
     "ffprobe-static": "2.0.0",
+    "file-type": "8.0.0",
     "fluent-ffmpeg": "2.1.2",
     "gridfs-stream": "1.1.1",
     "jsonwebtoken": "^7.4.3",
@@ -32,6 +33,7 @@
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
+    "read-chunk": "2.1.0",
     "validator": "8.1.0"
   },
   "devDependencies": {

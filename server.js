@@ -11,7 +11,7 @@ let Fawn = require("fawn");
 mongoose.Promise = global.Promise = require("bluebird");
 
 let {DB_URL, PORT} = require("./config/index.js");
-let apiRouter = require("./app/routes");
+let apiRouter = require("./app/api");
 
 mongoose.Promise = Promise;
 mongoose.connect(DB_URL);

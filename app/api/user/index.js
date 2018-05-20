@@ -12,12 +12,15 @@ let auth = require("../../../utils/authToken");
 
 let userRouter = express.Router();
 let upload = multer({dest: "uploads/"});
+let uploadImg = upload.single("profileImg");
+
+userRouter.post("/login", user.login);
 
 userRouter.route("/")
-  .post(upload.single("profileImg"), user.createUser)
+  .post(user.createUser)
   .put(auth.checkToken, user.editUser)
   .get(auth.checkToken, user.getUser);
 
-userRouter.post("/login", user.login);
+userRouter.post("/img", uploadImg, auth.checkToken, user.setProfileImg);
 
 module.exports = userRouter;

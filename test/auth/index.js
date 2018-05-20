@@ -17,6 +17,7 @@ let SERVER_URL = `http://localhost:${config.PORT}`;
 
 module.exports = describe("Authentication Tests", () => {
   let request = chai.request(SERVER_URL);
+  let token;
 
   context("User Creation", () => {
     it("should return user and jwt with _id and alias", async () => {
@@ -27,8 +28,10 @@ module.exports = describe("Authentication Tests", () => {
       let addressKeys = Object.keys(mock[u].address);
       let res = await request.post("/api/u")
         .send(mock[u]);
-      let {user, token} = res.body.result;
-      let decoded = await jwt.verifyAsync(token, config.SECRET);
+      let {user, token: _token} = res.body.result;
+      let decoded = await jwt.verifyAsync(_token, config.SECRET);
+
+      token = _token;
 
       for(let key of keys){
         if(key === "password" || key === "ssn"){
@@ -44,8 +47,28 @@ module.exports = describe("Authentication Tests", () => {
         }
       }
 
+      expect(res).to.have.status(http.CREATED);
       expect(decoded["alias"]).to.equal(mock.user1["alias"]);
       expect(decoded._id).to.equal(user._id);
+    });
+  });
+
+  context("Profile Image Upload", () => {
+    it("should set a user's profile image", async () => {
+      let filename = "user1.jpg";
+      let buffer = fs.readFileSync(`${__dirname}/imgs/${filename}`);
+
+      let res = await request
+        .post("/api/u/img")
+        .set(config.AUTH_TOKEN, token)
+        .attach("profileImg", buffer, filename)
+        .send(null);
+
+      let {user} = res.body.result;
+      let data = user.profileImg.file.metadata;
+
+      expect(res).to.have.status(http.CREATED);
+      expect(data.originalname).to.equal(filename);
     });
   });
 });

@@ -77,4 +77,4 @@ UserSchema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);
 };
 
-exports.User = mongoose.model("User", UserSchema);
+exports.User = mongoose.model("users", UserSchema);

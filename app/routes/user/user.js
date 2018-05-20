@@ -16,6 +16,7 @@ let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
 let User = require("../../models/User").User;
 let auth = require("../../../utils/authToken");
+let files = require("../../../utils/files");
 
 Grid.mongo = mongoose.mongo;
 
@@ -77,27 +78,10 @@ exports.createUser = async (req, res) => {
   }
 
   try{
-    if(req.file){
-      let fileId = mongoose.Types.ObjectId();
-      let task = Fawn.Task();
-
-      user.profileImg = fileId;
-
-      let result = await task
-        .saveFile(req.file.path, {_id: fileId})
-        .save(user)
-        .run({useMongoose: true});
-
-      await fs.unlinkAsync(req.file.path);
-
-      user = result[1];
-    }
-    else {user = await user.save();}
+    user = await user.save();
 
     user = user.toObject();
     let token = await auth.createToken(user);
-
-    // delete user.password;
 
     respond(http.CREATED, "User Created", {user, token});
   }
@@ -166,5 +150,44 @@ exports.editUser = async (req, res) => {
   }
   catch(err){
     respondErr(http.BAD_REQUEST, err.message, err);
+  }
+};
+
+/**
+ * Sets the profile image for a
+ * logged in user.
+ *
+ * @param req request
+ * @param res response
+ *
+ * @returns {Promise.<*>}
+ */
+exports.setProfileImg = async (req, res) => {
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
+  let conn = mongoose.connection;
+  let gfs = Grid(conn.db);
+  let removeFile = Promise.promisify(gfs.remove);
+
+  try{
+    let result = await files.uploadImage(req.file);
+    let user = req.user();
+
+    if(!result){
+      return respondErr(http.BAD_REQUEST, "Invalid Image");
+    }
+
+    // remove pre-existing profile image
+    if(user.profileImg){
+      await removeFile({_id: user.profileImg});
+    }
+
+    user.profileImg = result._id;
+    user = await user.save();
+
+    respond(http.OK, "Profile Image saved", {user});
+  }
+  catch(err){
+    throw err;
   }
 };

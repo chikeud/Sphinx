@@ -40,7 +40,8 @@ async function isImage(file){
 }
 
 /**
- * Gets an image with the specified _id
+ * Route handler to get an
+ * image with the specified _id
  *
  * @param req the request
  * @param res the response
@@ -66,18 +67,23 @@ exports.getImg = async (req, res) => {
 exports.uploadImage = async (file) => {
   let result = null;
 
-  if(isImage(file)){
-    let task = Fawn.Task();
-    let _id = mongoose.Types.ObjectId();
+  try{
+    if(isImage(file)){
+      let task = Fawn.Task();
+      let _id = mongoose.Types.ObjectId();
 
-    result = await task
-      .saveFile(file.path, {_id})
-      .run();
+      result = await task
+        .saveFile(file.path, {_id})
+        .run();
 
-    result = result[0];
+      result = result[0];
+    }
+
+    await fs.unlinkAsync(file.path);
   }
-
-  await fs.unlinkAsync(file.path);
+  catch(err){
+    throw err;
+  }
 
   return result;
 };

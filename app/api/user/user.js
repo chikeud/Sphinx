@@ -1,4 +1,5 @@
 /**
+ *
  * @author Chike Udenze
  * @since 4/21/18
  */
@@ -6,12 +7,16 @@
 let moduleId = "users/user";
 
 let bcrypt = require("bcrypt");
+let mongoose = require("mongoose");
+let Grid = require("gridfs-stream");
 
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
-let User = require("../../models/User").User;
+let User = require("../../models/user").User;
 let auth = require("../../../utils/authToken");
+let files = require("../../../utils/files");
 
+Grid.mongo = mongoose.mongo;
 
 /**
  * Route handler to get users
@@ -46,33 +51,35 @@ exports.getUser = async (req, res) => {
  * @returns {Promise.<void>}
  */
 exports.createUser = async (req, res) => {
-  const respond = response.success(res);
-  const respondErr = response.failure(res, moduleId);
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
   let user = new User();
-  const props = [
-    'alias', 'email', 'password', 'first_name', 'last_name', 'phone', 'address', 'isHost', 'isRenter'
+  let props = [
+    "alias",
+    "email",
+    "password",
+    "firstName",
+    "lastName",
+    "phone",
+    "isHost",
+    "isRenter",
+    "address"
   ];
 
-  for(const prop of props){
+  for(let prop of props){
     user[prop] = req.body[prop];
   }
-  // ssn field should me made required for Host for sign-up from the Front End
-  if (req.body['isHost']) {
-    user['ssn'] = req.body['ssn']
-  }
 
-  const noUserExists = ! await User.findOne().exec();
-
-  if(noUserExists){
-    user.admin = true;
+  // ssn field should me made required for Host
+  if (user.isHost && !user.ssn) {
+    return respondErr(http.BAD_REQUEST, "Missing Host SSN!");
   }
 
   try{
     user = await user.save();
+
     user = user.toObject();
     let token = await auth.createToken(user);
-
-    delete user.password;
 
     respond(http.CREATED, "User Created", {user, token});
   }
@@ -93,26 +100,18 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   const respond = response.success(res);
   const respondErr = response.failure(res, moduleId);
-  const { alias, password } = req.body;
+  let {alias, password} = req.body;
+  let fail = () => respondErr(http.UNAUTHORIZED, "Invalid User");
 
   try{
-    const user = await User.findOne({alias}).select("+password").exec();
+    let user = await User.findOne({alias}).exec();
+    if(!user) return fail();
 
-    if(!user){
-      return respondErr(http.BAD_REQUEST, "Incorrect Username");
-    }
+    let validPass = await bcrypt.compare(password, user.password);
+    if(!validPass) return fail();
 
-    const authorized = await bcrypt.compare(password, user.password);
-
-    if(!authorized){
-      return respondErr(http.BAD_REQUEST, "Incorrect Password");
-    }
-
-    const token = await auth.createToken(user);
-
-    delete user.password;
-
-    respond(http.OK, "Logged In!", {token, user});
+    let token = await auth.createToken(user);
+    return respond(http.OK, "Logged In!", {token});
   }
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);
@@ -134,7 +133,7 @@ exports.editUser = async (req, res) => {
   try{
     let user = req.user;
     let props = [
-      'alias', 'email', 'password', 'first_name', 'last_name', 'phone', 'address'
+      "alias", "email", "password", "first_name", "last_name", "phone", "address"
     ];
 
     for(let prop of props){
@@ -149,5 +148,46 @@ exports.editUser = async (req, res) => {
   }
   catch(err){
     respondErr(http.BAD_REQUEST, err.message, err);
+  }
+};
+
+/**
+ * Sets the profile image for a
+ * logged in user.
+ *
+ * @param req request
+ * @param res response
+ *
+ * @returns {Promise.<*>}
+ */
+exports.setProfileImg = async (req, res) => {
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
+  let conn = mongoose.connection;
+  let gfs = Grid(conn.db);
+  let removeFile = Promise.promisify(gfs.remove);
+
+  try{
+    let result = await files.uploadImage(req.file);
+    let user = req.user;
+
+    if(!result){
+      return respondErr(http.BAD_REQUEST, "Invalid Image");
+    }
+
+    // remove pre-existing profile image
+    if(user.profileImg && user.profileImg.id){
+      await removeFile({_id: user.profileImg.id});
+    }
+
+    user.profileImg.file = result;
+    user.profileImg.id = result._id;
+
+    user = await user.save();
+
+    respond(http.CREATED, "Profile Image saved", {user});
+  }
+  catch(err){
+    throw err;
   }
 };

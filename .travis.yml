@@ -1,0 +1,21 @@
+language: node_js
+
+node_js:
+  - "8"
+
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.2-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
+
+services: mongodb
+
+script:
+  - npm install nodemon
+  - PORT=8888 COLLECTION=Pharaoh npm start &
+  - sleep 5
+  - npm test

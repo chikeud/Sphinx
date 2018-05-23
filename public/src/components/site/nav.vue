@@ -35,8 +35,6 @@
 
   .nav{
     @include mdc-top-app-bar-fill-color(white);
-    @include mdc-top-app-bar-ink-color(#95A3AA);
-    @include mdc-top-app-bar-icon-ink-color(#95A3AA);
 
     margin: 0;
     padding-left: 50px;
@@ -52,7 +50,7 @@
   }
 
   .nav a{
-    @include mdc-button-ink-color(#95A3AA);
+    @include mdc-button-ink-color(#7B8E96);
 
     width: 80px;
     height: 100%;

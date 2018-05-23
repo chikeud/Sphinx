@@ -2,7 +2,7 @@
   <div id="app">
     <nav-bar></nav-bar>
 
-    <h1>{{ msg }}</h1>
+    <router-view></router-view>
   </div>
 </template>
 

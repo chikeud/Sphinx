@@ -73,12 +73,12 @@
     opacity: 0 !important;
   }
 
-  .mdc-top-app-bar__section{
+  .nav .mdc-top-app-bar__section{
     padding-top: 0;
     padding-bottom: 0;
   }
 
-  .mdc-top-app-bar__title{
+  .nav .mdc-top-app-bar__title{
     height: 100%;
   }
 </style>

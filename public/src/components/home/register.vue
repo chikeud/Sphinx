@@ -1,32 +1,56 @@
 <template>
-  <m-card class="auth-card">
-    <div class="auth-title">
+  <m-card class="r-card">
+    <div class="r-title">
       Sign Up Today
     </div>
 
-    <div class="auth-user-type">
+    <div class="r-user-type">
       <button class="greyed-out">HOST</button>
       <button class="active">STORE</button>
     </div>
 
-    <div class="auth-form">
-      <div class="auth-name">
-        <m-textfield outlined id="first-name" :value="fName">
-          <m-floating-label for="first-name">
-            First Name
-          </m-floating-label>
-          <m-notched-outline></m-notched-outline>
-        </m-textfield>
+    <div class="r-form">
+      <div class="r1">
+        <div class="r-name r-section">
+          <m-textfield outlined id="first-name" :value="fName">
+            <m-floating-label for="first-name">First Name</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
 
-        <m-textfield outlined id="last-name" :value="lName">
-          <m-floating-label for="last-name">
-            Last Name
-          </m-floating-label>
-          <m-notched-outline></m-notched-outline>
-        </m-textfield>
+          <m-textfield outlined id="last-name" :value="lName">
+            <m-floating-label for="last-name">Last Name</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+
+        <div class="r-contact r-section">
+          <m-textfield outlined id="email" :value="email">
+            <m-floating-label for="email">Email</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+
+          <m-textfield outlined id="phone" :value="phone">
+            <m-floating-label for="phone">Phone</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+
+          <m-textfield outlined id="password" :value="password">
+            <m-floating-label for="password">Password</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+
+        <div class="r-city r-section">
+          <m-textfield outlined id="city" :value="city">
+            <m-floating-label for="city">City</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
       </div>
+    </div>
 
-      <div class="auth-contact"></div>
+    <div class="r-action">
+      <m-button>SIGN UP</m-button>
     </div>
   </m-card>
 </template>
@@ -50,8 +74,13 @@
   export default {
     data(){
       return {
+        submitText: "SIGN UP",
         fName: "",
-        lName: ""
+        lName: "",
+        email: "",
+        phone: "",
+        password: "",
+        city: ""
       }
     }
   }
@@ -66,31 +95,36 @@
   @import "~material-components-vue/dist/floating-label/styles";
   @import "~material-components-vue/dist/elevation/styles";
 
-  .auth-card{
+  .r-card{
     width: 330px;
     padding: 20px 40px;
     margin-right: 80px;
   }
 
-  .auth-title{
+  .r-title{
     text-align: left;
     font-size: 19px;
     margin-bottom: 25px;
   }
 
-  .auth-user-type{
+  .r-user-type{
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
   }
 
-  .auth-user-type button{
+  .r-user-type button{
     border: none;
     width: 120px;
     height: 35px;
     color: white;
     font-size: 14px;
     font-weight: bold;
+    cursor: pointer;
+  }
+
+  .r-user-type button:focus{
+    outline: none
   }
 
   .greyed-out{
@@ -102,52 +136,68 @@
     background: #369FDA;
   }
 
-  .auth-card .mdc-text-field{
+  .r-card .mdc-text-field{
     @include mdc-text-field-focused-outline-color(#369FDA);
     @include mdc-text-field-outline-color(#EBEFF1);
 
-    height: 30px;
     margin: 0 !important;
   }
 
-  .auth-card .mdc-text-field--outlined{
-    height: 30px;
+  .r-card .mdc-text-field--outlined{
+    height: 35px;
   }
 
-  .auth-card .mdc-text-field__input{
+  .r-card .mdc-text-field__input{
     padding: 0 12px 2px;
   }
 
-  .auth-card .mdc-notched-outline{
+  .r-card .mdc-notched-outline{
     @include mdc-notched-outline-stroke-width(2px);
   }
 
-  .auth-card .mdc-notched-outline,
-  .auth-card .mdc-notched-outline__idle{
+  .r-card .mdc-notched-outline,
+  .r-card .mdc-notched-outline__idle{
     border-radius: 0;
   }
 
-  .auth-card .mdc-notched-outline svg{
+  .r-card .mdc-notched-outline svg{
     position: relative;
   }
 
-  .auth-card .mdc-floating-label{
-    color: #EBEFF1 !important;
-    bottom: 7px;
+  .r-card .mdc-floating-label{
+    color: lightgray !important;
+    bottom: 9px;
   }
 
-  .auth-card .mdc-floating-label,
-  .auth-card .mdc-text-field__input{
+  .r-card .mdc-floating-label,
+  .r-card .mdc-text-field__input{
     font-size: 13px;
   }
 
-  .auth-card .mdc-floating-label--float-above{
+  .r-card .mdc-floating-label--float-above{
     transform: translateY(-70%) scale(0.75);
     color: #369FDA !important;
   }
 
-  .auth-name{
+  .r-section{
+    margin-bottom: 10px;
+  }
+
+  .r-form .mdc-text-field{
+    width: 100%;
+  }
+
+  .r-name{
     display: flex;
     flex-direction: row;
+  }
+
+  .r-action .mdc-button{
+    @include mdc-button-container-fill-color(#369FDA);
+    @include mdc-button-ink-color(white);
+
+    width: 100%;
+    font-weight: bold;
+    margin-top: 20px;
   }
 </style>

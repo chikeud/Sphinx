@@ -26,7 +26,7 @@
         </m-textfield>
       </div>
 
-      <div class="auth-contact"
+      <div class="auth-contact"></div>
     </div>
   </m-card>
 </template>

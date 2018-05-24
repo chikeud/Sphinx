@@ -27,8 +27,8 @@
 </script>
 
 <style lang="scss">
-  @import "~material-components-vue/dist/top-app-bar/styles";
-  @import "~material-components-vue/dist/button/styles";
+  @import "../../../node_modules/material-components-vue/dist/top-app-bar/styles";
+  @import "../../../node_modules/material-components-vue/dist/button/styles";
 
   .nav{
     @include mdc-top-app-bar-fill-color(white);

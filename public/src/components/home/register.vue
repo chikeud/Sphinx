@@ -5,7 +5,7 @@
     </div>
 
     <div class="r-form">
-      <div class="r1" v-if="screen == 'r1'">
+      <div class="r1" v-show="screen == 'r1'">
         <div class="r-user-type r-two-buttons">
           <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
             HOST
@@ -45,15 +45,88 @@
         </div>
 
         <div class="r-city r-section">
-          <m-textfield outlined id="city" :value="city">
+          <m-textfield outlined id="city" :value="address.city">
             <m-floating-label for="city">City</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
       </div>
 
-      <div class="r2" v-if="screen == 'r2'">
+      <div class="r2" v-show="screen == 'r2'">
+        <div class="r-address r-section">
+          <div class="r-heading">Address</div>
 
+          <m-textfield outlined id="street" :value="address.street">
+            <m-floating-label for="street">Street</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+
+          <m-textfield outlined id="suite" :value="address.suite">
+            <m-floating-label for="suite">Suite (Optional)</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+
+          <m-textfield outlined id="state" :value="address.state">
+            <m-floating-label for="state">State</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+
+          <m-textfield outlined id="zip" :value="address.zip">
+            <m-floating-label for="zip">Zip Code</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+
+        <div class="r-username r-section">
+          <div class="r-heading">Username</div>
+
+          <div class="r-subheading">
+            Will be used in your profile url
+          </div>
+
+          <m-textfield outlined id="alias" :value="alias">
+            <m-floating-label for="alias">Username</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+      </div>
+
+      <div class="r3" v-show="screen == 'r3'">
+        <div class="r-ssn r-section">
+          <div class="r-heading">SSN</div>
+
+          <div class="r-subheading">
+            Required for hosts
+          </div>
+
+          <m-textfield outlined id="ssn" :value="ssn">
+            <m-floating-label for="ssn">xxx-xx-xxxx</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+      </div>
+
+      <div class="r4" v-show="screen == 'r4'">
+        <div class="r-img r-section">
+          <div class="r-img-preview">
+            <img src="" onerror="this.style.opacity='0'">
+          </div>
+
+          <div class="r-upload">
+            <input id="r-upload-img" type="file"/>
+            <label for="r-upload-img" class="r-button stor-blue">
+              <m-icon icon="cloud_upload"></m-icon>
+              <span>Profile Image</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="r-invite r-section">
+          <m-textfield outlined id="invite" :value="invite">
+            <m-floating-label for="invite">Invite Code (Optional)</m-floating-label>
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
       </div>
     </div>
 
@@ -64,7 +137,9 @@
 
       <div class="r-two-buttons" v-else>
         <button @click="back" class="r-button stor-blue">Back</button>
-        <button @click="next" class="r-button stor-blue">Next</button>
+
+        <button @click="next" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
+        <button @click="next" class="r-button stor-blue" v-else>Next</button>
       </div>
     </div>
   </m-card>
@@ -78,6 +153,7 @@
   import NotchedOutline from "material-components-vue/dist/notched-outline"
   import FloatingLabel from "material-components-vue/dist/floating-label"
   import Elevation from "material-components-vue/dist/elevation"
+  import Icon from "material-components-vue/dist/icon"
 
   Vue.use(Card);
   Vue.use(Button);
@@ -85,6 +161,7 @@
   Vue.use(NotchedOutline);
   Vue.use(FloatingLabel);
   Vue.use(Elevation);
+  Vue.use(Icon);
 
   export default {
     data(){
@@ -96,7 +173,16 @@
         email: "",
         phone: "",
         password: "",
-        city: ""
+        address: {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+          suite: ""
+        },
+        alias: "",
+        ssn: "",
+        invite: ""
       }
     },
 
@@ -148,6 +234,30 @@
 
         self.userType = type;
       }
+    },
+
+    mounted(){
+      console.log($('.r-img-preview img').css("opacity"));
+
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          let reader = new FileReader();
+          let img = $('.r-img-preview img');
+
+          reader.onload = function (e) {
+            img.attr('src', e.target.result);
+          };
+
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      $("#r-upload-img").change(function(){
+        let img = $('.r-img-preview img');
+
+        readURL(this);
+        img.css({opacity: 1});
+      });
     }
   }
 
@@ -213,7 +323,7 @@
     @include mdc-text-field-focused-outline-color(#369FDA);
     @include mdc-text-field-outline-color(#EBEFF1);
 
-    margin: 0 !important;
+    margin: 2px 0 0 !important;
   }
 
   .r-card .mdc-text-field--outlined{
@@ -269,6 +379,10 @@
     margin-top: 30px;
   }
 
+  .r-sign-up{
+    margin-bottom: 20px;
+  }
+
   .r-sign-up button{
     width: 100%;
     height: 35px;
@@ -280,5 +394,58 @@
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+  }
+
+  .r-heading{
+    text-align: left;
+    font-size: 14px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .r-subheading{
+    text-align: left;
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .r-img{
+    padding-top: 20px;
+  }
+
+  .r-img-preview{
+    width: 150px;
+    height: 140px;
+    border-radius: 50%;
+    background-color: lightgray;
+    margin: auto auto 30px;
+  }
+
+  .r-img-preview img{
+    width: 150px;
+    height: 140px;
+    border-radius: 50%;
+  }
+
+  #r-upload-img{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  #r-upload-img + label{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 35px;
+    border: none;
+  }
+
+  #r-upload-img + label span{
+    margin: 0 8px;
   }
 </style>

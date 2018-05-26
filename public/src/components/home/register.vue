@@ -423,7 +423,7 @@
 
   .r-img-preview img{
     width: 150px;
-    height: 140px;
+    height: 150px;
     border-radius: 50%;
   }
 

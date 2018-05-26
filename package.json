@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "mocha"
+    "test": "mocha",
+    "test-server": "PORT=8888 COLLECTION=Pharaoh npm start"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

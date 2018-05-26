@@ -2,12 +2,12 @@
   <div id="app">
     <nav-bar></nav-bar>
 
-    <h1>{{ msg }}</h1>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import Nav from "./components/site/nav.vue"
+  import Nav from "./components/nav/nav.vue"
 
   export default {
     name: 'app',
@@ -23,8 +23,9 @@
 </script>
 
 <style>
-  body{
-
+  body, h1{
+    margin: 0;
+    padding: 0;
   }
 
   #app {
@@ -42,11 +43,6 @@
   ul {
     list-style-type: none;
     padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
   }
 
   a {

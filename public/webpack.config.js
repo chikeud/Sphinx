@@ -42,21 +42,7 @@ module.exports = {
         options: {
           name: "[name].[ext]?[hash]"
         }
-      },
-      // {
-      //   test: /\.scss$/,
-      //   use: [{
-      //     loader: "style-loader",
-      //
-      //   }, {
-      //     loader: "css-loader"
-      //   }, {
-      //     loader: "sass-loader",
-      //     options: {
-      //       includePaths: [path.resolve(`${__dirname}/node_modules`)]
-      //     }
-      //   }]
-      // }
+      }
     ]
   },
   resolve: {

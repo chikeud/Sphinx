@@ -4,13 +4,17 @@
       Sign Up Today
     </div>
 
-    <div class="r-user-type">
-      <button class="greyed-out">HOST</button>
-      <button class="active">STORE</button>
-    </div>
-
     <div class="r-form">
-      <div class="r1">
+      <div class="r1" v-if="screen == 'r1'">
+        <div class="r-user-type r-two-buttons">
+          <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
+            HOST
+          </button>
+          <button @click="setUserType('store')" id="r-store" class="r-button stor-blue">
+            STORE
+          </button>
+        </div>
+
         <div class="r-name r-section">
           <m-textfield outlined id="first-name" :value="fName">
             <m-floating-label for="first-name">First Name</m-floating-label>
@@ -47,10 +51,21 @@
           </m-textfield>
         </div>
       </div>
+
+      <div class="r2" v-if="screen == 'r2'">
+
+      </div>
     </div>
 
     <div class="r-action">
-      <m-button>SIGN UP</m-button>
+      <div class="r-sign-up" v-if="screen == 'r1'">
+        <button @click="next" class="r-button stor-blue">Sign Up</button>
+      </div>
+
+      <div class="r-two-buttons" v-else>
+        <button @click="back" class="r-button stor-blue">Back</button>
+        <button @click="next" class="r-button stor-blue">Next</button>
+      </div>
     </div>
   </m-card>
 </template>
@@ -74,13 +89,64 @@
   export default {
     data(){
       return {
-        submitText: "SIGN UP",
+        screen: "r1",
+        userType: "",
         fName: "",
         lName: "",
         email: "",
         phone: "",
         password: "",
         city: ""
+      }
+    },
+
+    methods: {
+      next(){
+        let self = this;
+        let numScreens = 4;
+        let n = parseInt(self.screen[1]);
+        let next = n + 1;
+
+        if (next <= numScreens){
+          self.screen = `r${next}`;
+        }
+      },
+
+      back(){
+        let self = this;
+        let n = parseInt(self.screen[1]);
+        let prev = n - 1;
+
+        if (prev > 0){
+          self.screen = `r${prev}`;
+        }
+      },
+
+      setUserType(type){
+        let types = ["host", "store"];
+        let valid = new Set(types);
+
+        if (!valid.has(type)){
+          throw new Error("Invalid user type!");
+        }
+
+        let self = this;
+
+        if(type === self.userType){return;}
+
+        let elem = $(`#r-${type}`);
+        let other = type === types[0]? types[1] : types[0];
+        other = $(`#r-${other}`);
+
+        elem.removeClass("greyed-out");
+        elem.removeClass("active");
+        elem.addClass("stor-blue");
+
+        other.addClass("greyed-out");
+        other.addClass("active");
+        other.removeClass("stor-blue");
+
+        self.userType = type;
       }
     }
   }
@@ -96,9 +162,15 @@
   @import "~material-components-vue/dist/elevation/styles";
 
   .r-card{
+    @include mdc-card-corner-radius(0);
+
     width: 330px;
     padding: 20px 40px;
     margin-right: 80px;
+  }
+
+  .r-card button:focus{
+    outline: none;
   }
 
   .r-title{
@@ -107,24 +179,17 @@
     margin-bottom: 25px;
   }
 
-  .r-user-type{
+  .r-two-buttons{
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
   }
 
-  .r-user-type button{
+  .r-two-buttons button{
     border: none;
     width: 120px;
     height: 35px;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .r-user-type button:focus{
-    outline: none
+    transition: color 0.2s ease, background-color 0.4s ease;
   }
 
   .greyed-out{
@@ -132,7 +197,15 @@
     color: #CBD6DA !important;
   }
 
-  .active{
+  .inactive:hover{
+    color: #CBD6DA !important;
+  }
+
+  .active:hover{
+    color: #369FDA !important;
+  }
+
+  .stor-blue{
     background: #369FDA;
   }
 
@@ -192,12 +265,20 @@
     flex-direction: row;
   }
 
-  .r-action .mdc-button{
-    @include mdc-button-container-fill-color(#369FDA);
-    @include mdc-button-ink-color(white);
+  .r-action{
+    margin-top: 30px;
+  }
 
+  .r-sign-up button{
     width: 100%;
+    height: 35px;
+    border: none;
+  }
+
+  .r-button{
+    color: white;
+    font-size: 14px;
     font-weight: bold;
-    margin-top: 20px;
+    cursor: pointer;
   }
 </style>

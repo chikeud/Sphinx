@@ -33,6 +33,7 @@
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
+    height: 75px;
     margin: 0;
     padding-left: 50px;
     padding-right: 50px;
@@ -42,6 +43,8 @@
   }
 
   .nav img{
+    position: relative;
+    bottom: 4px;
     width: 90px;
     display: flex;
   }
@@ -79,7 +82,7 @@
     padding-bottom: 0;
   }
 
-  .nav .mdc-top-app-bar__title{
+  .nav .mdc-top-app-bar__title, .nav .mdc-top-app-bar__row{
     height: 100%;
   }
 </style>

@@ -10,7 +10,7 @@ let http = require("../../utils/HttpStats");
 let files = require("../../utils/files");
 let userRouter = require("./user");
 
-let apiRouter = module.exports = express.Router();
+let apiRouter = express.Router();
 
 apiRouter.use("/u", userRouter);
 apiRouter.use("/images", files.getImg);

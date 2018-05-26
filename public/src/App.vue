@@ -2,12 +2,12 @@
   <div id="app">
     <nav-bar></nav-bar>
 
-    <h1>{{ msg }}</h1>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import Nav from "./components/site/nav.vue"
+  import Nav from "./components/nav/nav.vue"
 
   export default {
     name: 'app',

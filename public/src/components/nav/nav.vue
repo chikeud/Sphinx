@@ -1,7 +1,9 @@
 <template>
   <div>
     <m-top-app-bar fixed class="nav">
-      <img src="/src/assets/logo.png" slot="navigation">
+      <router-link to="/" tag="div" slot="navigation" class="nav-item">
+        <img src="/src/assets/logo.png">
+      </router-link>
 
       <m-button href="/">Rent</m-button>
       <m-button href="/">Host</m-button>
@@ -16,26 +18,22 @@
 <script>
   import Vue from "vue"
   import TopAppBar from "material-components-vue/dist/top-app-bar"
-  import Elevation from "material-components-vue/dist/elevation"
-  import Icon from "material-components-vue/dist/icon"
   import Button from "material-components-vue/dist/button"
 
   Vue.use(TopAppBar);
-  Vue.use(Elevation);
   Vue.use(Button);
-  Vue.use(Icon);
 
   export default {}
 </script>
 
 <style lang="scss">
-  @import "~material-components-vue/dist/top-app-bar/styles";
-  @import "~material-components-vue/dist/elevation/styles";
-  @import "~material-components-vue/dist/button/styles";
+  @import "../../../node_modules/material-components-vue/dist/top-app-bar/styles";
+  @import "../../../node_modules/material-components-vue/dist/button/styles";
 
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
+    height: 75px;
     margin: 0;
     padding-left: 50px;
     padding-right: 50px;
@@ -45,8 +43,14 @@
   }
 
   .nav img{
+    position: relative;
+    bottom: 4px;
     width: 90px;
     display: flex;
+  }
+
+  .nav-item{
+    width: 80px;
   }
 
   .nav a{
@@ -78,7 +82,7 @@
     padding-bottom: 0;
   }
 
-  .nav .mdc-top-app-bar__title{
+  .nav .mdc-top-app-bar__title, .nav .mdc-top-app-bar__row{
     height: 100%;
   }
 </style>

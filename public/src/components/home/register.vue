@@ -187,6 +187,10 @@
     },
 
     methods: {
+      /**
+       * Goes to the next screen in the
+       * registration form
+       */
       next(){
         let self = this;
         let numScreens = 4;
@@ -198,6 +202,10 @@
         }
       },
 
+      /**
+       * Goes to the previous screen
+       * in the registration form
+       */
       back(){
         let self = this;
         let n = parseInt(self.screen[1]);
@@ -208,6 +216,13 @@
         }
       },
 
+      /**
+       * Sets the user type.
+       * Used for the "Store" and "Host"
+       * buttons
+       *
+       * @param type
+       */
       setUserType(type){
         let types = ["host", "store"];
         let valid = new Set(types);
@@ -239,6 +254,11 @@
     mounted(){
       console.log($('.r-img-preview img').css("opacity"));
 
+      /**
+       * Reads an uploaded file
+       *
+       * @param input
+       */
       function readURL(input) {
         if (input.files && input.files[0]) {
           let reader = new FileReader();
@@ -252,6 +272,10 @@
         }
       }
 
+      /**
+       * Updates the image when file input
+       * changes
+       */
       $("#r-upload-img").change(function(){
         let img = $('.r-img-preview img');
 

@@ -144,7 +144,7 @@
 
     <div class="r-action">
       <div class="r-sign-up" v-if="screen == 'r1'">
-        <button :disabled="r1Errs" @click="next" class="r-button stor-blue">Sign Up</button>
+        <button @click="next" class="r-button stor-blue">Sign Up</button>
       </div>
 
       <div class="r-two-buttons" v-else>
@@ -176,6 +176,25 @@
   Vue.use(Elevation);
   Vue.use(Icon);
 
+  let rProps = {
+    r1: [
+      "userType", "fName", "lName", "email",
+      "phone", "password", "city"
+    ],
+
+    r2: [
+      "street", "suite", "state", "zip", "alias"
+    ],
+
+    r3: ["ssn"],
+
+    r4: ["invite"]
+  };
+
+  function emptyObj(obj){
+    return Object.keys(obj).length === 0;
+  }
+
   export default {
     data(){
       return {
@@ -196,11 +215,7 @@
         alias: "",
         ssn: "",
         invite: "",
-        touched: {
-          fName: "", lName: "", email: "", phone: "", password: "",
-          street: "", city: "", state: "", zip: "", suite: "",
-          alias: "", ssn: "", invite: ""
-        }
+        touched: {}
       }
     },
 
@@ -215,7 +230,9 @@
         let n = parseInt(self.screen[1]);
         let next = n + 1;
 
-        if (next <= numScreens){
+        self.touchAll();
+
+        if (emptyObj(self[`${self.screen}Errs`]) && next <= numScreens){
           self.screen = `r${next}`;
         }
       },
@@ -270,10 +287,26 @@
 
       checkRequired(required, errs){
         let self = this;
+        let addressProps = new Set(["city", "street", "suite", "state", "zip"]);
+        let aProp;
 
         for(let prop of required){
-          if(self.touched[prop] && !self[prop]){
-            errs[prop] = "*";
+          if(self.touched[prop]){
+            aProp = addressProps.has(prop);
+
+            if((aProp && !self.address[prop]) || (!aProp && !self[prop])){
+              errs[prop] = "*";
+            }
+          }
+        }
+      },
+
+      touchAll(){
+        let self = this;
+
+        for(let prop of rProps[self.screen]){
+          if(!self.touched[prop]){
+            self.$set(self.touched, prop, true);
           }
         }
       }
@@ -283,12 +316,8 @@
       r1Errs: function(){
         let self = this;
         let touched = self.touched;
+        let required = rProps.r1;
         let errs = {};
-
-        let required = [
-          "userType", "fName", "lName", "email",
-          "phone", "password", "city"
-        ];
 
         self.checkRequired(required, errs);
 
@@ -315,10 +344,8 @@
         let elem = this;
 
         if(!self.touched[elem.id]){
-          self.touched[elem.id] = true;
+          self.$set(self.touched, elem.id, true);
         }
-
-        console.log("Clicked!!! " + elem.id, self);
       });
 
       /**

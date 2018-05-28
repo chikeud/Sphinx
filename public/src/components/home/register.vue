@@ -16,37 +16,49 @@
         </div>
 
         <div class="r-name r-section">
-          <m-textfield outlined id="first-name" :value="fName">
-            <m-floating-label for="first-name">First Name</m-floating-label>
+          <m-textfield outlined id="fName" v-model="fName">
+            <m-floating-label for="fName">
+              First Name <span class="r-error" v-show="r1Errs.fName">{{r1Errs.fName}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="last-name" :value="lName">
-            <m-floating-label for="last-name">Last Name</m-floating-label>
+          <m-textfield outlined id="lName" v-model="lName">
+            <m-floating-label for="lName">
+              Last Name <span class="r-error" v-show="r1Errs.lName">{{r1Errs.lName}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
 
         <div class="r-contact r-section">
-          <m-textfield outlined id="email" :value="email">
-            <m-floating-label for="email">Email</m-floating-label>
+          <m-textfield outlined id="email" v-model="email">
+            <m-floating-label for="email">
+              Email <span class="r-error" v-show="r1Errs.email">({{r1Errs.email}})</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="phone" :value="phone">
-            <m-floating-label for="phone">Phone</m-floating-label>
+          <m-textfield outlined id="phone" v-model="phone">
+            <m-floating-label for="phone">
+              Phone <span class="r-error" v-show="r1Errs.phone">({{r1Errs.phone}})</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="password" :value="password">
-            <m-floating-label for="password">Password</m-floating-label>
+          <m-textfield outlined id="password" type="password" v-model="password">
+            <m-floating-label for="password">
+              Password <span class="r-error" v-show="r1Errs.password">({{r1Errs.password}})</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
 
         <div class="r-city r-section">
-          <m-textfield outlined id="city" :value="address.city">
-            <m-floating-label for="city">City</m-floating-label>
+          <m-textfield outlined id="city" v-model="address.city">
+            <m-floating-label for="city">
+              City <span class="r-error" v-show="r1Errs.city">{{r1Errs.city}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -56,22 +68,22 @@
         <div class="r-address r-section">
           <div class="r-heading">Address</div>
 
-          <m-textfield outlined id="street" :value="address.street">
+          <m-textfield outlined id="street" v-model="address.street">
             <m-floating-label for="street">Street</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="suite" :value="address.suite">
+          <m-textfield outlined id="suite" v-model="address.suite">
             <m-floating-label for="suite">Suite (Optional)</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="state" :value="address.state">
+          <m-textfield outlined id="state" v-model="address.state">
             <m-floating-label for="state">State</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="zip" :value="address.zip">
+          <m-textfield outlined id="zip" v-model="address.zip">
             <m-floating-label for="zip">Zip Code</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -84,7 +96,7 @@
             Will be used in your profile url
           </div>
 
-          <m-textfield outlined id="alias" :value="alias">
+          <m-textfield outlined id="alias" v-model="alias">
             <m-floating-label for="alias">Username</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -99,7 +111,7 @@
             Required for hosts
           </div>
 
-          <m-textfield outlined id="ssn" :value="ssn">
+          <m-textfield outlined id="ssn" v-model="ssn">
             <m-floating-label for="ssn">xxx-xx-xxxx</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -122,7 +134,7 @@
         </div>
 
         <div class="r-invite r-section">
-          <m-textfield outlined id="invite" :value="invite">
+          <m-textfield outlined id="invite" v-model="invite">
             <m-floating-label for="invite">Invite Code (Optional)</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -132,7 +144,7 @@
 
     <div class="r-action">
       <div class="r-sign-up" v-if="screen == 'r1'">
-        <button @click="next" class="r-button stor-blue">Sign Up</button>
+        <button :disabled="r1Errs" @click="next" class="r-button stor-blue">Sign Up</button>
       </div>
 
       <div class="r-two-buttons" v-else>
@@ -154,6 +166,7 @@
   import FloatingLabel from "material-components-vue/dist/floating-label"
   import Elevation from "material-components-vue/dist/elevation"
   import Icon from "material-components-vue/dist/icon"
+  import validator from "validator"
 
   Vue.use(Card);
   Vue.use(Button);
@@ -167,7 +180,7 @@
     data(){
       return {
         screen: "r1",
-        userType: "",
+        userType: "store",
         fName: "",
         lName: "",
         email: "",
@@ -182,7 +195,12 @@
         },
         alias: "",
         ssn: "",
-        invite: ""
+        invite: "",
+        touched: {
+          fName: "", lName: "", email: "", phone: "", password: "",
+          street: "", city: "", state: "", zip: "", suite: "",
+          alias: "", ssn: "", invite: ""
+        }
       }
     },
 
@@ -248,11 +266,60 @@
         other.removeClass("stor-blue");
 
         self.userType = type;
+      },
+
+      checkRequired(required, errs){
+        let self = this;
+
+        for(let prop of required){
+          if(self.touched[prop] && !self[prop]){
+            errs[prop] = "*";
+          }
+        }
       }
     },
 
+    computed: {
+      r1Errs: function(){
+        let self = this;
+        let touched = self.touched;
+        let errs = {};
+
+        let required = [
+          "userType", "fName", "lName", "email",
+          "phone", "password", "city"
+        ];
+
+        self.checkRequired(required, errs);
+
+        if(touched["email"] && !validator.isEmail(self.email)){
+          errs["email"] = "invalid"
+        }
+
+        if(touched["phone"] && !validator.isMobilePhone(self.phone, "en-US")){
+          errs["phone"] = "invalid"
+        }
+
+        if(touched["password"] && self.password.length < 6){
+          errs["password"] = "6 characters minimum"
+        }
+
+        return errs;
+      },
+    },
+
     mounted(){
-      console.log($('.r-img-preview img').css("opacity"));
+      let self = this;
+
+      $(".mdc-text-field input").click(function(){
+        let elem = this;
+
+        if(!self.touched[elem.id]){
+          self.touched[elem.id] = true;
+        }
+
+        console.log("Clicked!!! " + elem.id, self);
+      });
 
       /**
        * Reads an uploaded file
@@ -384,6 +451,8 @@
   .r-card .mdc-floating-label--float-above{
     transform: translateY(-70%) scale(0.75);
     color: #369FDA !important;
+    background-color: white;
+    z-index: 2;
   }
 
   .r-section{
@@ -472,4 +541,11 @@
   #r-upload-img + label span{
     margin: 0 8px;
   }
+
+  .r-card .r-error{
+    color: red !important;
+    font-size: 12px;
+    margin-right: 3px;
+  }
+
 </style>

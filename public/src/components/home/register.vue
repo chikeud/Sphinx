@@ -34,21 +34,21 @@
         <div class="r-contact r-section">
           <m-textfield outlined id="email" v-model="email">
             <m-floating-label for="email">
-              Email <span class="r-error" v-show="r1Errs.email">({{r1Errs.email}})</span>
+              Email <span class="r-error" v-show="r1Errs.email">{{r1Errs.email}}</span>
             </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
           <m-textfield outlined id="phone" v-model="phone">
             <m-floating-label for="phone">
-              Phone <span class="r-error" v-show="r1Errs.phone">({{r1Errs.phone}})</span>
+              Phone <span class="r-error" v-show="r1Errs.phone">{{r1Errs.phone}}</span>
             </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
           <m-textfield outlined id="password" type="password" v-model="password">
             <m-floating-label for="password">
-              Password <span class="r-error" v-show="r1Errs.password">({{r1Errs.password}})</span>
+              Password <span class="r-error" v-show="r1Errs.password">{{r1Errs.password}}</span>
             </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -69,7 +69,9 @@
           <div class="r-heading">Address</div>
 
           <m-textfield outlined id="street" v-model="address.street">
-            <m-floating-label for="street">Street</m-floating-label>
+            <m-floating-label for="street">
+              Street <span class="r-error" v-show="r2Errs.street">{{r2Errs.street}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
@@ -79,12 +81,16 @@
           </m-textfield>
 
           <m-textfield outlined id="state" v-model="address.state">
-            <m-floating-label for="state">State</m-floating-label>
+            <m-floating-label for="state">
+              State <span class="r-error" v-show="r2Errs.state">{{r2Errs.state}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
           <m-textfield outlined id="zip" v-model="address.zip">
-            <m-floating-label for="zip">Zip Code</m-floating-label>
+            <m-floating-label for="zip">
+              Zip Code <span class="r-error" v-show="r2Errs.zip">{{r2Errs.zip}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -97,7 +103,9 @@
           </div>
 
           <m-textfield outlined id="alias" v-model="alias">
-            <m-floating-label for="alias">Username</m-floating-label>
+            <m-floating-label for="alias">
+              Username <span class="r-error" v-show="r2Errs.alias">{{r2Errs.alias}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -112,7 +120,9 @@
           </div>
 
           <m-textfield outlined id="ssn" v-model="ssn">
-            <m-floating-label for="ssn">xxx-xx-xxxx</m-floating-label>
+            <m-floating-label for="ssn">
+              xxx-xx-xxxx <span class="r-error" v-show="r3Errs.ssn">{{r3Errs.ssn}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -176,6 +186,9 @@
   Vue.use(Elevation);
   Vue.use(Icon);
 
+  const INVALID = "(invalid)";
+
+  // properties grouped by screen
   let rProps = {
     r1: [
       "userType", "fName", "lName", "email",
@@ -191,8 +204,38 @@
     r4: ["invite"]
   };
 
+  /**
+   * Checks if object is empty
+   *
+   * @param obj object to check
+   *
+   * @returns {boolean}
+   */
   function emptyObj(obj){
     return Object.keys(obj).length === 0;
+  }
+
+  /**
+   * Checks if a string is a valid US
+   * zip code
+   *
+   * @param zip zip code
+   *
+   * @returns {boolean}
+   */
+  function isValidUSZip(zip) {
+    return /^\d{5}(-\d{4})?$/.test(zip);
+  }
+
+  /**
+   * Checks if a string is a valid ssn
+   *
+   * @param ssn string to check
+   *
+   * @returns {boolean}
+   */
+  function isValidSSN(ssn) {
+    return /^\d{3}-?\d{2}-?\d{4}$/.test(ssn);
   }
 
   export default {
@@ -285,22 +328,34 @@
         self.userType = type;
       },
 
-      checkRequired(required, errs){
+      /**
+       * Validates required fields in
+       * the form
+       *
+       * @param required list of required props
+       * @param errs object containing found errors
+       */
+       checkRequired(required, errs){
         let self = this;
         let addressProps = new Set(["city", "street", "suite", "state", "zip"]);
         let aProp;
+        let data;
 
         for(let prop of required){
           if(self.touched[prop]){
             aProp = addressProps.has(prop);
+            data = aProp ? self.address : self;
 
-            if((aProp && !self.address[prop]) || (!aProp && !self[prop])){
+            if(!data[prop].trim()){
               errs[prop] = "*";
             }
           }
         }
       },
 
+      /**
+       * Marks all fields as touched
+       */
       touchAll(){
         let self = this;
 
@@ -313,39 +368,96 @@
     },
 
     computed: {
-      r1Errs: function(){
+      /**
+       * Errors on the first registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r1Errs(){
         let self = this;
         let touched = self.touched;
         let required = rProps.r1;
         let errs = {};
 
+        if(touched.email && !validator.isEmail(self.email)){
+          errs["email"] = INVALID;
+        }
+
+        if(touched.phone && !validator.isMobilePhone(self.phone, "en-US")){
+          errs.phone = INVALID
+        }
+
+        if(touched.password && self.password.length < 6){
+          errs.password = "(6 characters minimum)"
+        }
+
         self.checkRequired(required, errs);
-
-        if(touched["email"] && !validator.isEmail(self.email)){
-          errs["email"] = "invalid"
-        }
-
-        if(touched["phone"] && !validator.isMobilePhone(self.phone, "en-US")){
-          errs["phone"] = "invalid"
-        }
-
-        if(touched["password"] && self.password.length < 6){
-          errs["password"] = "6 characters minimum"
-        }
 
         return errs;
       },
+
+      /**
+       * Errors on the second registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r2Errs(){
+        let self = this;
+        let optional = new Set(["suite"]);
+        let required = rProps.r2.filter(prop => !optional.has(prop));
+        let errs = {};
+
+        if(self.touched.zip && !isValidUSZip(self.address.zip)){
+          errs.zip = INVALID;
+        }
+
+        if(self.touched.alias && self.alias.length < 2){
+          errs.alias = "(2 characters minimum)";
+        }
+
+        self.checkRequired(required, errs);
+
+        return errs;
+      },
+
+      /**
+       * Errors on the third registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r3Errs(){
+        let self = this;
+        let required = rProps.r3;
+        let errs = {};
+
+        if(self.touched.ssn && !isValidSSN(self.ssn)){
+          errs.ssn = INVALID;
+        }
+
+        self.checkRequired(required, errs);
+
+        return errs;
+      }
     },
 
     mounted(){
       let self = this;
 
+      // mark field as touched once clicked
       $(".mdc-text-field input").click(function(){
         let elem = this;
 
         if(!self.touched[elem.id]){
           self.$set(self.touched, elem.id, true);
         }
+
+        console.log("clicked", elem.id);
+
+        // remove click listener
+        $(`#${elem.id}`).off("click");
       });
 
       /**

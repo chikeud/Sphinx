@@ -152,10 +152,13 @@
       </div>
 
       <div class="r5" v-show="screen == 'r5'">
+        <div class="r-final">
+          <img src="/src/assets/stor-loading.gif"/>
+        </div>
       </div>
     </div>
 
-    <div class="r-action">
+    <div class="r-action" v-if="screen !== 'r5'">
       <div class="r-sign-up" v-if="screen == 'r1'">
         <button @click="next" class="r-button stor-blue">Sign Up</button>
       </div>
@@ -163,7 +166,7 @@
       <div class="r-two-buttons" v-else>
         <button @click="back" class="r-button stor-blue">Back</button>
 
-        <button @click="next" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
+        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
         <button @click="next" class="r-button stor-blue" v-else>Next</button>
       </div>
     </div>
@@ -215,6 +218,8 @@
    * @returns {boolean}
    */
   function emptyObj(obj){
+    if(!obj) return true;
+
     return Object.keys(obj).length === 0;
   }
 
@@ -278,8 +283,15 @@
 
         self.touchAll();
 
-        if (emptyObj(self[`${self.screen}Errs`]) && next <= numScreens){
-          self.screen = `r${next}`;
+        if(emptyObj(self[`${self.screen}Errs`]) && next <= numScreens){
+          let nextScreen = `r${next}`;
+          let props = rProps[nextScreen] || [];
+
+          if(props.includes("ssn") && self.userType !== "host"){
+            nextScreen = `r${next + 1}`
+          }
+
+          self.screen = nextScreen;
         }
       },
 
@@ -293,7 +305,14 @@
         let prev = n - 1;
 
         if (prev > 0){
-          self.screen = `r${prev}`;
+          let prevScreen = `r${prev}`;
+          let props = rProps[prevScreen] || [];
+
+          if(props.includes("ssn") && self.userType !== "host"){
+            prevScreen = `r${prev - 1}`
+          }
+
+          self.screen = prevScreen;
         }
       },
 
@@ -301,7 +320,7 @@
        * Submits the sign up form.
        */
       submit(){
-
+        this.next();
       },
 
       /**
@@ -463,8 +482,6 @@
         if(!self.touched[elem.id]){
           self.$set(self.touched, elem.id, true);
         }
-
-        console.log("clicked", elem.id);
 
         // remove click listener
         $(`.mdc-text-field #${elem.id}`).off("click.touched");
@@ -697,4 +714,17 @@
     margin-right: 3px;
   }
 
+  .r5 .r-final{
+    width: 100%;
+    height: 300px;
+    padding-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .r5 .r-final img{
+    width: 100px;
+    height: 100px;
+  }
 </style>

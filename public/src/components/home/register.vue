@@ -457,7 +457,7 @@
       let self = this;
 
       // mark field as touched once clicked
-      $(".mdc-text-field input").click(function(){
+      $(".mdc-text-field input").on("click.touched", function(){
         let elem = this;
 
         if(!self.touched[elem.id]){
@@ -467,7 +467,7 @@
         console.log("clicked", elem.id);
 
         // remove click listener
-        $(`#${elem.id}`).off("click");
+        $(`.mdc-text-field #${elem.id}`).off("click.touched");
       });
 
       /**

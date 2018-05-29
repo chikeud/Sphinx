@@ -48,7 +48,7 @@
 
           <m-textfield outlined id="password" type="password" v-model="password">
             <m-floating-label for="password">
-              Password <span class="r-error" v-show="r1Errs.password">{{r1Errs.password}}</span>
+              Password <span class="r-error" v-if="r1Errs.password">{{r1Errs.password}}</span>
             </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
@@ -149,6 +149,9 @@
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
+      </div>
+
+      <div class="r5" v-show="screen == 'r5'">
       </div>
     </div>
 
@@ -269,7 +272,7 @@
        */
       next(){
         let self = this;
-        let numScreens = 4;
+        let numScreens = 5;
         let n = parseInt(self.screen[1]);
         let next = n + 1;
 
@@ -292,6 +295,13 @@
         if (prev > 0){
           self.screen = `r${prev}`;
         }
+      },
+
+      /**
+       * Submits the sign up form.
+       */
+      submit(){
+
       },
 
       /**

@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 
+let config = require("../../config");
 
 const REQUIRED = "{PATH} is required";
 let Schema = mongoose.Schema;
@@ -30,7 +31,12 @@ let UserSchema = new Schema({
       message: "Invalid Email {VALUE}"
     }
   },
-  password: {type: String, required: REQUIRED, select: false},
+  password: {
+    type: String,
+    required: REQUIRED,
+    select: false,
+    minlength: config.MIN_PASS_LENGTH
+  },
   firstName: {type: String, required: REQUIRED},
   lastName: {type: String, required: REQUIRED},
   ssn: {type: String},
@@ -48,7 +54,7 @@ let UserSchema = new Schema({
     state: {type: String, required: REQUIRED},
     zip: {type: String, required: REQUIRED},
     street: {type: String, required: REQUIRED},
-    houseNum: {type: String, required: REQUIRED}
+    houseNum: {type: String}
   }
 });
 
@@ -64,6 +70,10 @@ UserSchema.pre("save", async function(next){
 
     if(doc.isModified("ssn")){
       doc.ssn = await bcrypt.hash(doc.ssn, rounds);
+    }
+
+    if(doc.isHost && !doc.ssn){
+      next(new Error("SSN required for host!"));
     }
   }
   catch(err){

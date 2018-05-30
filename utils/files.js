@@ -68,7 +68,9 @@ exports.uploadImage = async (file) => {
   let result = null;
 
   try{
-    if(isImage(file)){
+    let isImg = await isImage(file);
+
+    if(isImg){
       let task = Fawn.Task();
       let _id = mongoose.Types.ObjectId();
 

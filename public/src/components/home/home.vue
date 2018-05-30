@@ -31,7 +31,6 @@
 
 <style lang="scss">
   #home{
-    font-family: "Montserrat", sans-serif ;
     position: relative;
     top: 130px;
     margin: 0;

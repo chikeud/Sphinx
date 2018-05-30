@@ -3,7 +3,10 @@
  * @since 5/29/18
  */
 
+let config = require("../../config");
+
 export default{
-  AUTH_TOKEN: require("../../config").AUTH_TOKEN,
-  AUTH: "auth"
+  AUTH_TOKEN: config.AUTH_TOKEN,
+  AUTH: "auth",
+  MIN_PASS_LENGTH: config.MIN_PASS_LENGTH
 };

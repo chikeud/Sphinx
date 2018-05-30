@@ -12,8 +12,9 @@ Vue.use(Vuex);
 
 Vue.http.interceptors.push((req, next) => {
   let token = localStorage.getItem(config.AUTH);
+  let exists = !!req.headers.get(config.AUTH_TOKEN);
 
-  req.headers.set(config.AUTH_TOKEN, token);
+  if(!exists) req.headers.set(config.AUTH_TOKEN, token);
 
   next(res => {
     if(res.status === status.UNAUTHORIZED){

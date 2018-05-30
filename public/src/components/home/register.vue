@@ -11,7 +11,7 @@
             HOST
           </button>
           <button @click="setUserType('store')" id="r-store" class="r-button stor-blue">
-            STORE
+            RENT
           </button>
         </div>
 
@@ -153,7 +153,13 @@
 
       <div class="r5" v-show="screen == 'r5'">
         <div class="r-final">
-          <img src="/src/assets/stor-loading.gif"/>
+          <img v-if="!loggedIn" src="/src/assets/stor-loading.gif"/>
+          <div v-else>
+            Welcome to Stör!
+          </div>
+          <div v-if="err" class="err">
+            {{err}}
+          </div>
         </div>
       </div>
     </div>
@@ -183,6 +189,9 @@
   import Elevation from "material-components-vue/dist/elevation"
   import Icon from "material-components-vue/dist/icon"
   import validator from "validator"
+
+  import config from "../../config";
+  import httpStats from "../../../../utils/HttpStats"
 
   Vue.use(Card);
   Vue.use(Button);
@@ -266,7 +275,8 @@
         alias: "",
         ssn: "",
         invite: "",
-        touched: {}
+        touched: {},
+        err: null
       }
     },
 
@@ -319,8 +329,57 @@
       /**
        * Submits the sign up form.
        */
-      submit(){
-        this.next();
+      async submit(){
+        let self = this;
+
+        self.next();
+
+        let data = JSON.parse(JSON.stringify(self.$data));
+        let keys = Object.keys(data);
+        let exclude = new Set(["screen", "touched", "err", "userType"]);
+
+        let profileImage = $("#r-upload-img")[0].files[0];
+
+        for(let key of keys){
+          if(exclude.has(key)){
+            delete data[key];
+          }
+        }
+
+        data.firstName = data.fName;
+        data.lastName  = data.lName;
+        data.address.houseNum = data.suite;
+        data.isRenter = self.userType === "store";
+        data.isHost = !data.isRenter;
+
+        try{
+          let res = await self.$http.post("/api/u", data);
+          let {token} = res.body.result;
+
+          if(profileImage){
+            let formData = new FormData();
+            let options = {headers:{}};
+
+            options.headers[config.AUTH_TOKEN] = token;
+
+            formData.append("profileImg", profileImage);
+
+            try{
+              await self.$http.post("/api/u/img", formData, options);
+            }
+            catch(err){
+              if(err.status === httpStats.BAD_REQUEST){
+                self.err = "invalid image"
+              }
+              else self.err = err.body.message;
+            }
+          }
+
+          self.$store.commit("token", token);
+        }
+        catch(err){
+          self.err = err.body.message;
+        }
       },
 
       /**
@@ -397,6 +456,11 @@
     },
 
     computed: {
+
+      loggedIn(){
+        return this.$store.getters.loggedIn;
+      },
+
       /**
        * Errors on the first registration
        * screen
@@ -417,8 +481,8 @@
           errs.phone = INVALID
         }
 
-        if(touched.password && self.password.length < 6){
-          errs.password = "(6 characters minimum)"
+        if(touched.password && self.password.length < config.MIN_PASS_LENGTH){
+          errs.password = `(${config.MIN_PASS_LENGTH} characters minimum)`
         }
 
         self.checkRequired(required, errs);
@@ -719,6 +783,7 @@
     height: 300px;
     padding-bottom: 25px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -726,5 +791,9 @@
   .r5 .r-final img{
     width: 100px;
     height: 100px;
+  }
+
+  .r5 .err{
+    color: red;
   }
 </style>

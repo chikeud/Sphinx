@@ -17,4 +17,5 @@ exports.AUTH_TOKEN = "x-auth-token";
 exports.DEFAULT_ERR_MSG = "OOPS! Sumfin goofed!!";
 exports.AUTH_ERR_MSG = "Authentication Failed!";
 exports.MAX_PAYLOAD = "50mb";
+exports.MIN_PASS_LENGTH = 8;
 

@@ -11,42 +11,54 @@
             HOST
           </button>
           <button @click="setUserType('store')" id="r-store" class="r-button stor-blue">
-            STORE
+            RENT
           </button>
         </div>
 
         <div class="r-name r-section">
-          <m-textfield outlined id="first-name" :value="fName">
-            <m-floating-label for="first-name">First Name</m-floating-label>
+          <m-textfield outlined id="fName" v-model="fName">
+            <m-floating-label for="fName">
+              First Name <span class="r-error" v-show="r1Errs.fName">{{r1Errs.fName}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="last-name" :value="lName">
-            <m-floating-label for="last-name">Last Name</m-floating-label>
+          <m-textfield outlined id="lName" v-model="lName">
+            <m-floating-label for="lName">
+              Last Name <span class="r-error" v-show="r1Errs.lName">{{r1Errs.lName}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
 
         <div class="r-contact r-section">
-          <m-textfield outlined id="email" :value="email">
-            <m-floating-label for="email">Email</m-floating-label>
+          <m-textfield outlined id="email" v-model="email">
+            <m-floating-label for="email">
+              Email <span class="r-error" v-show="r1Errs.email">{{r1Errs.email}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="phone" :value="phone">
-            <m-floating-label for="phone">Phone</m-floating-label>
+          <m-textfield outlined id="phone" v-model="phone">
+            <m-floating-label for="phone">
+              Phone <span class="r-error" v-show="r1Errs.phone">{{r1Errs.phone}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="password" :value="password">
-            <m-floating-label for="password">Password</m-floating-label>
+          <m-textfield outlined id="password" type="password" v-model="password">
+            <m-floating-label for="password">
+              Password <span class="r-error" v-if="r1Errs.password">{{r1Errs.password}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
 
         <div class="r-city r-section">
-          <m-textfield outlined id="city" :value="address.city">
-            <m-floating-label for="city">City</m-floating-label>
+          <m-textfield outlined id="city" v-model="address.city">
+            <m-floating-label for="city">
+              City <span class="r-error" v-show="r1Errs.city">{{r1Errs.city}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -56,23 +68,29 @@
         <div class="r-address r-section">
           <div class="r-heading">Address</div>
 
-          <m-textfield outlined id="street" :value="address.street">
-            <m-floating-label for="street">Street</m-floating-label>
+          <m-textfield outlined id="street" v-model="address.street">
+            <m-floating-label for="street">
+              Street <span class="r-error" v-show="r2Errs.street">{{r2Errs.street}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="suite" :value="address.suite">
+          <m-textfield outlined id="suite" v-model="address.suite">
             <m-floating-label for="suite">Suite (Optional)</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="state" :value="address.state">
-            <m-floating-label for="state">State</m-floating-label>
+          <m-textfield outlined id="state" v-model="address.state">
+            <m-floating-label for="state">
+              State <span class="r-error" v-show="r2Errs.state">{{r2Errs.state}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
 
-          <m-textfield outlined id="zip" :value="address.zip">
-            <m-floating-label for="zip">Zip Code</m-floating-label>
+          <m-textfield outlined id="zip" v-model="address.zip">
+            <m-floating-label for="zip">
+              Zip Code <span class="r-error" v-show="r2Errs.zip">{{r2Errs.zip}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -84,8 +102,10 @@
             Will be used in your profile url
           </div>
 
-          <m-textfield outlined id="alias" :value="alias">
-            <m-floating-label for="alias">Username</m-floating-label>
+          <m-textfield outlined id="alias" v-model="alias">
+            <m-floating-label for="alias">
+              Username <span class="r-error" v-show="r2Errs.alias">{{r2Errs.alias}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -99,8 +119,10 @@
             Required for hosts
           </div>
 
-          <m-textfield outlined id="ssn" :value="ssn">
-            <m-floating-label for="ssn">xxx-xx-xxxx</m-floating-label>
+          <m-textfield outlined id="ssn" v-model="ssn">
+            <m-floating-label for="ssn">
+              xxx-xx-xxxx <span class="r-error" v-show="r3Errs.ssn">{{r3Errs.ssn}}</span>
+            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -122,15 +144,27 @@
         </div>
 
         <div class="r-invite r-section">
-          <m-textfield outlined id="invite" :value="invite">
+          <m-textfield outlined id="invite" v-model="invite">
             <m-floating-label for="invite">Invite Code (Optional)</m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
       </div>
+
+      <div class="r5" v-show="screen == 'r5'">
+        <div class="r-final">
+          <img v-if="!loggedIn" src="/src/assets/stor-loading.gif"/>
+          <div v-else>
+            Welcome to Stör!
+          </div>
+          <div v-if="err" class="err">
+            {{err}}
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="r-action">
+    <div class="r-action" v-if="screen !== 'r5'">
       <div class="r-sign-up" v-if="screen == 'r1'">
         <button @click="next" class="r-button stor-blue">Sign Up</button>
       </div>
@@ -138,7 +172,7 @@
       <div class="r-two-buttons" v-else>
         <button @click="back" class="r-button stor-blue">Back</button>
 
-        <button @click="next" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
+        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
         <button @click="next" class="r-button stor-blue" v-else>Next</button>
       </div>
     </div>
@@ -154,6 +188,10 @@
   import FloatingLabel from "material-components-vue/dist/floating-label"
   import Elevation from "material-components-vue/dist/elevation"
   import Icon from "material-components-vue/dist/icon"
+  import validator from "validator"
+
+  import config from "../../config";
+  import httpStats from "../../../../utils/HttpStats"
 
   Vue.use(Card);
   Vue.use(Button);
@@ -163,11 +201,65 @@
   Vue.use(Elevation);
   Vue.use(Icon);
 
+  const INVALID = "(invalid)";
+
+  // properties grouped by screen
+  let rProps = {
+    r1: [
+      "userType", "fName", "lName", "email",
+      "phone", "password", "city"
+    ],
+
+    r2: [
+      "street", "suite", "state", "zip", "alias"
+    ],
+
+    r3: ["ssn"],
+
+    r4: ["invite"]
+  };
+
+  /**
+   * Checks if object is empty
+   *
+   * @param obj object to check
+   *
+   * @returns {boolean}
+   */
+  function emptyObj(obj){
+    if(!obj) return true;
+
+    return Object.keys(obj).length === 0;
+  }
+
+  /**
+   * Checks if a string is a valid US
+   * zip code
+   *
+   * @param zip zip code
+   *
+   * @returns {boolean}
+   */
+  function isValidUSZip(zip) {
+    return /^\d{5}(-\d{4})?$/.test(zip);
+  }
+
+  /**
+   * Checks if a string is a valid ssn
+   *
+   * @param ssn string to check
+   *
+   * @returns {boolean}
+   */
+  function isValidSSN(ssn) {
+    return /^\d{3}-?\d{2}-?\d{4}$/.test(ssn);
+  }
+
   export default {
     data(){
       return {
         screen: "r1",
-        userType: "",
+        userType: "store",
         fName: "",
         lName: "",
         email: "",
@@ -182,7 +274,9 @@
         },
         alias: "",
         ssn: "",
-        invite: ""
+        invite: "",
+        touched: {},
+        err: null
       }
     },
 
@@ -193,12 +287,21 @@
        */
       next(){
         let self = this;
-        let numScreens = 4;
+        let numScreens = 5;
         let n = parseInt(self.screen[1]);
         let next = n + 1;
 
-        if (next <= numScreens){
-          self.screen = `r${next}`;
+        self.touchAll();
+
+        if(emptyObj(self[`${self.screen}Errs`]) && next <= numScreens){
+          let nextScreen = `r${next}`;
+          let props = rProps[nextScreen] || [];
+
+          if(props.includes("ssn") && self.userType !== "host"){
+            nextScreen = `r${next + 1}`
+          }
+
+          self.screen = nextScreen;
         }
       },
 
@@ -212,7 +315,70 @@
         let prev = n - 1;
 
         if (prev > 0){
-          self.screen = `r${prev}`;
+          let prevScreen = `r${prev}`;
+          let props = rProps[prevScreen] || [];
+
+          if(props.includes("ssn") && self.userType !== "host"){
+            prevScreen = `r${prev - 1}`
+          }
+
+          self.screen = prevScreen;
+        }
+      },
+
+      /**
+       * Submits the sign up form.
+       */
+      async submit(){
+        let self = this;
+
+        self.next();
+
+        let data = JSON.parse(JSON.stringify(self.$data));
+        let keys = Object.keys(data);
+        let exclude = new Set(["screen", "touched", "err", "userType"]);
+
+        let profileImage = $("#r-upload-img")[0].files[0];
+
+        for(let key of keys){
+          if(exclude.has(key)){
+            delete data[key];
+          }
+        }
+
+        data.firstName = data.fName;
+        data.lastName  = data.lName;
+        data.address.houseNum = data.suite;
+        data.isRenter = self.userType === "store";
+        data.isHost = !data.isRenter;
+
+        try{
+          let res = await self.$http.post("/api/u", data);
+          let {token} = res.body.result;
+
+          if(profileImage){
+            let formData = new FormData();
+            let options = {headers:{}};
+
+            options.headers[config.AUTH_TOKEN] = token;
+
+            formData.append("profileImg", profileImage);
+
+            try{
+              await self.$http.post("/api/u/img", formData, options);
+            }
+            catch(err){
+              if(err.status === httpStats.BAD_REQUEST){
+                self.err = "invalid image"
+              }
+              else self.err = err.body.message;
+            }
+          }
+
+          self.$store.commit("token", token);
+        }
+        catch(err){
+          self.err = err.body.message;
         }
       },
 
@@ -248,11 +414,142 @@
         other.removeClass("stor-blue");
 
         self.userType = type;
+      },
+
+      /**
+       * Validates required fields in
+       * the form
+       *
+       * @param required list of required props
+       * @param errs object containing found errors
+       */
+       checkRequired(required, errs){
+        let self = this;
+        let addressProps = new Set(["city", "street", "suite", "state", "zip"]);
+        let aProp;
+        let data;
+
+        for(let prop of required){
+          if(self.touched[prop]){
+            aProp = addressProps.has(prop);
+            data = aProp ? self.address : self;
+
+            if(!data[prop].trim()){
+              errs[prop] = "*";
+            }
+          }
+        }
+      },
+
+      /**
+       * Marks all fields as touched
+       */
+      touchAll(){
+        let self = this;
+
+        for(let prop of rProps[self.screen]){
+          if(!self.touched[prop]){
+            self.$set(self.touched, prop, true);
+          }
+        }
+      }
+    },
+
+    computed: {
+
+      loggedIn(){
+        return this.$store.getters.loggedIn;
+      },
+
+      /**
+       * Errors on the first registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r1Errs(){
+        let self = this;
+        let touched = self.touched;
+        let required = rProps.r1;
+        let errs = {};
+
+        if(touched.email && !validator.isEmail(self.email)){
+          errs["email"] = INVALID;
+        }
+
+        if(touched.phone && !validator.isMobilePhone(self.phone, "en-US")){
+          errs.phone = INVALID
+        }
+
+        if(touched.password && self.password.length < config.MIN_PASS_LENGTH){
+          errs.password = `(${config.MIN_PASS_LENGTH} characters minimum)`
+        }
+
+        self.checkRequired(required, errs);
+
+        return errs;
+      },
+
+      /**
+       * Errors on the second registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r2Errs(){
+        let self = this;
+        let optional = new Set(["suite"]);
+        let required = rProps.r2.filter(prop => !optional.has(prop));
+        let errs = {};
+
+        if(self.touched.zip && !isValidUSZip(self.address.zip)){
+          errs.zip = INVALID;
+        }
+
+        if(self.touched.alias && self.alias.length < 2){
+          errs.alias = "(2 characters minimum)";
+        }
+
+        self.checkRequired(required, errs);
+
+        return errs;
+      },
+
+      /**
+       * Errors on the third registration
+       * screen
+       *
+       * @returns {{}}
+       */
+      r3Errs(){
+        let self = this;
+        let required = rProps.r3;
+        let errs = {};
+
+        if(self.touched.ssn && !isValidSSN(self.ssn)){
+          errs.ssn = INVALID;
+        }
+
+        self.checkRequired(required, errs);
+
+        return errs;
       }
     },
 
     mounted(){
-      console.log($('.r-img-preview img').css("opacity"));
+      let self = this;
+
+      // mark field as touched once clicked
+      $(".mdc-text-field input").on("click.touched", function(){
+        let elem = this;
+
+        if(!self.touched[elem.id]){
+          self.$set(self.touched, elem.id, true);
+        }
+
+        // remove click listener
+        $(`.mdc-text-field #${elem.id}`).off("click.touched");
+      });
 
       /**
        * Reads an uploaded file
@@ -384,6 +681,8 @@
   .r-card .mdc-floating-label--float-above{
     transform: translateY(-70%) scale(0.75);
     color: #369FDA !important;
+    background-color: white;
+    z-index: 2;
   }
 
   .r-section{
@@ -471,5 +770,30 @@
 
   #r-upload-img + label span{
     margin: 0 8px;
+  }
+
+  .r-card .r-error{
+    color: red !important;
+    font-size: 12px;
+    margin-right: 3px;
+  }
+
+  .r5 .r-final{
+    width: 100%;
+    height: 300px;
+    padding-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .r5 .r-final img{
+    width: 100px;
+    height: 100px;
+  }
+
+  .r5 .err{
+    color: red;
   }
 </style>

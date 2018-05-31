@@ -171,6 +171,8 @@ exports.setProfileImg = async (req, res) => {
     let result = await files.uploadImage(req.file);
     let user = req.user;
 
+    console.log(result);
+
     if(!result){
       return respondErr(http.BAD_REQUEST, "Invalid Image");
     }

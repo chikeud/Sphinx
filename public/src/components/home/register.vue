@@ -637,7 +637,7 @@
   }
 
   .stor-blue{
-    background: #369FDA;
+    background: #00B0FF;
   }
 
   .r-card .mdc-text-field{

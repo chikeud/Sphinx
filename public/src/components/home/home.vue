@@ -32,7 +32,7 @@
 <style lang="scss">
   #home{
     position: relative;
-    top: 130px;
+    top: 140px;
     margin: 0;
     padding: 0;
   }

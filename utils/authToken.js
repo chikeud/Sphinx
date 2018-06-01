@@ -31,8 +31,8 @@ exports.checkToken = async (req, res, next) => {
 
   try {
     let user = await jwt.verifyAsync(authToken, config.SECRET);
-    user = await Users.findById(user._id);
 
+    user = await Users.findById(user._id);
     if(!user) return fail();
 
     req.user = user;

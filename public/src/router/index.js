@@ -6,7 +6,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-import Home from "../components/site/home.vue";
+import Home from "../components/home/home.vue";
 
 Vue.use(Router);
 

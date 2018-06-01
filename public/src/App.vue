@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import Nav from "./components/site/nav.vue"
+  import Nav from "./components/nav/nav.vue"
 
   export default {
     name: 'app',
@@ -28,12 +28,10 @@
     padding: 0;
   }
 
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  #app *{
+    font-family: 'Proxima Nova', 'Montserrat', Helvetica, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
   }
 
   h1, h2 {
@@ -43,9 +41,5 @@
   ul {
     list-style-type: none;
     padding: 0;
-  }
-
-  a {
-    color: #42b983;
   }
 </style>

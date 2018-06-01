@@ -15,7 +15,7 @@
 <script>
   import Vue from "vue";
 
-  import Register from "./register.vue"
+  import Register from "./register.vue";
 
   export default {
     data(){

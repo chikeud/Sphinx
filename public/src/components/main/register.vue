@@ -357,7 +357,7 @@
 
         try{
           let res = await self.$http.post("/api/u", data);
-          let {token} = res.body.result;
+          let {token, user} = res.body.result;
 
           if(profileImage){
             let formData = new FormData();
@@ -378,7 +378,7 @@
             }
           }
 
-          self.$store.commit("token", token);
+          self.$store.commit("token", token, user);
         }
         catch(err){
           self.err = err.body.message;
@@ -660,7 +660,7 @@
   }
 
   .stor-blue{
-    background: #00B0FF;
+    background: #03A9F4;
   }
 
   .r-card .mdc-text-field{
@@ -769,7 +769,7 @@
 
   .r-img-preview{
     width: 150px;
-    height: 140px;
+    height: 150px;
     border-radius: 50%;
     background-color: #EDEFF0;
     margin: auto auto 30px;

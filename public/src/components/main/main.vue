@@ -37,6 +37,7 @@
 <style lang="scss">
   #main{
     display: flex;
+    align-items: flex-start;
     position: relative;
     top: 140px;
     margin: 0;

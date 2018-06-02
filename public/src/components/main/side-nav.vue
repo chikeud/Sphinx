@@ -3,57 +3,32 @@
     <m-drawer-content>
       <m-list>
         <m-list-group class="side-nav-top">
-          <m-list-item>
-            <router-link to="/">
-              <m-icon :class="{
-                'stor-blue-text': on='dashboard'
-              }" icon="dashboard">
-              </m-icon>
-              Dashboard
+          <m-list-item v-for="item in topItems" :key="item.id" :class="item.id">
+            <router-link :to="item.url">
+              <m-icon :icon="item.icon"></m-icon>
+              <span>{{item.text}}</span>
             </router-link>
           </m-list-item>
         </m-list-group>
 
         <m-list-divider></m-list-divider>
 
-        <m-list-group>
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="view_module"></m-icon> My Items
-            </router-link>
-          </m-list-item>
-
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="message"></m-icon> Messages
-            </router-link>
-          </m-list-item>
-
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="home"></m-icon> Hosts
-            </router-link>
-          </m-list-item>
-
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="favorite"></m-icon> Favourites
+        <m-list-group class="side-nav-mid">
+          <m-list-item v-for="item in midItems" :key="item.id" :class="item.id">
+            <router-link :to="item.url">
+              <m-icon :icon="item.icon"></m-icon>
+              <span>{{item.text}}</span>
             </router-link>
           </m-list-item>
         </m-list-group>
 
         <m-list-divider></m-list-divider>
 
-        <m-list-group>
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="help"></m-icon> Help
-            </router-link>
-          </m-list-item>
-
-          <m-list-item>
-            <router-link to="/">
-              <m-icon icon="settings"></m-icon> Settings
+        <m-list-group class="side-nav-bottom">
+          <m-list-item v-for="item in bottomItems" :key="item.id" :class="item.id">
+            <router-link :to="item.url">
+              <m-icon :icon="item.icon"></m-icon>
+              <span>{{item.text}}</span>
             </router-link>
           </m-list-item>
         </m-list-group>
@@ -75,9 +50,69 @@
   export default {
     data(){
       return {
-        on: "dashboard"
+        on: "dashboard",
+
+        topItems: [{
+          id: "dashboard",
+          text: "Dashboard",
+          icon: "view_compact",
+          url: "/"
+        }],
+
+        midItems: [
+          {
+            id: "rentals",
+            text: "My Rentals",
+            icon: "view_module",
+            url: "/rentals"
+          },
+
+          {
+            id: "listings",
+            text: "My Listings",
+            icon: "home",
+            url: "/listings"
+          },
+
+          {
+            id: "messages",
+            text: "Messages",
+            icon: "message",
+            url: "/messages"
+          },
+
+          {
+            id: "favourites",
+            text: "Favourites",
+            icon: "favorites",
+            url: "/favourites"
+          }
+        ],
+
+        bottomItems: [
+          {
+            id: "help",
+            text: "Help",
+            icon: "help",
+            url: "/help"
+          },
+
+          {
+            id: "settings",
+            text: "Settings",
+            icon: "settings",
+            url: "/settings"
+          },
+
+          {
+            id: "verified",
+            text: "Get Verified!",
+            icon: "verified_user",
+            url: "/verify",
+          }
+        ]
       }
-    }
+    },
   }
 </script>
 
@@ -85,9 +120,14 @@
   @import "../../../node_modules/material-components-vue/dist/drawer/styles";
   @import "../../../node_modules/material-components-vue/dist/list/styles";
 
-  #side-nav  .material-icons{
+  #side-nav .material-icons{
     margin-right: 10px;
     font-size: 20px;
+    max-width: 20px;
+  }
+
+  #side-nav .router-link-exact-active .material-icons{
+    color: #03A9F4;
   }
 
   #side-nav .mdc-list{
@@ -115,10 +155,18 @@
   }
 
   #side-nav :not(.mdc-list--non-interactive) > .mdc-list-item:hover::before {
-    opacity: 0.1;
+    opacity: 0.075;
   }
 
-  .stor-blue-text{
-    color: #03A9F4;
+  #side-nav .verified{
+    background-color: #F1F8E9;
+  }
+
+  #side-nav .verified a{
+    color: #8BC34A;
+  }
+
+  #side-nav .verified .material-icons{
+    color: #8BC34A
   }
 </style>

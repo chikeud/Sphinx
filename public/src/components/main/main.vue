@@ -46,6 +46,7 @@
   #main .main-side-nav{
     flex: 1;
     border-right: none;
+    background-color: transparent;
   }
 
   .main-content{

@@ -23,6 +23,9 @@
 </script>
 
 <style>
+  body{
+    background-color: #FAFAFA;
+  }
   body, h1{
     margin: 0;
     padding: 0;

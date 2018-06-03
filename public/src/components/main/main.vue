@@ -1,6 +1,8 @@
 <template>
-  <div id="home">
-    <div class="home-banner">
+  <div id="main">
+    <side-nav class="main-side-nav"></side-nav>
+
+    <div class="main-content">
       <div class="banner-content">
 
       </div>
@@ -16,6 +18,7 @@
   import Vue from "vue";
 
   import Register from "./register.vue";
+  import SideNav from "./side-nav.vue";
 
   export default {
     data(){
@@ -23,21 +26,32 @@
         content: "Some fucking content"
       }
     },
+
     components: {
-      "sign-up": Register
+      "sign-up": Register,
+      "side-nav": SideNav
     }
   }
 </script>
 
 <style lang="scss">
-  #home{
+  #main{
+    display: flex;
+    align-items: flex-start;
     position: relative;
     top: 140px;
     margin: 0;
     padding: 0;
   }
 
-  .home-banner{
+  #main .main-side-nav{
+    flex: 1;
+    border-right: none;
+    background-color: transparent;
+  }
+
+  .main-content{
+    flex: 6;
     display: flex;
     flex-direction: row;
   }

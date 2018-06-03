@@ -56,7 +56,7 @@
           id: "dashboard",
           text: "Dashboard",
           icon: "view_compact",
-          url: "/"
+          url: "/dashboard"
         }],
 
         midItems: [
@@ -108,7 +108,7 @@
             id: "verified",
             text: "Get Verified!",
             icon: "verified_user",
-            url: "/verify",
+            url: "/verification",
           }
         ]
       }
@@ -117,8 +117,8 @@
 </script>
 
 <style lang="scss">
-  @import "../../../node_modules/material-components-vue/dist/drawer/styles";
-  @import "../../../node_modules/material-components-vue/dist/list/styles";
+  @import "../../../../node_modules/material-components-vue/dist/drawer/styles";
+  @import "../../../../node_modules/material-components-vue/dist/list/styles";
 
   #side-nav .material-icons{
     margin-right: 10px;

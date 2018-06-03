@@ -23,17 +23,18 @@
 </script>
 
 <style>
+  body{
+    background-color: #FAFAFA;
+  }
   body, h1{
     margin: 0;
     padding: 0;
   }
 
-  #app {
-    font-family: 'Proxima Nova', 'Montserrat', Helvetica, sans-serif;
+  #app *:not(.material-icons){
+    font-family: 'Proxima Nova', 'Montserrat', Helvetica, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
   }
 
   h1, h2 {
@@ -43,9 +44,5 @@
   ul {
     list-style-type: none;
     padding: 0;
-  }
-
-  a {
-    color: #42b983;
   }
 </style>

@@ -5,12 +5,12 @@
         <img src="/src/assets/logo.png">
       </router-link>
 
-      <m-button href="/">Rent</m-button>
-      <m-button href="/">Host</m-button>
+      <router-link to="/">Rent</router-link>
+      <router-link to="/">Host</router-link>
 
-      <m-button href="/" slot="actions">STORY</m-button>
-      <m-button href="/" slot="actions">HELP</m-button>
-      <m-button href="/" slot="actions">SIGN IN</m-button>
+      <router-link to="/" slot="actions">STORY</router-link>
+      <router-link to="/" slot="actions">FAQ</router-link>
+      <router-link to="/" slot="actions">SIGN IN</router-link>
     </m-top-app-bar>
   </div>
 </template>
@@ -18,22 +18,19 @@
 <script>
   import Vue from "vue"
   import TopAppBar from "material-components-vue/dist/top-app-bar"
-  import Button from "material-components-vue/dist/button"
 
   Vue.use(TopAppBar);
-  Vue.use(Button);
 
   export default {}
 </script>
 
 <style lang="scss">
   @import "../../../node_modules/material-components-vue/dist/top-app-bar/styles";
-  @import "../../../node_modules/material-components-vue/dist/button/styles";
 
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
-    height: 75px;
+    height: 70px;
     margin: 0;
     padding-left: 50px;
     padding-right: 50px;
@@ -44,42 +41,42 @@
 
   .nav img{
     position: relative;
-    bottom: 4px;
-    width: 90px;
+    bottom: 5px;
+    height: 25px;
     display: flex;
   }
 
-  .nav-item{
-    width: 80px;
-  }
-
   .nav a{
-    @include mdc-button-ink-color(#7B8E96);
-
+    color: #546F7A !important;
     width: 80px;
     height: 100%;
-    border-bottom: 4px solid transparent;
+    font-size: 14px;
+    border-bottom: 5px solid transparent;
     box-sizing: border-box;
-    --mdc-ripple-fg-size: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .nav .mdc-top-app-bar__section--align-end a{
+    width: 90px;
   }
 
   .nav a:hover{
-    background: #EBEFF1;
+    background: #EDEFF0 !important;
     box-sizing: border-box !important;
-    border-bottom: 4px solid #369FDA;
-  }
-
-  .nav a:hover::before, .nav button:hover::after{
-    opacity: 0 !important;
-  }
-
-  .nav a::before, .nav button::after{
-    opacity: 0 !important;
+    border-bottom: 5px solid #00B0FF;
   }
 
   .nav .mdc-top-app-bar__section{
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  .nav .mdc-top-app-bar__title{
+    display: flex;
+    padding-left: 50px;
   }
 
   .nav .mdc-top-app-bar__title, .nav .mdc-top-app-bar__row{

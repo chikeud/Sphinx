@@ -1,7 +1,11 @@
 <template>
   <m-card class="r-card">
     <div class="r-title">
-      Sign Up Today
+      {{title}}
+
+      <div class="r-subtitle" v-if="subtitle">
+        {{subtitle}}
+      </div>
     </div>
 
     <div class="r-form">
@@ -62,6 +66,11 @@
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
+
+        <div class="r-section r-terms">
+          By clicking "create account" you agree to the
+          <router-link to="/">Terms and Conditions</router-link>
+        </div>
       </div>
 
       <div class="r2" v-show="screen == 'r2'">
@@ -113,12 +122,6 @@
 
       <div class="r3" v-show="screen == 'r3'">
         <div class="r-ssn r-section">
-          <div class="r-heading">SSN</div>
-
-          <div class="r-subheading">
-            Required for hosts
-          </div>
-
           <m-textfield outlined id="ssn" v-model="ssn">
             <m-floating-label for="ssn">
               xxx-xx-xxxx <span class="r-error" v-show="r3Errs.ssn">{{r3Errs.ssn}}</span>
@@ -166,14 +169,14 @@
 
     <div class="r-action" v-if="screen !== 'r5'">
       <div class="r-sign-up" v-if="screen == 'r1'">
-        <button @click="next" class="r-button stor-blue">Sign Up</button>
+        <button @click="next" class="r-button stor-blue">CREATE ACCOUNT</button>
       </div>
 
       <div class="r-two-buttons" v-else>
-        <button @click="back" class="r-button stor-blue">Back</button>
+        <button @click="back" class="r-button stor-blue">BACK</button>
 
-        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">Submit</button>
-        <button @click="next" class="r-button stor-blue" v-else>Next</button>
+        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">SUBMIT</button>
+        <button @click="next" class="r-button stor-blue" v-else>NEXT</button>
       </div>
     </div>
   </m-card>
@@ -354,7 +357,7 @@
 
         try{
           let res = await self.$http.post("/api/u", data);
-          let {token} = res.body.result;
+          let {token, user} = res.body.result;
 
           if(profileImage){
             let formData = new FormData();
@@ -375,7 +378,7 @@
             }
           }
 
-          self.$store.commit("token", token);
+          self.$store.commit("token", token, user);
         }
         catch(err){
           self.err = err.body.message;
@@ -456,6 +459,20 @@
     },
 
     computed: {
+      title(){
+        switch(this.screen){
+          case "r1": return "Sign Up Today";
+          case "r2": return "Create Account";
+          case "r3": return "SSN";
+          case "r4": return "Final Step"
+        }
+      },
+
+      subtitle(){
+        switch(this.screen){
+          case "r3": return "Required for hosts";
+        }
+      },
 
       loggedIn(){
         return this.$store.getters.loggedIn;
@@ -596,7 +613,7 @@
     @include mdc-card-corner-radius(0);
 
     width: 330px;
-    padding: 20px 40px;
+    padding: 30px 30px;
     margin-right: 80px;
   }
 
@@ -607,7 +624,13 @@
   .r-title{
     text-align: left;
     font-size: 19px;
+    color: #263238;
     margin-bottom: 25px;
+  }
+
+  .r-subtitle{
+    font-size: 10px;
+    color: #B0BEC5;
   }
 
   .r-two-buttons{
@@ -618,14 +641,14 @@
 
   .r-two-buttons button{
     border: none;
-    width: 120px;
+    width: 128px;
     height: 35px;
     transition: color 0.2s ease, background-color 0.4s ease;
   }
 
   .greyed-out{
-    background: #EBEFF1;
-    color: #CBD6DA !important;
+    background: #EDEFF0;
+    color: #CFD8DC!important;
   }
 
   .inactive:hover{
@@ -633,16 +656,16 @@
   }
 
   .active:hover{
-    color: #369FDA !important;
+    color: #546F7A !important;
   }
 
   .stor-blue{
-    background: #369FDA;
+    background: #03A9F4;
   }
 
   .r-card .mdc-text-field{
-    @include mdc-text-field-focused-outline-color(#369FDA);
-    @include mdc-text-field-outline-color(#EBEFF1);
+    @include mdc-text-field-focused-outline-color(#00B0FF);
+    @include mdc-text-field-outline-color(#EDEFF0);
 
     margin: 2px 0 0 !important;
   }
@@ -656,7 +679,7 @@
   }
 
   .r-card .mdc-notched-outline{
-    @include mdc-notched-outline-stroke-width(2px);
+    @include mdc-notched-outline-stroke-width(1px);
   }
 
   .r-card .mdc-notched-outline,
@@ -669,7 +692,7 @@
   }
 
   .r-card .mdc-floating-label{
-    color: lightgray !important;
+    color: #CFD8DC !important;
     bottom: 9px;
   }
 
@@ -699,11 +722,15 @@
   }
 
   .r-action{
-    margin-top: 30px;
+    margin-top: 20px;
+  }
+
+  .r-action .r-two-buttons{
+    margin: 0;
   }
 
   .r-sign-up{
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
   }
 
   .r-sign-up button{
@@ -715,21 +742,25 @@
   .r-button{
     color: white;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: bolder;
     cursor: pointer;
   }
 
   .r-heading{
     text-align: left;
     font-size: 14px;
+    color: #546F7A;
     padding-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    margin-left: 15px;
   }
 
   .r-subheading{
     text-align: left;
     font-size: 10px;
+    color: #B0BEC5;
     margin-bottom: 10px;
+    margin-left: 15px;
   }
 
   .r-img{
@@ -738,9 +769,9 @@
 
   .r-img-preview{
     width: 150px;
-    height: 140px;
+    height: 150px;
     border-radius: 50%;
-    background-color: lightgray;
+    background-color: #EDEFF0;
     margin: auto auto 30px;
   }
 
@@ -748,6 +779,10 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
+  }
+
+  .r-upload .material-icons{
+    font-size: 20px;
   }
 
   #r-upload-img{
@@ -796,4 +831,18 @@
   .r5 .err{
     color: red;
   }
+
+  .r-terms{
+    font-size: 7px;
+    font-weight: 100;
+    text-align: center;
+    color: #B0BEC5;
+    margin: 0;
+    padding-top: 10px;
+  }
+
+  .r-terms a{
+    color: #29B6F6;
+  }
+
 </style>

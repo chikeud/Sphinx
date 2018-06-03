@@ -3,11 +3,13 @@
     <side-nav class="main-side-nav"></side-nav>
 
     <div class="main-content">
-      <div class="banner-content">
+      <div class="app-content">
+        <router-view>
 
+        </router-view>
       </div>
 
-      <div class="banner-auth">
+      <div class="app-auth">
         <sign-up></sign-up>
       </div>
     </div>
@@ -18,7 +20,7 @@
   import Vue from "vue";
 
   import Register from "./register.vue";
-  import SideNav from "./side-nav.vue";
+  import SideNav from "./side-nav/side-nav.vue";
 
   export default {
     data(){
@@ -56,11 +58,11 @@
     flex-direction: row;
   }
 
-  .banner-content{
+  .app-content{
     flex: 3;
   }
 
-  .banner-auth{
+  .app-auth{
     display: flex;
     justify-content: space-between;
     flex: 1;

@@ -23,12 +23,15 @@
 </script>
 
 <style>
+  body{
+    background-color: #FAFAFA;
+  }
   body, h1{
     margin: 0;
     padding: 0;
   }
 
-  #app *{
+  #app *:not(.material-icons){
     font-family: 'Proxima Nova', 'Montserrat', Helvetica, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

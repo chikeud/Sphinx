@@ -9,7 +9,7 @@
         </router-view>
       </div>
 
-      <div class="app-auth">
+      <div v-if="!loggedIn" class="app-auth">
         <sign-up></sign-up>
       </div>
     </div>
@@ -19,13 +19,19 @@
 <script>
   import Vue from "vue";
 
-  import Register from "./register.vue";
+  import Register from "./registration/register.vue";
   import SideNav from "./side-nav/side-nav.vue";
 
   export default {
     data(){
       return {
         content: "Some fucking content"
+      }
+    },
+
+    computed: {
+      loggedIn(){
+        return this.$store.getters.loggedIn;
       }
     },
 

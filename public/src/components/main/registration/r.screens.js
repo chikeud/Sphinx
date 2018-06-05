@@ -33,19 +33,20 @@ let screens = {
           },
           {
             id: "password",
-            label: "Password"
+            label: "Password",
+            type: "password"
           }
         ]
       },
       {
-        id: "r-city",
+        id: "r-invite",
         fields: [
           {
-            id: "city",
-            label: "City"
+            id: "invite",
+            label: "Invite Code (Optional)"
           }
-        ]
-      },
+        ],
+      }
     ]
   },
 
@@ -53,8 +54,6 @@ let screens = {
     sections: [
       {
         id: "r-address",
-        heading: "Address",
-        subKey: "address",
         fields: [
           {
             id: "street",
@@ -63,6 +62,10 @@ let screens = {
           {
             id: "suite",
             label: "Suite (Optional)"
+          },
+          {
+            id: "city",
+            label: "City"
           },
           {
             id: "state",
@@ -74,17 +77,6 @@ let screens = {
           }
         ]
       },
-      {
-        id: "r-username",
-        heading: "Username",
-        subHeading: "Will be used in your profile url",
-        fields: [
-          {
-            id: "alias",
-            label: "Username"
-          }
-        ]
-      },
     ]
   },
 
@@ -92,8 +84,6 @@ let screens = {
     sections: [
       {
         id: "r-ssn",
-        heading: "SSN",
-        subHeading: "Required for hosts",
         fields: [
           {
             id: "ssn",
@@ -107,16 +97,36 @@ let screens = {
   r4: {
     sections: [
       {
-        id: "r-invite",
+        id: "r-username",
         fields: [
           {
-            id: "invite",
-            label: "Invite Code (Optional)"
+            id: "alias",
+            label: "Username"
           }
-        ],
-      }
+        ]
+      },
     ]
   }
 };
 
-export default screens;
+let rProps = (() => {
+  let views = Object.keys(screens);
+  let result = {};
+
+  for(let view of views){
+    for(let section of screens[view].sections){
+      for(let field of section.fields){
+        if(!result[view]){
+          result[view] = [field.id];
+        }
+        else{
+          result[view].push(field.id);
+        }
+      }
+    }
+  }
+
+  return result;
+})();
+
+export {screens as rScreens, rProps} ;

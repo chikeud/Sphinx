@@ -9,7 +9,7 @@
         </router-view>
       </div>
 
-      <div class="app-auth">
+      <div v-if="!loggedIn" class="app-auth">
         <sign-up></sign-up>
       </div>
     </div>
@@ -26,6 +26,12 @@
     data(){
       return {
         content: "Some fucking content"
+      }
+    },
+
+    computed: {
+      loggedIn(){
+        return this.$store.getters.loggedIn;
       }
     },
 

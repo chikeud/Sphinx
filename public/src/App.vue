@@ -16,6 +16,7 @@
         msg: 'Some fucking message'
       }
     },
+
     components: {
       "nav-bar": Nav
     },
@@ -26,6 +27,7 @@
   body{
     background-color: #FAFAFA;
   }
+
   body, h1{
     margin: 0;
     padding: 0;

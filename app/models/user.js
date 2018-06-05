@@ -68,7 +68,7 @@ UserSchema.pre("save", async function(next){
       doc.password = await bcrypt.hash(doc.password, rounds);
     }
 
-    if(doc.isModified("ssn")){
+    if(doc.ssn && doc.isModified("ssn")){
       doc.ssn = await bcrypt.hash(doc.ssn, rounds);
     }
 

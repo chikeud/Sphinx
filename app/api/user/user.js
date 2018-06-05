@@ -63,7 +63,8 @@ exports.createUser = async (req, res) => {
     "phone",
     "isHost",
     "isRenter",
-    "address"
+    "address",
+    "ssn"
   ];
 
   for(let prop of props){
@@ -72,6 +73,7 @@ exports.createUser = async (req, res) => {
 
   // ssn field should me made required for Host
   if (user.isHost && !user.ssn) {
+    console.log(user);
     return respondErr(http.BAD_REQUEST, "Missing Host SSN!");
   }
 

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueResource from "vue-resource";
 import Vuex from "vuex";
+import _ from "lodash";
 
 import App from "./App.vue";
 import router from "./router";
@@ -25,7 +26,8 @@ Vue.http.interceptors.push((req, next) => {
 
 let store = new Vuex.Store({
   state: {
-    token: null,
+    token: "",
+    user: null
   },
 
   getters: {
@@ -34,7 +36,17 @@ let store = new Vuex.Store({
      * @returns boolean login state
      */
     loggedIn(state){
+      let token = localStorage.getItem(config.AUTH);
+
+      if(token !== state.token){
+        state.token = token;
+      }
+
       return !!state.token;
+    },
+
+    user(state){
+      return state.user || localStorage.getItem(config.USER);
     }
   },
 
@@ -43,11 +55,12 @@ let store = new Vuex.Store({
      * Sets the value of token in the store
      * and localStorage
      *
-     * @param state
-     * @param token
+     * @param state global state
+     * @param token auth token
      */
     token(state, token){
       localStorage.setItem(config.AUTH, token);
+
       state.token = token;
     },
 
@@ -62,7 +75,7 @@ let store = new Vuex.Store({
         localStorage.removeItem(config.AUTH);
         state.token = "";
       }
-    }
+    },
   }
 });
 

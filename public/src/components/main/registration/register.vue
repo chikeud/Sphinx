@@ -10,7 +10,7 @@
 
     <div class="r-form">
       <div class="r1" v-show="screen == 'r1'">
-        <div class="r-user-type r-two-buttons">
+        <div class="r-user-type r-section r-two-buttons">
           <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
             HOST
           </button>
@@ -19,113 +19,81 @@
           </button>
         </div>
 
-        <div class="r-name r-section">
-          <m-textfield outlined id="fName" v-model="fName">
-            <m-floating-label for="fName">
-              First Name <span class="r-error" v-show="r1Errs.fName">{{r1Errs.fName}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
+        <div v-for="section in screens.r1.sections"
+             :class="[section.id, 'r-section']"
+             :key="section.id">
 
-          <m-textfield outlined id="lName" v-model="lName">
-            <m-floating-label for="lName">
-              Last Name <span class="r-error" v-show="r1Errs.lName">{{r1Errs.lName}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
+          <m-textfield v-for="field in section.fields"
+                       :type="field.type ? field.type : 'text'"
+                       :id="field.id"
+                       v-model="$data[field.id]"
+                       :key="field.id" outlined>
 
-        <div class="r-contact r-section">
-          <m-textfield outlined id="email" v-model="email">
-            <m-floating-label for="email">
-              Email <span class="r-error" v-show="r1Errs.email">{{r1Errs.email}}</span>
+            <m-floating-label :for="field.id">
+              {{field.label}}
+              <span class="r-error" v-show="r1Errs[field.id]">
+                {{r1Errs[field.id]}}
+              </span>
             </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
 
-          <m-textfield outlined id="phone" v-model="phone">
-            <m-floating-label for="phone">
-              Phone <span class="r-error" v-show="r1Errs.phone">{{r1Errs.phone}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-
-          <m-textfield outlined id="password" type="password" v-model="password">
-            <m-floating-label for="password">
-              Password <span class="r-error" v-if="r1Errs.password">{{r1Errs.password}}</span>
-            </m-floating-label>
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
 
-        <div class="r-city r-section">
-          <m-textfield outlined id="city" v-model="address.city">
-            <m-floating-label for="city">
-              City <span class="r-error" v-show="r1Errs.city">{{r1Errs.city}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
 
-        <div class="r-section r-terms">
+        <div class="r-terms r-section">
           By clicking "create account" you agree to the
           <router-link to="/">Terms and Conditions</router-link>
         </div>
       </div>
 
       <div class="r2" v-show="screen == 'r2'">
-        <div class="r-address r-section">
-          <div class="r-heading">Address</div>
+        <div v-for="section in screens.r2.sections"
+             :class="[section.id, 'r-section']"
+             :key="section.id">
 
-          <m-textfield outlined id="street" v-model="address.street">
-            <m-floating-label for="street">
-              Street <span class="r-error" v-show="r2Errs.street">{{r2Errs.street}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-
-          <m-textfield outlined id="suite" v-model="address.suite">
-            <m-floating-label for="suite">Suite (Optional)</m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-
-          <m-textfield outlined id="state" v-model="address.state">
-            <m-floating-label for="state">
-              State <span class="r-error" v-show="r2Errs.state">{{r2Errs.state}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-
-          <m-textfield outlined id="zip" v-model="address.zip">
-            <m-floating-label for="zip">
-              Zip Code <span class="r-error" v-show="r2Errs.zip">{{r2Errs.zip}}</span>
-            </m-floating-label>
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
-
-        <div class="r-username r-section">
-          <div class="r-heading">Username</div>
-
-          <div class="r-subheading">
-            Will be used in your profile url
+          <div v-if="section.heading" class="r-heading">
+            {{section.heading}}
           </div>
 
-          <m-textfield outlined id="alias" v-model="alias">
-            <m-floating-label for="alias">
-              Username <span class="r-error" v-show="r2Errs.alias">{{r2Errs.alias}}</span>
+          <div v-if="section.subHeading" class="r-subheading">
+            {{section.subHeading}}
+          </div>
+          <!--TODO tie values to address model-->
+          <m-textfield v-for="field in section.fields"
+                       :id="field.id"
+                       v-model="$data[field.id]"
+                       :key="field.id" outlined>
+
+            <m-floating-label :for="field.id">
+              {{field.label}}
+              <span class="r-error" v-show="r2Errs[field.id]">
+                {{r2Errs[field.id]}}
+              </span>
             </m-floating-label>
+
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
+
       </div>
 
       <div class="r3" v-show="screen == 'r3'">
-        <div class="r-ssn r-section">
-          <m-textfield outlined id="ssn" v-model="ssn">
-            <m-floating-label for="ssn">
-              xxx-xx-xxxx <span class="r-error" v-show="r3Errs.ssn">{{r3Errs.ssn}}</span>
+        <div v-for="section in screens.r3.sections"
+             :class="[section.id, 'r-section']"
+             :key="section.id">
+
+          <m-textfield v-for="field in section.fields"
+                       :id="field.id" v-model="$data[field.id]"
+                       :key="field.id" outlined>
+
+            <m-floating-label :for="field.id">
+              {{field.label}}
+              <span class="r-error" v-show="r3Errs[field.id]">
+                {{r3Errs[field.id]}}
+              </span>
             </m-floating-label>
+
             <m-notched-outline></m-notched-outline>
           </m-textfield>
         </div>
@@ -146,13 +114,24 @@
           </div>
         </div>
 
-        <div class="r-invite r-section">
-          <m-textfield outlined id="invite" v-model="invite">
-            <m-floating-label for="invite">Invite Code (Optional)</m-floating-label>
+        <div v-for="section in screens.r4.sections"
+             :class="[section.id, 'r-section']"
+             :key="section.id">
+
+          <m-textfield v-for="field in section.fields"
+                       :id="field.id" v-model="$data[field.id]"
+                       :key="field.id" outlined>
+
+            <m-floating-label :for="field.id">
+              {{field.label}}
+              <span class="r-error" v-show="r4Errs[field.id]">
+                {{r4Errs[field.id]}}
+              </span>
+            </m-floating-label>
+
             <m-notched-outline></m-notched-outline>
           </m-textfield>
-        </div>
-      </div>
+        </div>      </div>
 
       <div class="r5" v-show="screen == 'r5'">
         <div class="r-final">
@@ -184,17 +163,18 @@
 
 <script>
   import Vue from "vue";
-  import Card from "material-components-vue/dist/card"
-  import Button from "material-components-vue/dist/button"
-  import TextField from "material-components-vue/dist/textfield"
-  import NotchedOutline from "material-components-vue/dist/notched-outline"
-  import FloatingLabel from "material-components-vue/dist/floating-label"
-  import Elevation from "material-components-vue/dist/elevation"
-  import Icon from "material-components-vue/dist/icon"
-  import validator from "validator"
+  import Card from "material-components-vue/dist/card";
+  import Button from "material-components-vue/dist/button";
+  import TextField from "material-components-vue/dist/textfield";
+  import NotchedOutline from "material-components-vue/dist/notched-outline";
+  import FloatingLabel from "material-components-vue/dist/floating-label";
+  import Elevation from "material-components-vue/dist/elevation";
+  import Icon from "material-components-vue/dist/icon";
+  import validator from "validator";
 
-  import config from "../../config";
-  import httpStats from "../../../../utils/HttpStats"
+  import config from "../../../config";
+  import httpStats from "../../../../../utils/HttpStats";
+  import {rScreens, rProps} from "./r.screens";
 
   Vue.use(Card);
   Vue.use(Button);
@@ -205,22 +185,6 @@
   Vue.use(Icon);
 
   const INVALID = "(invalid)";
-
-  // properties grouped by screen
-  let rProps = {
-    r1: [
-      "userType", "fName", "lName", "email",
-      "phone", "password", "city"
-    ],
-
-    r2: [
-      "street", "suite", "state", "zip", "alias"
-    ],
-
-    r3: ["ssn"],
-
-    r4: ["invite"]
-  };
 
   /**
    * Checks if object is empty
@@ -233,6 +197,21 @@
     if(!obj) return true;
 
     return Object.keys(obj).length === 0;
+  }
+
+  /**
+   * Checks if date is valid
+   *
+   * @param date questionable date
+   *
+   * @returns {boolean}
+   */
+  function validDate(date){
+    let regEx = new RegExp("((0?[13578]|10|12)([-\/])((0[0-9])|([12])([0-9]?)" +
+      "|(3[01]?))([-\/])((\d{4})|(\d{2}))|(0?[2469]|11)([-\/])((0[0-9])|([12])" +
+      "([0-9]?)|(3[0]?))([-\/])((\d{4}|\d{2})))");
+
+    return regEx.test(date);
   }
 
   /**
@@ -261,6 +240,7 @@
   export default {
     data(){
       return {
+        screens: rScreens,
         screen: "r1",
         userType: "store",
         fName: "",
@@ -268,13 +248,11 @@
         email: "",
         phone: "",
         password: "",
-        address: {
-          street: "",
-          city: "",
-          state: "",
-          zip: "",
-          suite: ""
-        },
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+        suite: "",
         alias: "",
         ssn: "",
         invite: "",
@@ -339,7 +317,7 @@
 
         let data = JSON.parse(JSON.stringify(self.$data));
         let keys = Object.keys(data);
-        let exclude = new Set(["screen", "touched", "err", "userType"]);
+        let exclude = new Set(["screen", "screens", "touched", "err", "userType"]);
 
         let profileImage = $("#r-upload-img")[0].files[0];
 
@@ -350,14 +328,14 @@
         }
 
         data.firstName = data.fName;
-        data.lastName  = data.lName;
-        data.address.houseNum = data.suite;
+        data.lastName = data.lName;
         data.isRenter = self.userType === "store";
         data.isHost = !data.isRenter;
+        data.address = self.address;
 
         try{
           let res = await self.$http.post("/api/u", data);
-          let {token, user} = res.body.result;
+          let {token} = res.body.result;
 
           if(profileImage){
             let formData = new FormData();
@@ -377,11 +355,13 @@
               else self.err = err.body.message;
             }
           }
-
-          self.$store.commit("token", token, user);
+          self.$store.commit("token", token);
         }
         catch(err){
-          self.err = err.body.message;
+          if(err.body){
+            self.err = err.body.message;
+          }
+          else console.log(err);
         }
       },
 
@@ -428,16 +408,10 @@
        */
        checkRequired(required, errs){
         let self = this;
-        let addressProps = new Set(["city", "street", "suite", "state", "zip"]);
-        let aProp;
-        let data;
 
         for(let prop of required){
           if(self.touched[prop]){
-            aProp = addressProps.has(prop);
-            data = aProp ? self.address : self;
-
-            if(!data[prop].trim()){
+            if(!self[prop].trim()){
               errs[prop] = "*";
             }
           }
@@ -462,7 +436,7 @@
       title(){
         switch(this.screen){
           case "r1": return "Sign Up Today";
-          case "r2": return "Create Account";
+          case "r2": return "Address";
           case "r3": return "SSN";
           case "r4": return "Final Step"
         }
@@ -470,7 +444,20 @@
 
       subtitle(){
         switch(this.screen){
+          case "r2": return "Your address will never be shared without your consent";
           case "r3": return "Required for hosts";
+        }
+      },
+
+      address(){
+        let self = this;
+
+        return {
+          city: self.city,
+          street: self.street,
+          houseNum: self.suite,
+          state: self.state,
+          zip: self.zip
         }
       },
 
@@ -487,7 +474,8 @@
       r1Errs(){
         let self = this;
         let touched = self.touched;
-        let required = rProps.r1;
+        let optional = new Set(["invite"]);
+        let required = rProps.r1.filter(prop => !optional.has(prop));
         let errs = {};
 
         if(touched.email && !validator.isEmail(self.email)){
@@ -523,10 +511,6 @@
           errs.zip = INVALID;
         }
 
-        if(self.touched.alias && self.alias.length < 2){
-          errs.alias = "(2 characters minimum)";
-        }
-
         self.checkRequired(required, errs);
 
         return errs;
@@ -548,6 +532,17 @@
         }
 
         self.checkRequired(required, errs);
+
+        return errs;
+      },
+
+      r4Errs(){
+        let self =  this;
+        let errs = {};
+
+        if(self.touched.alias && self.alias.length < 2){
+          errs.alias = "(2 characters minimum)";
+        }
 
         return errs;
       }
@@ -602,12 +597,12 @@
 </script>
 
 <style lang="scss">
-  @import "~material-components-vue/dist/card/styles";
-  @import "~material-components-vue/dist/button/styles";
-  @import "~material-components-vue/dist/textfield/styles";
-  @import "~material-components-vue/dist/notched-outline/styles";
-  @import "~material-components-vue/dist/floating-label/styles";
-  @import "~material-components-vue/dist/elevation/styles";
+  @import "../../../../node_modules/material-components-vue/dist/card/styles";
+  @import "../../../../node_modules/material-components-vue/dist/button/styles";
+  @import "../../../../node_modules/material-components-vue/dist/textfield/styles";
+  @import "../../../../node_modules/material-components-vue/dist/notched-outline/styles";
+  @import "../../../../node_modules/material-components-vue/dist/floating-label/styles";
+  @import "../../../../node_modules/material-components-vue/dist/elevation/styles";
 
   .r-card{
     @include mdc-card-corner-radius(0);
@@ -615,6 +610,10 @@
     width: 330px;
     padding: 30px 30px;
     margin-right: 80px;
+  }
+
+  .r-card button{
+    height: 40px;
   }
 
   .r-card button:focus{
@@ -629,6 +628,8 @@
   }
 
   .r-subtitle{
+    width: 70%;
+    margin-top: 6px;
     font-size: 10px;
     color: #B0BEC5;
   }
@@ -639,10 +640,17 @@
     margin-bottom: 20px;
   }
 
+  .r-two-buttons:not(.r-user-type){
+    margin-bottom: 20px;
+  }
+
+  .r-card .r-user-type{
+    margin-bottom: 25px;
+  }
+
   .r-two-buttons button{
     border: none;
     width: 128px;
-    height: 35px;
     transition: color 0.2s ease, background-color 0.4s ease;
   }
 
@@ -678,6 +686,10 @@
     padding: 0 12px 2px;
   }
 
+  .r-card .mdc-text-field, .r-card .mdc-text-field__input{
+    height: 40px;
+  }
+
   .r-card .mdc-notched-outline{
     @include mdc-notched-outline-stroke-width(1px);
   }
@@ -693,7 +705,7 @@
 
   .r-card .mdc-floating-label{
     color: #CFD8DC !important;
-    bottom: 9px;
+    bottom: 12px;
   }
 
   .r-card .mdc-floating-label,
@@ -702,14 +714,14 @@
   }
 
   .r-card .mdc-floating-label--float-above{
-    transform: translateY(-70%) scale(0.75);
+    transform: translateY(-82%) scale(0.75);
     color: #369FDA !important;
     background-color: white;
     z-index: 2;
   }
 
-  .r-section{
-    margin-bottom: 10px;
+  .r-section:not(.r-user-type){
+    margin-bottom: 13px;
   }
 
   .r-form .mdc-text-field{
@@ -718,7 +730,12 @@
 
   .r-name{
     display: flex;
+    justify-content: space-between;
     flex-direction: row;
+  }
+
+  .r-name .mdc-text-field, .r-name .mdc-text-field__input{
+    width: 134.5px;
   }
 
   .r-action{
@@ -735,7 +752,6 @@
 
   .r-sign-up button{
     width: 100%;
-    height: 35px;
     border: none;
   }
 
@@ -799,7 +815,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 35px;
+    height: 40px;
     border: none;
   }
 
@@ -809,7 +825,6 @@
 
   .r-card .r-error{
     color: red !important;
-    font-size: 12px;
     margin-right: 3px;
   }
 
@@ -838,7 +853,7 @@
     text-align: center;
     color: #B0BEC5;
     margin: 0;
-    padding-top: 10px;
+    padding-top: 6px;
   }
 
   .r-terms a{

@@ -1,11 +1,17 @@
 <template>
   <div class="blah">
-    Dashboard
+    {{msg}}
   </div>
 </template>
 
 <script>
-  export default {}
+  export default {
+    data(){
+      return {
+        msg: "Dashboard"
+      }
+    }
+  }
 </script>
 
 <style lang="scss">

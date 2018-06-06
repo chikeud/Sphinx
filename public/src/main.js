@@ -46,14 +46,7 @@ let store = new Vuex.Store({
     },
 
     user(state){
-      let user = localStorage.getItem(config.USER);
-      let _user = JSON.parse(JSON.stringify(state.user));
-
-      if(!_.isEqual(user, _user)){
-        state.user = user;
-      }
-
-      return !!state.user;
+      return state.user || localStorage.getItem(config.USER);
     }
   },
 
@@ -64,14 +57,11 @@ let store = new Vuex.Store({
      *
      * @param state global state
      * @param token auth token
-     * @param user logged in user
      */
-    token(state, token, user){
+    token(state, token){
       localStorage.setItem(config.AUTH, token);
-      localStorage.setItem(config.USER, user);
 
       state.token = token;
-      state.user = user;
     },
 
     /**
@@ -84,11 +74,6 @@ let store = new Vuex.Store({
       if(state.token){
         localStorage.removeItem(config.AUTH);
         state.token = "";
-      }
-
-      if(state.user){
-        localStorage.removeItem(config.USER);
-        state.user = null;
       }
     },
   }

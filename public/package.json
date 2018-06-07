@@ -10,7 +10,9 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "autosize": "4.0.2",
     "babel-polyfill": "6.26.0",
+    "grabity": "1.0.4",
     "jquery": "3.3.1",
     "lodash": "4.17.10",
     "material-components-vue": "0.20.3",

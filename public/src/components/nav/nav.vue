@@ -30,6 +30,7 @@
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
+    z-index: 1;
     height: 70px;
     margin: 0;
     padding-left: 50px;

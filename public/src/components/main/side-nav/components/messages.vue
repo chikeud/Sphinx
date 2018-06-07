@@ -200,7 +200,7 @@
 
   .msg-new textarea{
     width: 90%;
-    max-height: 200px;
+    max-height: 150px;
     padding: 10px;
     border: none;
     resize: none;

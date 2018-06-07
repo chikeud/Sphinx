@@ -60,7 +60,7 @@
     data(){
       return {
         search: "",
-        message: "yo",
+        message: "",
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC"
       }
@@ -189,6 +189,6 @@
   }
 
   .msg-new .material-icons{
-    font-size: 25px;
+    font-size: 20px;
   }
 </style>

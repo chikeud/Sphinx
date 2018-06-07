@@ -3,8 +3,9 @@
     <m-card class="msg-card">
       <div class="msg-select">
         <div class="msg-card-top">
-          <m-icon icon="search"></m-icon>
-          <input id="msg-search" class="in" type="text" placeholder="Search Messages"/>
+          <m-icon :style="{color : search ? storBlue : iconGrey}" icon="search"></m-icon>
+          <input id="msg-search" class="in" type="text"
+                 v-model="search" placeholder="Search Messages"/>
         </div>
 
       </div>
@@ -19,7 +20,7 @@
         <div class="msg-new">
           <textarea id="msg-text" rows="1" class="in" v-model="message" placeholder="Enter Message"></textarea>
 
-          <m-icon icon="send"></m-icon>
+          <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
         </div>
       </div>
     </m-card>
@@ -58,18 +59,16 @@
   export default {
     data(){
       return {
-        message: "",
+        search: "",
+        message: "yo",
+        storBlue: "#03A9F4",
+        iconGrey: "#CFD8DC"
       }
     },
 
     mounted(){
       let $window = $(window);
       let $msgInput = $(".msg-new textarea");
-      let $input = $(".in");
-      let icons = {
-        "msg-search" : $("#msg-search").parent().find(".material-icons"),
-        "msg-text": $("#msg-text").parent().find(".material-icons")
-      };
 
       resize($window);
 
@@ -82,27 +81,6 @@
 
         $msgInput.off("click.autoSize");
       });
-
-
-      (() => {
-        let $icon;
-
-        $input.click(function () {
-          $icon = icons[this.id];
-
-          $icon.css({
-            color: "#03A9F4"
-          });
-        });
-
-        $input.blur(function () {
-          $icon = icons[this.id];
-
-          $icon.css({
-            color: "#CFD8DC"
-          });
-        });
-      })()
     }
   }
 </script>
@@ -200,7 +178,7 @@
 
   .msg-new textarea{
     width: 90%;
-    max-height: 150px;
+    max-height: 120px;
     padding: 10px;
     border: none;
     resize: none;

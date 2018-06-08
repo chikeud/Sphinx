@@ -8,6 +8,7 @@ let socketIo = require("socket.io");
 let config = require("../../../config");
 let auth = require("../../../utils/authToken");
 let Message = require("../../models/messaging").Message;
+let User = require("../../models/user").User;
 
 class MessageServer{
 
@@ -15,9 +16,13 @@ class MessageServer{
     let self = this;
     self.server = server;
     self.connected = {};
-    let io = self.io = socketIo(server);
+    self.io = socketIo(server);
+  }
 
-    io.on("connection", async function(socket){
+  start(){
+    let self = this;
+
+    self.io.on("connection", async function(socket){
       let token = socket.handshake.query[config.AUTH_TOKEN];
 
       try{
@@ -27,20 +32,19 @@ class MessageServer{
           return self._fail(socket);
         }
 
-        self._listen(socket);
-
         self.connected[user._id] = {
           socketId: socket.id,
           user: user
         };
 
+        self._listen(socket);
+
         let messages = await getAllMessages(user);
 
-        io.to(socket.id).emit("all-messages", messages);
+        self.io.to(socket.socketId).emit("all-messages", messages);
       }
       catch (err){
         self._fail(err, socket);
-        socket.disconnect(true);
       }
     });
   }
@@ -48,7 +52,7 @@ class MessageServer{
   _listen(socket){
     let self = this;
 
-    socket.on("chat-message", async function(msg){
+    socket.on("chat-message", async function(msg, respond){
       let token = msg[config.AUTH_TOKEN];
 
       try{
@@ -59,12 +63,28 @@ class MessageServer{
         }
 
         let message = new Message();
+        let recipient = await verifyUser(msg.to);
+
+        if(!recipient) {
+          console.log("None");
+
+          return self.fail(socket, {msg: "invalid recipient"});
+        }
 
         message.from = user._id;
-        message.to = msg.to; // make sure msg.to is valid user id
+        message.to = recipient._id; // make sure msg.to is valid user id
         message.text = msg.text;
 
         message = await message.save();
+        recipient = self.connected[message.to];
+
+        if(recipient){
+          self.io.to(recipient.socketId).emit("chat-message", message);
+        }
+
+        console.log(self.connected);
+
+        respond(message);
       }
       catch (err){
         self._fail(err, socket);
@@ -75,7 +95,7 @@ class MessageServer{
   _fail(socket, err){
     err = err || {msg: config.AUTH_ERR_MSG};
 
-    this.io.to(socket.id).emit("error", {err: err.msg});
+    this.io.to(socket.socketId).emit("error", {err: err.msg});
   }
 }
 
@@ -90,6 +110,10 @@ async function getAllMessages(user){
   catch(err){
     throw err;
   }
+}
+
+async function verifyUser(id){
+  return await User.findById(id).exec();
 }
 
 module.exports = MessageServer;

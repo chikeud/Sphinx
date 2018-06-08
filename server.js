@@ -26,9 +26,6 @@ app.use(compress());
 app.use(logger("dev"));
 app.use(bodyParser.json());
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 app.use(express.static(STATIC));
 
 // CORS
@@ -66,8 +63,9 @@ if (app.get("env") === "development") {
 
 // start the server
 let server = app.listen(PORT);
+let messageServer = new MessageServer(server);
 
-new MessageServer(server);
+messageServer.start();
 
 server.on("close", async err => {
   if(err) throw err;

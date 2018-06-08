@@ -39,14 +39,7 @@ let UserSchema = new Schema({
   },
   firstName: {type: String, required: REQUIRED},
   lastName: {type: String, required: REQUIRED},
-  ssn: {
-    type: String,
-    unique: true,
-    validate: {
-      validator: val => isValidSSN(val),
-      message: "Invalid SSN {VALUE}"
-    },
-  },
+  ssn: {type: String, unique: true},
   stripeId: {type: String},
   phone: {
     type: String,
@@ -62,7 +55,6 @@ let UserSchema = new Schema({
     zip: {
       type: String,
       required: REQUIRED,
-      unique: true,
       validate: {
         validator: val => isValidUSZip(val),
         message: "Invalid Zip {VALUE}"
@@ -84,6 +76,10 @@ UserSchema.pre("save", async function(next){
     }
 
     if(doc.ssn && doc.isModified("ssn")){
+      if(!isValidSSN(doc.ssn)){
+        return next(new Error("Invalid SSN!"));
+      }
+
       doc.ssn = await bcrypt.hash(doc.ssn, rounds);
     }
 

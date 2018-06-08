@@ -16,10 +16,11 @@
         </div>
 
         <div class="msg-display">
-          <div v-for="msg in messages" :key="msg.id">{{msg.message}}</div>
+          <div v-for="msg in messages" :key="msg.id">{{msg.text}}</div>
         </div>
 
         <div class="msg-new">
+          <input v-model="to" placeholder="to?"/>
           <textarea id="msg-text" rows="1" class="in"
                     v-model="message" placeholder="Enter Message"></textarea>
 
@@ -67,6 +68,7 @@
   export default {
     data(){
       return {
+        to: "",
         search: "",
         message: "",
         messages: [],
@@ -79,9 +81,9 @@
       send(){
         let self = this;
 
-        if(!self.message) return;
+        if(!(self.message && self.to)) return;
 
-        let data = {message: self.message};
+        let data = {text: self.message, to: self.to};
 
         messageClient.send(data);
         console.log(data);

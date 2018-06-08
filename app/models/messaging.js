@@ -8,11 +8,11 @@ let Schema = mongoose.Schema;
 const REQUIRED = "{PATH} is required";
 
 let MessageSchema = new Schema({
-  from: {type: Schema.Types.ObjectId, required: REcQUIRED},
-  to: {type: Schema.Types.ObjectID, required: REQUIRED},
+  from: {type: Schema.ObjectId, required: REQUIRED},
+  to: {type: Schema.ObjectId, required: REQUIRED},
   text: {type: String, required: REQUIRED},
   img: {
-    id: Schema.types.ObjectID,
+    id: Schema.ObjectId,
     file: {}
   }
 }, {timestamps: true});

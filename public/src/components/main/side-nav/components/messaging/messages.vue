@@ -15,12 +15,17 @@
 
         </div>
 
-        <div class="msg-display">{{message}}</div>
+        <div class="msg-display">
+          <div v-for="msg in messages" :key="msg.id">{{msg.message}}</div>
+        </div>
 
         <div class="msg-new">
-          <textarea id="msg-text" rows="1" class="in" v-model="message" placeholder="Enter Message"></textarea>
+          <textarea id="msg-text" rows="1" class="in"
+                    v-model="message" placeholder="Enter Message"></textarea>
 
-          <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
+          <div @click="send">
+            <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
+          </div>
         </div>
       </div>
     </m-card>
@@ -29,6 +34,7 @@
 
 <script>
   import Vue from "vue";
+  import autoSize from "autosize";
   import Card from "material-components-vue/dist/card";
   import TextField from "material-components-vue/dist/textfield";
   import NotchedOutline from "material-components-vue/dist/notched-outline";
@@ -36,7 +42,7 @@
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
 
-  import autoSize from "autosize";
+  import MessageClient from "./client";
 
   Vue.use(Card);
   Vue.use(TextField);
@@ -44,6 +50,8 @@
   Vue.use(FloatingLabel);
   Vue.use(Elevation);
   Vue.use(Icon);
+
+  let messageClient;
 
   let resize = function($window){
     let classes = [".msg-card", ".msg-select", ".msg-reader"];
@@ -61,14 +69,32 @@
       return {
         search: "",
         message: "",
+        messages: [],
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC"
       }
     },
 
+    methods:{
+      send(){
+        let self = this;
+
+        if(!self.message) return;
+
+        let data = {message: self.message};
+
+        messageClient.send(data);
+        console.log(data);
+        self.message = "";
+      }
+    },
+
     mounted(){
+      let self = this;
       let $window = $(window);
       let $msgInput = $(".msg-new textarea");
+
+      messageClient = new MessageClient(self);
 
       resize($window);
 
@@ -81,16 +107,17 @@
 
         $msgInput.off("click.autoSize");
       });
+
     }
   }
 </script>
 
 <style lang="scss">
-  @import "../../../../../node_modules/material-components-vue/dist/card/styles";
-  @import "../../../../../node_modules/material-components-vue/dist/textfield/styles";
-  @import "../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
-  @import "../../../../../node_modules/material-components-vue/dist/floating-label/styles";
-  @import "../../../../../node_modules/material-components-vue/dist/elevation/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/card/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/textfield/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/floating-label/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/elevation/styles";
 
   #messages{
     display: flex;

@@ -39,7 +39,14 @@ let UserSchema = new Schema({
   },
   firstName: {type: String, required: REQUIRED},
   lastName: {type: String, required: REQUIRED},
-  ssn: {type: String},
+  ssn: {
+    type: String,
+    unique: true,
+    validate: {
+      validator: val => isValidSSN(val),
+      message: "Invalid SSN {VALUE}"
+    },
+  },
   stripeId: {type: String},
   phone: {
     type: String,
@@ -52,7 +59,15 @@ let UserSchema = new Schema({
   address: {
     city: {type: String, required: REQUIRED},
     state: {type: String, required: REQUIRED},
-    zip: {type: String, required: REQUIRED},
+    zip: {
+      type: String,
+      required: REQUIRED,
+      unique: true,
+      validate: {
+        validator: val => isValidUSZip(val),
+        message: "Invalid Zip {VALUE}"
+      }
+    },
     street: {type: String, required: REQUIRED},
     houseNum: {type: String}
   }
@@ -82,6 +97,29 @@ UserSchema.pre("save", async function(next){
 
   next();
 });
+
+/**
+ * Checks if a string is a valid US
+ * zip code
+ *
+ * @param zip zip code
+ *
+ * @returns {boolean}
+ */
+function isValidUSZip(zip) {
+  return /^\d{5}(-\d{4})?$/.test(zip);
+}
+
+/**
+ * Checks if a string is a valid ssn
+ *
+ * @param ssn string to check
+ *
+ * @returns {boolean}
+ */
+function isValidSSN(ssn) {
+  return /^\d{3}-?\d{2}-?\d{4}$/.test(ssn);
+}
 
 UserSchema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);

@@ -5,13 +5,15 @@ let path = require("path");
 let logger = require("morgan");
 let bodyParser = require("body-parser");
 let compress = require("compression");
-let passport = require("passport");
 let mongoose = require("mongoose");
 let Fawn = require("fawn");
+
 mongoose.Promise = global.Promise = require("bluebird");
 
 let {DB_URL, PORT} = require("./config/index.js");
 let apiRouter = require("./app/api");
+let MessageServer = require("./app/api/messaging");
+
 const STATIC = path.join(__dirname, "public");
 
 mongoose.Promise = Promise;
@@ -64,6 +66,8 @@ if (app.get("env") === "development") {
 
 // start the server
 let server = app.listen(PORT);
+
+new MessageServer(server);
 
 server.on("close", async err => {
   if(err) throw err;

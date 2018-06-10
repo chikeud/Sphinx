@@ -13,6 +13,26 @@ let Users = require("../app/models/user").User;
 let moduleId = "utils/authToken";
 
 /**
+ * Validates an authentication token
+ * @type {function(*=)}
+ */
+let validateToken = exports.validateToken = async (token) => {
+
+  if(!token) return false;
+
+  try {
+    let user = await jwt.verifyAsync(token, config.SECRET);
+
+    user = await Users.findById(user._id);
+
+    return user;
+  }
+  catch(err){
+    throw err;
+  }
+};
+
+/**
  * Checks that a user has a valid token
  * i.e. is logged in
  *
@@ -30,12 +50,9 @@ exports.checkToken = async (req, res, next) => {
   if(!authToken) return fail();
 
   try {
-    let user = await jwt.verifyAsync(authToken, config.SECRET);
+    req.user = await validateToken(authToken);
 
-    user = await Users.findById(user._id);
-    if(!user) return fail();
-
-    req.user = user;
+    if(!req.user) return fail();
 
     next();
   }

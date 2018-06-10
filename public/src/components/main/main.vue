@@ -54,6 +54,7 @@
 
   #main .main-side-nav{
     flex: 1;
+    min-width: 200px;
     border-right: none;
     background-color: transparent;
   }

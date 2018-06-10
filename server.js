@@ -62,7 +62,7 @@ if (app.get("env") === "development") {
 })();
 
 // start the server
-let server = app.listen(PORT);
+let server = app.listen(PORT, "0.0.0.0");
 let messageServer = new MessageServer(server);
 
 messageServer.start();

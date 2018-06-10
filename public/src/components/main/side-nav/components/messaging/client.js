@@ -32,6 +32,8 @@ export default class MessageClient{
     let self = this;
     data[config.AUTH_TOKEN] = localStorage.getItem(config.AUTH);
 
+    console.log(data);
+
     self.socket.emit(CHAT_MSG, data, function(msg){
       self.view.messages.push(msg);
     });
@@ -42,14 +44,17 @@ export default class MessageClient{
 
     self.socket.on(CHAT_MSG, function(msg){
       self.view.messages.push(msg);
-      console.log(self.view.messages);
+
+      console.log(msg);
     });
 
-    self.socket.on(ALL_MSGS, function(messages){
-      console.log("All messages: ", messages);
+    self.socket.on(ALL_MSGS, function(data){
+      if(!self.view.messages.length){
+        self.view.user = data.user;
 
-      for(let msg of messages){
-        self.view.messages.push(msg);
+        for(let msg of data.messages){
+          self.view.messages.push(msg);
+        }
       }
     });
   }

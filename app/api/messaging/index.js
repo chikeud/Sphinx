@@ -10,6 +10,10 @@ let auth = require("../../../utils/authToken");
 let Message = require("../../models/messaging").Message;
 let User = require("../../models/user").User;
 
+const CHAT_MSG = "chat-message";
+const ALL_MSGS = "all-messages";
+const ERR = "error";
+
 class MessageServer{
 
   constructor(server){
@@ -40,8 +44,10 @@ class MessageServer{
         self._listen(socket);
 
         let messages = await getAllMessages(user);
+        delete user.password;
 
-        self.io.to(socket.socketId).emit("all-messages", messages);
+        self.io.to(socket.id).emit(ALL_MSGS, {messages, user});
+        console.log(self.connected);
       }
       catch (err){
         self._fail(err, socket);
@@ -52,39 +58,40 @@ class MessageServer{
   _listen(socket){
     let self = this;
 
-    socket.on("chat-message", async function(msg, respond){
+    socket.on(CHAT_MSG, async function(msg, respond){
       let token = msg[config.AUTH_TOKEN];
 
       try{
         let user = await auth.validateToken(token);
 
-        if(!user){
-          return self._fail(socket);
-        }
+        if(!user){return self._fail(socket);}
 
         let message = new Message();
         let recipient = await verifyUser(msg.to);
 
         if(!recipient) {
-          console.log("None");
-
           return self.fail(socket, {msg: "invalid recipient"});
         }
 
         message.from = user._id;
-        message.to = recipient._id; // make sure msg.to is valid user id
+        message.to = recipient._id;
         message.text = msg.text;
 
         message = await message.save();
-        recipient = self.connected[message.to];
+        message = await message
+          .populate({path: "to", select: ["-password"]})
+          .populate({path: "from", select: ["-password"]})
+          .execPopulate();
+
+        recipient = self.connected[message.to._id];
 
         if(recipient){
-          self.io.to(recipient.socketId).emit("chat-message", message);
+          self.io.to(recipient.socketId).emit(CHAT_MSG, message);
         }
 
-        console.log(self.connected);
-
         respond(message);
+
+        console.log("message", message);
       }
       catch (err){
         self._fail(err, socket);
@@ -95,17 +102,20 @@ class MessageServer{
   _fail(socket, err){
     err = err || {msg: config.AUTH_ERR_MSG};
 
-    this.io.to(socket.socketId).emit("error", {err: err.msg});
+    this.io.to(socket.id).emit(ERR, {err: err.msg});
   }
 }
 
 async function getAllMessages(user){
   try{
-    let messages = Message.find({
-      $or: [{from: user.id}, {to: user.id}]
-    });
+    let messages = Message
+      .find({
+        $or: [{from: user.id}, {to: user.id}]
+      })
+      .populate({path: "to", select: ["-password"]})
+      .populate({path: "from", select: ["-password"]});
 
-    return await messages.sort("-createdAt").exec();
+    return await messages.sort("createdAt").exec();
   }
   catch(err){
     throw err;

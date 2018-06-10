@@ -19,6 +19,7 @@ let fileType = require("file-type");
 
 let response = require("./response");
 let http = require("./HttpStats");
+let User = require("../app/models/user").User;
 
 Grid.mongo = mongoose.mongo;
 
@@ -51,11 +52,31 @@ async function isImage(file){
 exports.getImg = async (req, res) => {
   let conn = mongoose.connection;
   let gfs = Grid(conn.db);
-  let readStream = gfs.createReadStream({
-    _id: req.query.imgId
-  });
+  let respondErr = response.failure(res, moduleId);
+  let readStream;
 
-  readStream.pipe(res);
+  if(req.query["imgId"]){
+    readStream = gfs.createReadStream({
+      _id: req.query["imgId"]
+    });
+
+    readStream.pipe(res);
+  }
+  else if(req.query["userId"]){
+    try{
+      let user = await User.findById(req.query["userId"]);
+      let _id = user.profileImg.file._id;
+
+      readStream = gfs.createReadStream({_id});
+
+      readStream.pipe(res);
+    }
+    catch(err){
+      respondErr(http.SERVER_ERROR, err.message, err);
+    }
+  }
+
+  else respondErr(http.BAD_REQUEST, "Missing required id");
 };
 /**
  * Uploads an image to the db. Returns

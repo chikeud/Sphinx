@@ -30,6 +30,7 @@
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
+    z-index: 1;
     height: 70px;
     margin: 0;
     padding-left: 50px;
@@ -64,9 +65,9 @@
   }
 
   .nav a:hover{
-    background: #EDEFF0 !important;
+    background: #E1F5FE !important;
     box-sizing: border-box !important;
-    border-bottom: 5px solid #00B0FF;
+    border-bottom: 5px solid #03A9F4;
   }
 
   .nav .mdc-top-app-bar__section{

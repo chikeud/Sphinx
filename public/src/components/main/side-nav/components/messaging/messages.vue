@@ -22,30 +22,6 @@
               </div>
               <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
             </m-list-item>
-            <m-list-item v-for="partner in partners"
-                         :key="partner.info._id"
-                         :class="{'msg-selected': selected === partner.info._id}"
-                         @click="selected = partner.info._id">
-
-              <img onerror="this.style.opacity='0'" :src="profileImg(partner.info._id)" slot="graphic"/>
-
-              <div class="msg-select-header" slot="text">
-                {{partner.displayName}}
-              </div>
-              <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
-            </m-list-item>
-            <m-list-item v-for="partner in partners"
-                         :key="partner.info._id"
-                         :class="{'msg-selected': selected === partner.info._id}"
-                         @click="selected = partner.info._id">
-
-              <img onerror="this.style.opacity='0'" :src="profileImg(partner.info._id)" slot="graphic"/>
-
-              <div class="msg-select-header" slot="text">
-                {{partner.displayName}}
-              </div>
-              <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
-            </m-list-item>
           </m-list>
         </div>
 
@@ -323,17 +299,12 @@
   }
 
   .msg-select .msg-selected{
-    background-color: #03A9F4;
-  }
-
-  .msg-selected .msg-select-header,.msg-selected .msg-select-sub{
-    color: white !important;
+    background-color: #EDEFF0;
   }
 
   .msg-select .msg-select-header{
     font-size: 14px;
-    font-weight: bold;
-    color: #03A9F4;
+    color: #546F7A;
     line-height: 1;
   }
 
@@ -371,7 +342,6 @@
 
   .msg-reader .msg-display{
     width: 100%;
-    height: 92%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -408,6 +378,7 @@
   .msg-reader .msg-partner{
     margin-right: auto;
     background-color: #EDEFF0;
+    color: #37474F
   }
 
   .msg-reader .msg-new{
@@ -416,7 +387,6 @@
     align-items: center;
     justify-content: center;
     margin: auto 0 35px;
-    padding: 5px;
     border: 1px solid #EDEFF0;
   }
 

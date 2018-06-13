@@ -21,3 +21,10 @@ This is the first version of a web app for [Stör](http://www.storapp.io). The g
         - response.js - Wrapper functions for quick and easy responses
     - <b>config/</b> - Contains app configuration variables
         - index.js - Returns all the required configuration variables
+    - <b>app/</b> - Contains backend code
+        - <b>api/</b> - Contains api code
+            - index.js - handles requests to "/api"
+            - One folder per api (e.g. messaging/ would contain all messaging api code)
+        - <b>models/</b> - contains all model declarations
+            - one file per model (e.g. user.js cointains the user model)
+    - <b>public/</b>

@@ -5,7 +5,7 @@
         <div class="msg-card-top">
           <m-icon :style="{color : search ? storBlue : iconGrey}" icon="search"></m-icon>
           <input id="msg-search" class="in" type="text"
-                 v-model="search" placeholder="Search Messages"/>
+                 v-model="search" placeholder="Search Inbox"/>
         </div>
 
         <div class="msg-select-list">
@@ -29,11 +29,19 @@
 
       <div class="msg-reader">
         <div class="msg-card-top">
+          <div class="convo-search-bar">
+            <div class="convo-search-controls">
+              <m-icon icon="keyboard_arrow_up"></m-icon>
+              <m-icon icon="keyboard_arrow_down"></m-icon>
+            </div>
 
+            <input id="convo-search" class="in" type="text"
+                   v-model="searchConvo" placeholder="Search Messages"/>
+          </div>
         </div>
 
         <div class="msg-display">
-          <div class="msg-unit" v-for="msg in msgList" :key="msg.id">
+          <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id">
             <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
                  @click="showDates = !showDates">
                {{msg.text}}
@@ -113,6 +121,7 @@
         selected: "",
         to: "",
         search: "",
+        searchConvo: "",
         message: "",
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC",
@@ -141,20 +150,38 @@
       conversations(){
         let self = this;
         let convos = {};
+        let search = self.search ? self.search.toLowerCase() : "";
 
-        if(self.user){
-          for(let msg of self.messages){
-            let partner = msg.to._id === self.user._id ? msg.from : msg.to;
+        if (!self.user) return;
 
-            if(!convos[partner._id]){
-              convos[partner._id] = {
-                info: partner,
-                messages: [msg]
-              };
+        for(let msg of self.messages){
+          let partner = msg.to._id === self.user._id ? msg.from : msg.to;
+          let nameMatch = false;
+          let wordMatch = false;
+
+          if(search){
+            nameMatch = partner.firstName.toLowerCase().includes(search)
+              || partner.lastName.toLowerCase().includes(search);
+            wordMatch = msg.text.toLowerCase().includes(search);
+
+            if(!(nameMatch || wordMatch)){
+              continue;
             }
-            else{
-              convos[partner._id].messages.push(msg);
-            }
+          }
+
+          if(!convos[partner._id]){
+            convos[partner._id] = {
+              info: partner,
+              messages: [msg],
+              found: []
+            };
+          }
+          else{
+            convos[partner._id].messages.push(msg);
+          }
+
+          if(wordMatch){
+            convos[partner._id].found.push(msg._id);
           }
         }
 
@@ -190,7 +217,6 @@
 
         if(self.selected){
           for(let msg of self.conversations[self.selected].messages){
-            msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
             result.push(msg);
           }
         }
@@ -268,15 +294,6 @@
     color: #546F7A;
   }
 
-  .msg-card-top{
-    width: 100%;
-    height: 58px;
-    min-height: 58px;
-    display: flex;
-    justify-content: center;
-    border-bottom: 1px solid #EDEFF0;
-  }
-
   .msg-card .material-icons{
     font-size: 30px;
     color: #CFD8DC;
@@ -288,7 +305,16 @@
     transition: all 0.3s ease;
   }
 
-  .msg-select input{
+  .msg-card-top{
+    width: 100%;
+    height: 58px;
+    min-height: 58px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #EDEFF0;
+  }
+
+  .msg-card-top input{
     width: 90%;
     height: 48px;
     margin: 0;
@@ -296,8 +322,23 @@
     border: none;
   }
 
-  .msg-select input::placeholder{
+  .msg-card-top input::placeholder{
     color: #CFD8DC;
+  }
+
+  .msg-card-top .convo-search-bar{
+    width: 90%;
+    display: flex;
+  }
+
+  .msg-card-top .convo-search-controls{
+    display: flex;
+    margin-right: 10px;
+  }
+
+  .convo-search-controls .material-icons{
+    font-size: 30px;
+    margin: 0;
   }
 
   .msg-select .mdc-list{

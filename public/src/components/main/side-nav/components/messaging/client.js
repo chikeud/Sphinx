@@ -4,6 +4,8 @@
  * @since 6/7/18
  */
 
+import moment from "moment"
+
 import config from "../../../../../config";
 
 const CHAT_MSG = "chat-message";
@@ -43,6 +45,7 @@ export default class MessageClient{
     let self = this;
 
     self.socket.on(CHAT_MSG, function(msg){
+      self.setMsgTime(msg);
       self.view.messages.push(msg);
 
       console.log(msg);
@@ -53,9 +56,14 @@ export default class MessageClient{
         self.view.user = data.user;
 
         for(let msg of data.messages){
+          self.setMsgTime(msg);
           self.view.messages.push(msg);
         }
       }
     });
+  }
+
+  setMsgTime(msg){
+    msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
   }
 }

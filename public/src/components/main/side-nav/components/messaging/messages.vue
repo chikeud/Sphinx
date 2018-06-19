@@ -39,7 +39,7 @@
                {{msg.text}}
             </div>
             <div v-show="showDates"
-                 :class="[ 'msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
+                 :class="['msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
               {{msg.at}}
             </div>
           </div>

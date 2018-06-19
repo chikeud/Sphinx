@@ -22,30 +22,6 @@
               </div>
               <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
             </m-list-item>
-            <m-list-item v-for="partner in partners"
-                         :key="partner.info._id"
-                         :class="{'msg-selected': selected === partner.info._id}"
-                         @click="selected = partner.info._id">
-
-              <img onerror="this.style.opacity='0'" :src="profileImg(partner.info._id)" slot="graphic"/>
-
-              <div class="msg-select-header" slot="text">
-                {{partner.displayName}}
-              </div>
-              <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
-            </m-list-item>
-            <m-list-item v-for="partner in partners"
-                         :key="partner.info._id"
-                         :class="{'msg-selected': selected === partner.info._id}"
-                         @click="selected = partner.info._id">
-
-              <img onerror="this.style.opacity='0'" :src="profileImg(partner.info._id)" slot="graphic"/>
-
-              <div class="msg-select-header" slot="text">
-                {{partner.displayName}}
-              </div>
-              <div class="msg-select-sub" slot="secondaryText">{{partner.lastMsg}}</div>
-            </m-list-item>
           </m-list>
         </div>
 
@@ -57,12 +33,15 @@
         </div>
 
         <div class="msg-display">
-          <div class="msg-box" v-for="msg in msgList"
-               :key="msg.id">
-
-            <span :class="msg.from._id === user._id ? 'msg-self' : 'msg-partner'">
-              {{msg.text}}
-            </span>
+          <div class="msg-unit" v-for="msg in msgList" :key="msg.id">
+            <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
+                 @click="showDates = !showDates">
+               {{msg.text}}
+            </div>
+            <div v-show="showDates"
+                 :class="['msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
+              {{msg.at}}
+            </div>
           </div>
         </div>
 
@@ -82,6 +61,7 @@
 
 <script>
   import Vue from "vue";
+  import moment from "moment";
   import autoSize from "autosize";
   import Card from "material-components-vue/dist/card";
   import List from "material-components-vue/dist/list";
@@ -136,6 +116,7 @@
         message: "",
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC",
+        showDates: false
       }
     },
 
@@ -209,6 +190,7 @@
 
         if(self.selected){
           for(let msg of self.conversations[self.selected].messages){
+            msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
             result.push(msg);
           }
         }
@@ -323,17 +305,12 @@
   }
 
   .msg-select .msg-selected{
-    background-color: #03A9F4;
-  }
-
-  .msg-selected .msg-select-header,.msg-selected .msg-select-sub{
-    color: white !important;
+    background-color: #EDEFF0;
   }
 
   .msg-select .msg-select-header{
     font-size: 14px;
-    font-weight: bold;
-    color: #03A9F4;
+    color: #546F7A;
     line-height: 1;
   }
 
@@ -371,32 +348,45 @@
 
   .msg-reader .msg-display{
     width: 100%;
-    height: 92%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     margin-bottom: 15px;
   }
 
-  .msg-reader .msg-box{
+  .msg-reader .msg-unit{
     display: flex;
     align-items: center;
     align-self: center;
-    flex-direction: row;
+    flex-direction: column;
     width: 90%;
     min-height: fit-content;
     font-size: 13px;
     margin-top: 15px;
   }
 
-  .msg-reader .msg-box:first-child{
+  .msg-reader .msg-unit:first-child{
     margin-top: 0;
   }
 
-  .msg-box span{
+  .msg-unit .msg-box{
     max-width: 300px;
     padding: 15px;
     line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .msg-unit .msg-time{
+    font-size: 10px;
+    margin-top: 5px;
+  }
+
+  .msg-unit .msg-time-self{
+    margin-left: auto;
+  }
+
+  .msg-unit .msg-time-partner{
+    margin-right: auto;
   }
 
   .msg-reader .msg-self{
@@ -408,6 +398,7 @@
   .msg-reader .msg-partner{
     margin-right: auto;
     background-color: #EDEFF0;
+    color: #37474F
   }
 
   .msg-reader .msg-new{
@@ -416,7 +407,6 @@
     align-items: center;
     justify-content: center;
     margin: auto 0 35px;
-    padding: 5px;
     border: 1px solid #EDEFF0;
   }
 

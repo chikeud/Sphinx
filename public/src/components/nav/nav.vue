@@ -65,7 +65,7 @@
   }
 
   .nav a:hover{
-    background: #E1F5FE !important;
+    background: #EDEFF0 !important;
     box-sizing: border-box !important;
     border-bottom: 5px solid #03A9F4;
   }

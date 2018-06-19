@@ -33,12 +33,15 @@
         </div>
 
         <div class="msg-display">
-          <div class="msg-box" v-for="msg in msgList"
-               :key="msg.id">
-
-            <span :class="msg.from._id === user._id ? 'msg-self' : 'msg-partner'">
-              {{msg.text}}
-            </span>
+          <div class="msg-unit" v-for="msg in msgList" :key="msg.id">
+            <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
+                 @click="showDates = !showDates">
+               {{msg.text}}
+            </div>
+            <div v-show="showDates"
+                 :class="['msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
+              {{msg.at}}
+            </div>
           </div>
         </div>
 
@@ -58,6 +61,7 @@
 
 <script>
   import Vue from "vue";
+  import moment from "moment";
   import autoSize from "autosize";
   import Card from "material-components-vue/dist/card";
   import List from "material-components-vue/dist/list";
@@ -112,6 +116,7 @@
         message: "",
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC",
+        showDates: false
       }
     },
 
@@ -185,6 +190,7 @@
 
         if(self.selected){
           for(let msg of self.conversations[self.selected].messages){
+            msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
             result.push(msg);
           }
         }
@@ -348,25 +354,39 @@
     margin-bottom: 15px;
   }
 
-  .msg-reader .msg-box{
+  .msg-reader .msg-unit{
     display: flex;
     align-items: center;
     align-self: center;
-    flex-direction: row;
+    flex-direction: column;
     width: 90%;
     min-height: fit-content;
     font-size: 13px;
     margin-top: 15px;
   }
 
-  .msg-reader .msg-box:first-child{
+  .msg-reader .msg-unit:first-child{
     margin-top: 0;
   }
 
-  .msg-box span{
+  .msg-unit .msg-box{
     max-width: 300px;
     padding: 15px;
     line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .msg-unit .msg-time{
+    font-size: 10px;
+    margin-top: 5px;
+  }
+
+  .msg-unit .msg-time-self{
+    margin-left: auto;
+  }
+
+  .msg-unit .msg-time-partner{
+    margin-right: auto;
   }
 
   .msg-reader .msg-self{

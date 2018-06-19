@@ -98,7 +98,7 @@ exports.edited = {
   ssn: "123-45-6789"
 };
 
-exports.user6 = {
+exports.toEdit = {
   alias: "Weed_man",
   isRenter: false,
   isHost: true,
@@ -116,4 +116,3 @@ exports.user6 = {
   },
   ssn: "223-45-6789"
 };
-

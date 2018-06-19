@@ -75,7 +75,7 @@ module.exports = describe("Authentication Tests", () => {
   context("Settings test", () => {
     it("should edit and return a user", async () => {
         let u1 = "edited"; //user with properties to copy
-        let u2 = "user6";//user to edit
+        let u2 = "toEdit";//user to edit
 
         let keys = Object.keys(mock[u1]);
         let addressKeys = Object.keys(mock[u1].address);
@@ -83,7 +83,6 @@ module.exports = describe("Authentication Tests", () => {
         let res = await request.post("/api/u/")
             .send(mock[u2]);
         let {user, token: _token} = res.body.result;
-
 
         //edit user
         res = await request.put("/api/u")

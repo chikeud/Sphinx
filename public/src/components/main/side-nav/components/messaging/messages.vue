@@ -229,10 +229,6 @@
                 startIndex = search.lastIndex - search.source.length;
                 endIndex = search.lastIndex + openMark.length;
 
-                if(search.lastIndex === msg.foundText.length){
-                  startIndex++;
-                }
-
                 msg.foundText = msg.foundText.insert(startIndex, openMark);
                 msg.foundText = msg.foundText.insert(endIndex, closeMark);
                 search.lastIndex = endIndex + closeMark.length;

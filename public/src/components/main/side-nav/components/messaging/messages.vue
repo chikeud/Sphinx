@@ -118,6 +118,10 @@
     return preview.length < lastMsg.length ? `${preview} . . .` : preview;
   }
 
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
   export default {
     data(){
       return {
@@ -208,7 +212,7 @@
 
       msgList(){
         let self = this;
-        let search = self.searchConvo ? new RegExp(self.searchConvo.toLowerCase(), "gi") : "";
+        let search = self.searchConvo ? new RegExp(escapeRegExp(self.searchConvo), "gi") : "";
         let openMark = "<mark>";
         let closeMark = "</mark>";
         let startIndex;
@@ -312,7 +316,7 @@
   }
 
   .msg-card .material-icons{
-    font-size: 30px;
+    font-size: 25px;
     color: #CFD8DC;
     display: flex;
     flex-direction: column;

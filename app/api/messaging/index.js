@@ -50,7 +50,7 @@ class MessageServer{
         console.log(self.connected);
       }
       catch (err){
-        self._fail(err, socket);
+        self._fail(socket, err);
       }
     });
   }
@@ -94,7 +94,7 @@ class MessageServer{
         console.log("message", message);
       }
       catch (err){
-        self._fail(err, socket);
+        self._fail(socket, err);
       }
     });
   }

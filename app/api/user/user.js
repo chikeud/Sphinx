@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style,indent */
 /**
  *
  * @author Chike Udenze
@@ -53,6 +54,7 @@ exports.getUser = async (req, res) => {
 exports.createUser = async (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
+
   let user = new User();
   let props = [
     "alias",
@@ -92,6 +94,63 @@ exports.createUser = async (req, res) => {
 };
 
 /**
+ * Route handler to edit user
+ *
+ * @param req request
+ * @param res response
+ *
+ * @returns {Promise.<void>}
+ */
+exports.editUser = async (req, res) => {
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
+  let user;
+
+  try{
+    user = req.user;
+
+    let props = [
+      "password", "firstName", "lastName", "phone",
+      "isHost", "isRenter", "address"
+    ];
+
+    let uniques = [
+      "alias", "email", "ssn"
+    ];
+
+    for (let unique of uniques ) {
+      if (req.body[unique]) {
+          let query = {};
+          query[unique] = req.body[unique];
+          let exists = await User.findOne(query).exec();
+          if (!exists) {
+              user[unique] = req.body[unique];
+          }
+          else {
+              return respondErr(http.BAD_REQUEST, "Username already exists!");
+          }
+      }
+    }
+
+    for(let prop of props){
+      if(req.body[prop]){
+        user[prop] = req.body[prop];
+      }
+    }
+
+    user = await user.save();
+
+    console.log(user);
+
+    respond(http.OK, "User Edited", {user});
+  }
+  catch(err){
+    console.log(err);
+    respondErr(http.BAD_REQUEST, err.message, err);
+  }
+};
+
+/**
  * Login route handler
  *
  * @param req request
@@ -117,39 +176,6 @@ exports.login = async (req, res) => {
   }
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);
-  }
-};
-
-/**
- * Route handler to edit user
- *
- * @param req request
- * @param res response
- *
- * @returns {Promise.<void>}
- */
-exports.editUser = async (req, res) => {
-  let respond = response.success(res);
-  let respondErr = response.failure(res, moduleId);
-
-  try{
-    let user = req.user;
-    let props = [
-      "alias", "email", "password", "first_name", "last_name", "phone", "address"
-    ];
-
-    for(let prop of props){
-      if(req.body[prop]){
-        user[prop] = req.body[prop];
-      }
-    }
-
-    user = await user.save();
-
-    respond(http.OK, "User Edited", {user});
-  }
-  catch(err){
-    respondErr(http.BAD_REQUEST, err.message, err);
   }
 };
 

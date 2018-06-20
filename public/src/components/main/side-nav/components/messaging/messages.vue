@@ -3,9 +3,9 @@
     <m-card class="msg-card">
       <div class="msg-select">
         <div class="msg-card-top">
-          <m-icon :style="{color : search ? storBlue : iconGrey}" icon="search"></m-icon>
+          <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
           <input id="msg-search" class="in" type="text"
-                 v-model="search" placeholder="Search Inbox"/>
+                 v-model="searchUser" placeholder="Search Inbox"/>
         </div>
 
         <div class="msg-select-list">
@@ -44,7 +44,12 @@
           <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id">
             <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
                  @click="showDates = !showDates">
-               {{msg.text}}
+               <span v-if="msg.foundText" v-html="msg.foundText">
+                 {{msg.foundText}}
+               </span>
+               <span v-else>
+                 {{msg.text}}
+               </span>
             </div>
             <div v-show="showDates"
                  :class="['msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
@@ -120,7 +125,7 @@
         messages: [],
         selected: "",
         to: "",
-        search: "",
+        searchUser: "",
         searchConvo: "",
         message: "",
         storBlue: "#03A9F4",
@@ -149,39 +154,31 @@
     computed: {
       conversations(){
         let self = this;
-        let convos = {};
-        let search = self.search ? self.search.toLowerCase() : "";
 
         if (!self.user) return;
 
+        let search = self.searchUser ? self.searchUser.toLowerCase() : "";
+        let convos = {};
+        let nameMatch = false;
+
         for(let msg of self.messages){
           let partner = msg.to._id === self.user._id ? msg.from : msg.to;
-          let nameMatch = false;
-          let wordMatch = false;
 
           if(search){
             nameMatch = partner.firstName.toLowerCase().includes(search)
               || partner.lastName.toLowerCase().includes(search);
-            wordMatch = msg.text.toLowerCase().includes(search);
 
-            if(!(nameMatch || wordMatch)){
-              continue;
-            }
+            if(!nameMatch) continue;
           }
 
           if(!convos[partner._id]){
             convos[partner._id] = {
               info: partner,
               messages: [msg],
-              found: []
             };
           }
           else{
             convos[partner._id].messages.push(msg);
-          }
-
-          if(wordMatch){
-            convos[partner._id].found.push(msg._id);
           }
         }
 
@@ -197,8 +194,6 @@
         for(let partner of partners){
           info = self.conversations[partner].info;
 
-          console.log(info);
-
           result.push({
             info,
             displayName: `${info.firstName} ${info.lastName[0]}`,
@@ -212,11 +207,33 @@
       },
 
       msgList(){
-        let result = [];
         let self = this;
+        let search = self.searchConvo ? new RegExp(self.searchConvo.toLowerCase(), "gi") : "";
+        let openMark = "<mark>";
+        let closeMark = "</mark>";
+        let startIndex;
+        let endIndex;
+        let result = [];
+
 
         if(self.selected){
           for(let msg of self.conversations[self.selected].messages){
+            if(search){
+              msg.foundText = msg.text;
+
+              while(search.test(msg.foundText)){
+                startIndex = search.lastIndex - search.source.length;
+                endIndex = search.lastIndex + openMark.length;
+                msg.foundText = msg.foundText.insert(startIndex, openMark);
+                msg.foundText = msg.foundText.insert(endIndex, closeMark);
+                search.lastIndex = endIndex + closeMark.length;
+              }
+            }
+
+            if(!search || msg.foundText === msg.text){
+              msg.foundText = "";
+            }
+
             result.push(msg);
           }
         }

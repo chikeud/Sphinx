@@ -129,28 +129,52 @@ exports.login = async (req, res) => {
  * @returns {Promise.<void>}
  */
 exports.editUser = async (req, res) => {
-  let respond = response.success(res);
-  let respondErr = response.failure(res, moduleId);
+    let respond = response.success(res);
+    let respondErr = response.failure(res, moduleId);
+    let user;
 
-  try{
-    let user = req.user;
-    let props = [
-      "alias", "email", "password", "first_name", "last_name", "phone", "address"
-    ];
+    try{
+        user = req.user;
 
-    for(let prop of props){
-      if(req.body[prop]){
-        user[prop] = req.body[prop];
-      }
+        let props = [
+            "password", "firstName", "lastName", "phone",
+            "isHost", "isRenter", "address"
+        ];
+
+        let uniques = [
+            "alias", "email", "ssn"
+        ];
+
+        for (let unique of uniques ) {
+            if (req.body[unique]) {
+                let query = {};
+                query[unique] = req.body[unique];
+                let exists = await User.findOne(query).exec();
+                if (!exists) {
+                    user[unique] = req.body[unique];
+                }
+                else {
+                    return respondErr(http.BAD_REQUEST, "Username already exists!");
+                }
+            }
+        }
+
+        for(let prop of props){
+            if(req.body[prop]){
+                user[prop] = req.body[prop];
+            }
+        }
+
+        user = await user.save();
+
+        console.log(user);
+
+        respond(http.OK, "User Edited", {user});
     }
-
-    user = await user.save();
-
-    respond(http.OK, "User Edited", {user});
-  }
-  catch(err){
-    respondErr(http.BAD_REQUEST, err.message, err);
-  }
+    catch(err){
+        console.log(err);
+        respondErr(http.BAD_REQUEST, err.message, err);
+    }
 };
 
 /**

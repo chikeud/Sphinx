@@ -77,3 +77,40 @@ exports.user4 = {
   ssn: "121-76-8965"
 };
 
+exports.edited = {
+    alias: "Edited",
+    isRenter: false,
+    isHost: true,
+    email: "fakenews@mail.com",
+    password: "changed_password",
+    firstName: "Jonah",
+    lastName: "Whale",
+    phone: "8888888887",
+    address: {
+        street: "Edited Street",
+        city: "Edited City",
+        state: "Edited State",
+        zip: "14623",
+        houseNum: "P12"
+    },
+    ssn: "123-45-6789"
+};
+
+exports.toEdit = {
+    alias: "Weed_man",
+    isRenter: false,
+    isHost: true,
+    email: "endtimes@mail.com",
+    password: "password",
+    firstName: "False",
+    lastName: "Witness",
+    phone: "8888888888",
+    address: {
+        street: "Plug Walk NY",
+        city: "New York City",
+        state: "New York",
+        zip: "14623",
+        houseNum: "P12"
+    },
+    ssn: "223-45-6789"
+};

@@ -236,7 +236,7 @@
             }
 
             if(!search || msg.foundText === msg.text){
-              msg.foundText = "";
+              msg.foundText = false;
             }
 
             result.push(msg);

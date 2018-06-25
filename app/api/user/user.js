@@ -1,6 +1,7 @@
 /**
  *
  * @author Chike Udenze
+ * @author King David Lawrence
  * @since 4/21/18
  */
 
@@ -61,8 +62,8 @@ exports.createUser = async (req, res) => {
     "firstName",
     "lastName",
     "phone",
-    "isHost",
     "isRenter",
+    "isHost",
     "address",
     "ssn"
   ];
@@ -138,7 +139,7 @@ exports.editUser = async (req, res) => {
 
         let props = [
             "password", "firstName", "lastName", "phone",
-            "isHost", "isRenter", "address"
+            "isHost", "isRenter",  "address"
         ];
 
         let uniques = [
@@ -154,13 +155,13 @@ exports.editUser = async (req, res) => {
                     user[unique] = req.body[unique];
                 }
                 else {
-                    return respondErr(http.BAD_REQUEST, "Username already exists!");
+                    return respondErr(http.BAD_REQUEST, req.body[unique]);
                 }
             }
         }
 
         for(let prop of props){
-            if(req.body[prop]){
+            if(req.body[prop] !== null){
                 user[prop] = req.body[prop];
             }
         }

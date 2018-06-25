@@ -1,5 +1,6 @@
 /**
  * @author EmmanuelOlaojo
+ * @author King David Lawrence
  * @since 5/18/18
  */
 
@@ -72,38 +73,40 @@ module.exports = describe("Authentication Tests", () => {
   });
 
   context("Settings test", () => {
-      it("should edit and return a user", async () => {
-          let u1 = "edited"; //user with properties to copy
-          let u2 = "toEdit";//user to edit
+    it("should edit and return a user", async () => {
+      let u1 = "edited"; //user with properties to copy
+      let u2 = "toEdit";//user to edit
+      //let u3 = "exists";//user with existing (unique) properties
 
-          let keys = Object.keys(mock[u1]);
-          let addressKeys = Object.keys(mock[u1].address);
+      let keys = Object.keys(mock[u1]);
+      let addressKeys = Object.keys(mock[u1].address);
 
-          let res = await request.post("/api/u/")
-              .send(mock[u2]);
-          let {user, token: _token} = res.body.result;
+      //Create user to edit
+      let res = await request.post("/api/u/")
+          .send(mock[u2]);
+      let {user, token: _token} = res.body.result;
 
-          //edit user
-          res = await request.put("/api/u")
-              .set(config.AUTH_TOKEN, _token)
-              .send(mock[u1]);
-          user = res.body.result.user;
+      //edit the user using mock.edited properties
+      res = await request.put("/api/u")
+          .set(config.AUTH_TOKEN, _token)
+          .send(mock[u1]);
+      user = res.body.result.user;
 
-          for(let key of keys){
-              if(key === "password" || key === "ssn"){
-                  expect(bcrypt.compareSync(mock.edited[key], user[key])).to.be.true;
-              }
-              else if(key === "address"){
-                  for(let addKey of addressKeys){
-                      expect(mock.edited.address[addKey]).to.equal(user.address[addKey]);
-                  }
-              }
-              else{
-                  expect(mock.edited[key]).to.equal(user[key]);
-              }
+
+      for (let key of keys) {
+        if (key === "password") {
+          expect(bcrypt.compareSync(mock[u1][key], user[key])).to.be.true;
+        }
+        else if (key === "address") {
+          for (let addKey of addressKeys) {
+            expect(mock[u1].address[addKey]).to.equal(user.address[addKey]);
           }
-
-          expect(res).to.have.status(http.OK);
-      });
+        }
+        else {
+          expect(mock[u1][key]).to.equal(user[key]);
+        }
+      }
+      expect(res).to.have.status(http.OK);
+    });
   });
 });

@@ -19,8 +19,8 @@ let UserSchema = new Schema({
     file: {}
   },
   admin: { type: Boolean, default: false },
-  isRenter: { type: Boolean, required: REQUIRED},
   isHost: { type: Boolean, required: REQUIRED},
+  isRenter: { type: Boolean, required: REQUIRED},
   isVerified: { type: Boolean, default: false },
   email: {
     type: String,

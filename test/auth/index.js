@@ -94,7 +94,7 @@ module.exports = describe("Authentication Tests", () => {
 
 
       for (let key of keys) {
-        if (key === "password") {
+        if (key === "password" || key === "ssn") {
           expect(bcrypt.compareSync(mock[u1][key], user[key])).to.be.true;
         }
         else if (key === "address") {

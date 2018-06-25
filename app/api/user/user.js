@@ -143,25 +143,26 @@ exports.editUser = async (req, res) => {
         ];
 
         let uniques = [
-            "alias", "email", "ssn"
+            "alias", "email"
         ];
 
+        let query = {};
         for (let unique of uniques ) {
             if (req.body[unique]) {
-                let query = {};
                 query[unique] = req.body[unique];
                 let exists = await User.findOne(query).exec();
                 if (!exists) {
                     user[unique] = req.body[unique];
                 }
                 else {
-                    return respondErr(http.BAD_REQUEST, req.body[unique]);
+                    return unique === "alias" ? respondErr(http.BAD_REQUEST, "username already exists!") :
+                        respondErr(http.BAD_REQUEST, req.body[unique] + " already exists!");
                 }
             }
         }
 
         for(let prop of props){
-            if(req.body[prop] !== null){
+            if(req.body[prop] !== null && req.body[prop] !== undefined){
                 user[prop] = req.body[prop];
             }
         }

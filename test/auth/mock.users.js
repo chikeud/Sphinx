@@ -61,8 +61,8 @@ exports.user3 = {
 
 exports.edited = {
     alias: "Edited",
-    isHost: false,
-    isRenter: true,
+    isHost: true,
+    isRenter: false,
     email: "fakenews@mail.com",
     password: "changed_password",
     firstName: "Jonah",

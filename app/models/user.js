@@ -75,7 +75,7 @@ UserSchema.pre("save", async function(next){
       doc.password = await bcrypt.hash(doc.password, rounds);
     }
 
-    if(doc.isHost && doc.ssn && doc.isModified("ssn")){
+    if(doc.ssn && doc.isModified("ssn")){
       if(!isValidSSN(doc.ssn)){
         return next(new Error("Invalid SSN!"));
       }

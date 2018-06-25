@@ -555,7 +555,7 @@
   }
 
   .msg-reader mark{
-    border: 1px dashed yellow
+    border: 2px dashed yellow
   }
 
   .msg-reader .marked{

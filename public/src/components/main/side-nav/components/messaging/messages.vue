@@ -31,8 +31,15 @@
         <div class="msg-card-top">
           <div class="convo-search-bar">
             <div class="convo-search-controls">
-              <m-icon icon="keyboard_arrow_up"></m-icon>
-              <m-icon icon="keyboard_arrow_down"></m-icon>
+              <div @click="foundPrev">
+                <m-icon :style="{color : hasFoundPrev ? storBlue : iconGrey}" icon="keyboard_arrow_up"></m-icon>
+              </div>
+
+              <div @click="foundNext">
+                <m-icon :style="{color : hasFoundNext ? storBlue : iconGrey}" icon="keyboard_arrow_down"></m-icon>
+              </div>
+
+              <div>{{foundIndex}} of {{found.length}}</div>
             </div>
 
             <input id="convo-search" class="in" type="text"
@@ -127,6 +134,8 @@
       return {
         user: {},
         messages: [],
+        found: [],
+        currFound: "",
         selected: "",
         to: "",
         searchUser: "",
@@ -141,6 +150,40 @@
     methods:{
       profileImg(id){
         return `/api/images/?userId=${id}`;
+      },
+
+      markFound(){
+        let self = this;
+
+        if(!self.currFound) return;
+
+        const MARKED = "marked";
+        let $elem = $(`#${self.currFound}`);
+        let $prevELem = $(`.${MARKED}`);
+
+        $prevELem.removeClass(MARKED);
+        $elem.addClass(MARKED);
+      },
+
+      foundNext(){
+        let self = this;
+
+        if(!self.hasFoundNext) return;
+
+        // self.foundIndex: 1 based index
+        self.currFound = self.found[self.foundIndex];
+        console.log("next:", self.currFound)
+      },
+
+      foundPrev(){
+        let self = this;
+
+        console.log("prev:", self.currFound);
+
+        if(!self.hasFoundPrev) return;
+
+        // self.foundIndex: 1 based index
+        self.currFound = self.found[self.foundIndex - 2];
       },
 
       send(){
@@ -213,12 +256,15 @@
       msgList(){
         let self = this;
         let search = self.searchConvo ? new RegExp(escapeRegExp(self.searchConvo), "gi") : "";
-        let openMark = "<mark>";
+        let foundIndex = 1;
         let closeMark = "</mark>";
+        let result = [];
+        let foundId;
+        let openMark;
         let startIndex;
         let endIndex;
-        let result = [];
 
+        self.found = [];
 
         if(self.selected){
           for(let msg of self.conversations[self.selected].messages){
@@ -226,25 +272,62 @@
               msg.foundText = msg.text;
 
               while(search.test(msg.foundText)){
+                foundId = `found-msg-${foundIndex}`;
+                openMark = `<mark id=${foundId}>`;
                 startIndex = search.lastIndex - search.source.length;
                 endIndex = search.lastIndex + openMark.length;
 
                 msg.foundText = msg.foundText.insert(startIndex, openMark);
                 msg.foundText = msg.foundText.insert(endIndex, closeMark);
                 search.lastIndex = endIndex + closeMark.length;
+                self.found.push(foundId);
+                foundIndex++;
               }
             }
 
             if(!search || msg.foundText === msg.text){
               msg.foundText = false;
+              self.currFound = "";
             }
 
             result.push(msg);
           }
+
+          if(self.found.length){
+            self.currFound = self.found[self.found.length - 1];
+          }
         }
 
         return result;
+      },
+
+      foundIndex(){
+        let self = this;
+
+        if(!self.currFound) return 0;
+
+        let split = self.currFound.split("-");
+
+        return parseInt(split[split.length - 1]);
+      },
+
+      hasFoundNext(){
+        let self = this;
+
+        return self.foundIndex && self.foundIndex < self.found.length;
+      },
+
+      hasFoundPrev(){
+        let self = this;
+
+        return self.foundIndex > 1;
       }
+    },
+
+    updated(){
+      let self = this;
+
+      self.$nextTick(self.markFound);
     },
 
     mounted(){
@@ -265,7 +348,6 @@
 
         $msgInput.off("click.autoSize");
       });
-
     }
   }
 </script>
@@ -337,7 +419,7 @@
   }
 
   .msg-card-top input{
-    width: 90%;
+    width: 82%;
     height: 48px;
     margin: 0;
     padding-top: 5px;
@@ -351,16 +433,24 @@
   .msg-card-top .convo-search-bar{
     width: 90%;
     display: flex;
+    justify-content: space-between;
   }
 
   .msg-card-top .convo-search-controls{
     display: flex;
-    margin-right: 10px;
+    justify-content: space-between;
+    align-items: center;
+    width: 15%;
+    color: #CFD8DC;
   }
 
   .convo-search-controls .material-icons{
     font-size: 30px;
     margin: 0;
+  }
+
+  .convo-search-controls div{
+    display: flex;
   }
 
   .msg-select .mdc-list{
@@ -462,6 +552,14 @@
     margin-right: auto;
     background-color: #EDEFF0;
     color: #37474F
+  }
+
+  .msg-reader mark{
+    border: 1px dashed yellow
+  }
+
+  .msg-reader .marked{
+    border-color: black;
   }
 
   .msg-reader .msg-new{

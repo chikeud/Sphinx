@@ -90,8 +90,6 @@ class MessageServer{
         }
 
         respond(message);
-
-        console.log("message", message);
       }
       catch (err){
         self._fail(socket, err);
@@ -102,7 +100,7 @@ class MessageServer{
   _fail(socket, err){
     err = err || {msg: config.AUTH_ERR_MSG};
 
-    this.io.to(socket.id).emit(ERR, {err: err.msg});
+    this.io.to(socket.id).emit(ERR, {err: err.message});
   }
 }
 
@@ -123,7 +121,12 @@ async function getAllMessages(user){
 }
 
 async function verifyUser(id){
-  return await User.findById(id).exec();
+  try{
+    return await User.findById(id).exec();
+  }
+  catch(err){
+    return await User.findOne({alias: id});
+  }
 }
 
 module.exports = MessageServer;

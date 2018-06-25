@@ -4,6 +4,8 @@
  * @since 6/7/18
  */
 
+import moment from "moment"
+
 import config from "../../../../../config";
 
 const CHAT_MSG = "chat-message";
@@ -32,10 +34,8 @@ export default class MessageClient{
     let self = this;
     data[config.AUTH_TOKEN] = localStorage.getItem(config.AUTH);
 
-    console.log(data);
-
     self.socket.emit(CHAT_MSG, data, function(msg){
-      self.view.messages.push(msg);
+      self.addMsg(msg);
     });
   }
 
@@ -43,9 +43,7 @@ export default class MessageClient{
     let self = this;
 
     self.socket.on(CHAT_MSG, function(msg){
-      self.view.messages.push(msg);
-
-      console.log(msg);
+      self.addMsg(msg);
     });
 
     self.socket.on(ALL_MSGS, function(data){
@@ -53,9 +51,14 @@ export default class MessageClient{
         self.view.user = data.user;
 
         for(let msg of data.messages){
-          self.view.messages.push(msg);
+          self.addMsg(msg);
         }
       }
     });
+  }
+
+  addMsg(msg){
+    msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
+    this.view.messages.push(msg);
   }
 }

@@ -139,7 +139,7 @@ exports.editUser = async (req, res) => {
 
         let props = [
             "password", "firstName", "lastName", "phone",
-            "isHost", "isRenter",  "address"
+            "isHost", "isRenter",  "address", "ssn"
         ];
 
         let uniques = [

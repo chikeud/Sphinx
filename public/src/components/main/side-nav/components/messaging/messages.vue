@@ -136,6 +136,7 @@
         messages: [],
         found: [],
         currFound: "",
+        foundTop: 0,
         selected: "",
         to: "",
         searchUser: "",
@@ -160,9 +161,15 @@
         const MARKED = "marked";
         let $elem = $(`#${self.currFound}`);
         let $prevELem = $(`.${MARKED}`);
+        let $msgDisplay = $(".msg-display");
+        let offsetTop = $elem.position().top;
 
         $prevELem.removeClass(MARKED);
         $elem.addClass(MARKED);
+
+        if(offsetTop > $msgDisplay.height() || offsetTop < 0){
+          $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, 100);
+        }
       },
 
       foundNext(){
@@ -172,13 +179,10 @@
 
         // self.foundIndex: 1 based index
         self.currFound = self.found[self.foundIndex];
-        console.log("next:", self.currFound)
       },
 
       foundPrev(){
         let self = this;
-
-        console.log("prev:", self.currFound);
 
         if(!self.hasFoundPrev) return;
 
@@ -441,6 +445,9 @@
     justify-content: space-between;
     align-items: center;
     width: 15%;
+    min-width: 110px;
+    max-width: 150px;
+    margin-right: 15px;
     color: #CFD8DC;
   }
 
@@ -500,6 +507,7 @@
   }
 
   .msg-reader .msg-display{
+    position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;

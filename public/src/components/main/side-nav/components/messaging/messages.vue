@@ -67,8 +67,7 @@
 
         <div class="msg-new">
           <input v-model="to" placeholder="to?"/>
-          <textarea id="msg-text" rows="1" class="in"
-                    v-model="message" placeholder="Enter Message"></textarea>
+          <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
 
           <div @click="send">
             <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
@@ -81,8 +80,6 @@
 
 <script>
   import Vue from "vue";
-  import moment from "moment";
-  import autoSize from "autosize";
   import Card from "material-components-vue/dist/card";
   import List from "material-components-vue/dist/list";
   import TextField from "material-components-vue/dist/textfield";
@@ -192,6 +189,8 @@
 
       send(){
         let self = this;
+        let $msgDisplay = $("#msg-display");
+        const TIME = 100;
 
         if(!(self.message && self.to)) return;
 
@@ -199,6 +198,8 @@
 
         messageClient.send(data);
         self.message = "";
+
+        $msgDisplay.animate({scrollTop: $msgDisplay[0].scrollHeight}, TIME);
       }
     },
 
@@ -337,7 +338,8 @@
     mounted(){
       let self = this;
       let $window = $(window);
-      let $msgInput = $(".msg-new textarea");
+      let $msgText = $("#msg-text");
+      const ENTER_KEY = 13;
 
       messageClient = new MessageClient(self);
 
@@ -347,10 +349,11 @@
         resize($window);
       });
 
-      $msgInput.on("click.autoSize", () => {
-        autoSize($(".msg-new textarea"));
-
-        $msgInput.off("click.autoSize");
+      $msgText.keypress(e => {
+        if(e.which === ENTER_KEY){
+          console.log("yo!");
+          self.send();
+        }
       });
     }
   }
@@ -572,6 +575,7 @@
 
   .msg-reader .msg-new{
     width: 90%;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -579,15 +583,15 @@
     border: 1px solid #EDEFF0;
   }
 
-  .msg-new textarea{
+  .msg-new #msg-text{
     width: 90%;
-    max-height: 120px;
     padding: 10px;
     border: none;
-    resize: none;
+    font-size: 14px;
+    color: #37474F;
   }
 
-  .msg-new textarea::placeholder{
+  .msg-new #msg-text::placeholder{
     color: #CFD8DC;
   }
 

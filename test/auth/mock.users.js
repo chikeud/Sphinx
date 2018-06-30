@@ -60,58 +60,58 @@ exports.user3 = {
 };
 
 exports.edited = {
-    alias: "Edited",
-    isHost: true,
-    isRenter: false,
-    email: "fakenews@mail.com",
-    password: "changed_password",
-    firstName: "Jonah",
-    lastName: "Whale",
-    phone: "8888888887",
-    address: {
-        street: "Edited Street",
-        city: "Edited City",
-        state: "Edited State",
-        zip: "14623",
-        houseNum: "P12"
-    },
-    ssn: "123-45-6789"
+  alias: "Edited",
+  isHost: false,
+  isRenter: true,
+  email: "fakenews@mail.com",
+  password: "changed_password",
+  firstName: "Jonah",
+  lastName: "Whale",
+  phone: "8888888887",
+  address: {
+    street: "Edited Street",
+    city: "Edited City",
+    state: "Edited State",
+    zip: "14623",
+    houseNum: "P12"
+  },
+  ssn: "123-45-6789"
 };
 
 exports.toEdit = {
-    alias: "Weed_man",
-    isHost: false,
-    isRenter: true,
-    email: "endtimes@mail.com",
-    password: "password",
-    firstName: "False",
-    lastName: "Witness",
-    phone: "8888888888",
-    address: {
-        street: "Plug Walk NY",
-        city: "New York City",
-        state: "New York",
-        zip: "14623",
-        houseNum: "419"
-    },
-    ssn: "223-45-6789"
+  alias: "Weed_man",
+  isHost: true,
+  isRenter: false,
+  email: "endtimes@mail.com",
+  password: "password",
+  firstName: "False",
+  lastName: "Witness",
+  phone: "8888888888",
+  address: {
+    street: "Plug Walk NY",
+    city: "New York City",
+    state: "New York",
+    zip: "14623",
+    houseNum: "419"
+  },
+  ssn: "223-45-6789"
 };
 
 exports.exists = {
-    alias: "Edited1",//unique
-    isHost: true,
-    isRenter: false,
-    email: "fakenews@mail.com2",//unique
-    password: "changed_password",
-    firstName: "Jonah",
-    lastName: "Whale",
-    phone: "8888888887",
-    address: {
-        street: "Edited Street",
-        city: "Edited City",
-        state: "Edited State",
-        zip: "14623",
-        houseNum: "P12"
-    },
-    ssn: "123-45-6788"//unique
+  alias: "Edited1",//unique
+  isHost: true,
+  isRenter: false,
+  email: "fakenews@mail.com2",//unique
+  password: "changed_password",
+  firstName: "Jonah",
+  lastName: "Whale",
+  phone: "8888888887",
+  address: {
+    street: "Edited Street",
+    city: "Edited City",
+    state: "Edited State",
+    zip: "14623",
+    houseNum: "P12"
+  },
+  ssn: "123-45-6788"//unique
 };

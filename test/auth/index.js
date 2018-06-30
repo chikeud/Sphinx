@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * @author EmmanuelOlaojo
  * @author King David Lawrence
@@ -83,13 +84,13 @@ module.exports = describe("Authentication Tests", () => {
 
       //Create user to edit
       let res = await request.post("/api/u/")
-          .send(mock[u2]);
+        .send(mock[u2]);
       let {user, token: _token} = res.body.result;
 
       //edit the user using mock.edited properties
       res = await request.put("/api/u")
-          .set(config.AUTH_TOKEN, _token)
-          .send(mock[u1]);
+        .set(config.AUTH_TOKEN, _token)
+        .send(mock[u1]);
       user = res.body.result.user;
 
 

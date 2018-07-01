@@ -19,8 +19,8 @@ let UserSchema = new Schema({
     file: {}
   },
   admin: { type: Boolean, default: false },
-  isRenter: { type: Boolean, required: REQUIRED},
   isHost: { type: Boolean, required: REQUIRED},
+  isRenter: { type: Boolean, required: REQUIRED},
   isVerified: { type: Boolean, default: false },
   email: {
     type: String,
@@ -75,7 +75,7 @@ UserSchema.pre("save", async function(next){
       doc.password = await bcrypt.hash(doc.password, rounds);
     }
 
-    if(doc.isHost && doc.ssn && doc.isModified("ssn")){
+    if(doc.ssn && doc.isModified("ssn")){
       if(!isValidSSN(doc.ssn)){
         return next(new Error("Invalid SSN!"));
       }

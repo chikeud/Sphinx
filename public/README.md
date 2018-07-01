@@ -1,6 +1,4 @@
-# public
-
-> A Vue.js project
+# Sphinx Frontend
 
 ## Build Setup
 
@@ -8,11 +6,11 @@
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
-npm run dev
+# build for dev
+npm run frontend
 
-# build for production with minification
+# build for production with minification (not yet setup)
 npm run build
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+

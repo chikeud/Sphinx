@@ -27,4 +27,4 @@ This is the first version of a web app for [Stör](http://www.storapp.io). The g
             - One folder per api (e.g. messaging/ would contain all messaging api code)
         - <b>models/</b> - contains all model declarations
             - one file per model (e.g. user.js cointains the user model)
-    - <b>public/</b>
+    - [<b>public/</b>](https://github.com/e-oj/Sphinx/tree/master/public)

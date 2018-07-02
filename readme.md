@@ -4,6 +4,8 @@
 
 This is the first version of a web app for [Stör](http://www.storapp.io). The goal of this project is to buid an application that's fast, reliable and easy to use; we aim to turn the cumbersome process of storage, into a calm and pleasant experience. Through this process, we hope to annihilate the [competition](https://www.storewithneighbor.com) and make them look stupid.
 
+## Beware!
+> If you don't read this documentation that I've put my blood, sweat, and tears into and you come and start asking me any stupid questions, I will lose my precious marbles.
 
 ## Structure
 

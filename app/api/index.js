@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /**
  * @author EmmanuelOlaojo
  * @since 10/20/17

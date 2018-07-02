@@ -1,12 +1,13 @@
 /**
  * @author EmmanuelOlaojo
+ * @author King David Lawrence
  * @since 5/18/18
  */
 
 exports.user1 = {
   alias: "e-oj",
-  isRenter: true,
   isHost: false,
+  isRenter: true,
   email: "e-oj@fakemail.com",
   password: "password",
   firstName: "Emmanuel",
@@ -23,8 +24,8 @@ exports.user1 = {
 
 exports.user2 = {
   alias: "bezinsky",
-  isRenter: true,
   isHost: false,
+  isRenter: true,
   email: "bezinsky@fakemail.com",
   password: "password",
   firstName: "Jeff",
@@ -41,8 +42,8 @@ exports.user2 = {
 
 exports.user3 = {
   alias: "Chinky",
-  isRenter: false,
   isHost: true,
+  isRenter: false,
   email: "chink@fakemail.com",
   password: "password",
   firstName: "Chin",
@@ -58,22 +59,59 @@ exports.user3 = {
   ssn: "131-76-8965"
 };
 
-exports.user4 = {
-  alias: "Trump",
-  isRenter: false,
-  isHost: true,
-  email: "trump@fakemail.com",
-  password: "password",
-  firstName: "Donald",
-  lastName: "Trump",
-  phone: "888-888-8888",
+exports.edited = {
+  alias: "Edited",
+  isHost: false,
+  isRenter: true,
+  email: "fakenews@mail.com",
+  password: "changed_password",
+  firstName: "Jonah",
+  lastName: "Whale",
+  phone: "8888888887",
   address: {
-    street: "Pennsylvania Ave NW",
-    city: "Washington D.C.",
-    state: "Washington D.C.",
-    zip: "20500",
-    houseNum: "1600"
+    street: "Edited Street",
+    city: "Edited City",
+    state: "Edited State",
+    zip: "14623",
+    houseNum: "P12"
   },
-  ssn: "121-76-8965"
+  ssn: "123-45-6789"
 };
 
+exports.toEdit = {
+  alias: "Weed_man",
+  isHost: true,
+  isRenter: false,
+  email: "endtimes@mail.com",
+  password: "password",
+  firstName: "False",
+  lastName: "Witness",
+  phone: "8888888888",
+  address: {
+    street: "Plug Walk NY",
+    city: "New York City",
+    state: "New York",
+    zip: "14623",
+    houseNum: "419"
+  },
+  ssn: "223-45-6789"
+};
+
+exports.exists = {
+  alias: "Edited1",//unique
+  isHost: true,
+  isRenter: false,
+  email: "fakenews@mail.com2",//unique
+  password: "changed_password",
+  firstName: "Jonah",
+  lastName: "Whale",
+  phone: "8888888887",
+  address: {
+    street: "Edited Street",
+    city: "Edited City",
+    state: "Edited State",
+    zip: "14623",
+    houseNum: "P12"
+  },
+  ssn: "123-45-6788"//unique
+};

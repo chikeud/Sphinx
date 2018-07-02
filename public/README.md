@@ -31,6 +31,8 @@ npm run frontend
     <br><br>
     - <b>/components</b>
       - <b>/nav</b> - Contains files related to the navigation component
-       - nav.vue - Navigation component
+        - nav.vue - Navigation component
       - <b>/main</b> - Contains components that are accessed from the nav (directly or indirectly)
-    
+        - Single file components are in files, components with multiple files are in folders
+    <br><br>
+    - <b>/assets</b> - Contains static files used in the view. Mostly images

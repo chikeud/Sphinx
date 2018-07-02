@@ -1,6 +1,7 @@
 /**
  *
  * @author Chike Udenze
+ * @author King David Lawrence
  * @since 4/21/18
  */
 
@@ -61,8 +62,8 @@ exports.createUser = async (req, res) => {
     "firstName",
     "lastName",
     "phone",
-    "isHost",
     "isRenter",
+    "isHost",
     "address",
     "ssn"
   ];
@@ -131,24 +132,49 @@ exports.login = async (req, res) => {
 exports.editUser = async (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
+  let user;
 
   try{
-    let user = req.user;
+    user = req.user;
+
     let props = [
-      "alias", "email", "password", "first_name", "last_name", "phone", "address"
+      "password", "firstName", "lastName", "phone",
+      "isHost", "isRenter",  "address", "ssn"
     ];
 
+    let uniques = [
+      "alias", "email"
+    ];
+
+    let query = {};
+    for (let unique of uniques ) {
+      if (req.body[unique]) {
+        query[unique] = req.body[unique];
+        let exists = await User.findOne(query).exec();
+        if (!exists) {
+          user[unique] = req.body[unique];
+        }
+        else {
+          return unique === "alias" ? respondErr(http.BAD_REQUEST, "username already exists!") :
+            respondErr(http.BAD_REQUEST, req.body[unique] + " already exists!");
+        }
+      }
+    }
+
     for(let prop of props){
-      if(req.body[prop]){
+      if(req.body[prop] !== null && req.body[prop] !== undefined){
         user[prop] = req.body[prop];
       }
     }
 
     user = await user.save();
 
+    console.log(user);
+
     respond(http.OK, "User Edited", {user});
   }
   catch(err){
+    console.log(err);
     respondErr(http.BAD_REQUEST, err.message, err);
   }
 };

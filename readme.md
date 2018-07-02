@@ -4,6 +4,7 @@
 
 This is the first version of a web app for [Stör](http://www.storapp.io). The goal of this project is to buid an application that's fast, reliable and easy to use; we aim to turn the cumbersome process of storage, into a calm and pleasant experience. Through this process, we hope to annihilate the [competition](https://www.storewithneighbor.com) and make them look stupid.
 
+
 ## Structure
 
 - <b>/</b> (Root)
@@ -32,4 +33,9 @@ This is the first version of a web app for [Stör](http://www.storapp.io). The g
         - <b>models/</b> - contains all model declarations
             - one file per model (e.g. user.js cointains the user model)
     <br><br>
-    - [<b>public</b>](https://github.com/e-oj/Sphinx/tree/master/public)
+    - [<b>public/</b>](https://github.com/e-oj/Sphinx/tree/master/public)
+    
+    
+## Common Errors
+
+To avoid errors when installing bcrypt, Mac users should make sure they have Xcode installed on the system. If this precaution is not taken, you will be faced with Dragons.

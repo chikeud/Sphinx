@@ -7,6 +7,25 @@ This is the first version of a web app for [Stör](http://www.storapp.io). The g
 ## Beware!
 > If you don't read this documentation that I've put my blood, sweat, and tears into and you come and start asking me any stupid questions, I will lose my precious marbles.
 
+## Backend Setup
+
+``` bash
+# install dependencies
+npm install
+
+# run test server (for any tests)
+npm run test-server
+
+# run main server
+npm start
+
+# run automated tests
+npm run test
+
+# kill server
+ctrl+c
+```
+
 ## Structure
 
 - <b>/</b> (Root)

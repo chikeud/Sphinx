@@ -3,7 +3,9 @@
     <m-card class="msg-card">
       <div class="msg-select">
         <div class="msg-card-top">
-          <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
+          <button>
+            <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
+          </button>
           <input id="msg-search" class="in" type="text"
                  v-model="searchUser" placeholder="Search Inbox"/>
         </div>
@@ -29,15 +31,15 @@
 
       <div class="msg-reader">
         <div class="msg-card-top">
-          <div class="convo-search-bar">
+          <div class="convo-search-bar" v-show="showSearchBar">
             <div class="convo-search-controls">
-              <div @click="foundPrev">
+              <button @click="foundPrev">
                 <m-icon :style="{color : hasFoundPrev ? storBlue : iconGrey}" icon="keyboard_arrow_up"></m-icon>
-              </div>
+              </button>
 
-              <div @click="foundNext">
+              <button @click="foundNext">
                 <m-icon :style="{color : hasFoundNext ? storBlue : iconGrey}" icon="keyboard_arrow_down"></m-icon>
-              </div>
+              </button>
 
               <div>{{foundIndex}} of {{found.length}}</div>
             </div>
@@ -45,6 +47,18 @@
             <input id="convo-search" class="in" type="text"
                    v-model="searchConvo" placeholder="Search Messages"/>
           </div>
+
+          <m-menu-anchor class="msg-reader-menu">
+            <button @click="openMenu = !openMenu">
+              <m-icon icon="more_vert"></m-icon>
+            </button>
+            <m-menu v-model="openMenu">
+              <m-list>
+                <m-list-item v-if="showSearchBar" @click="toggleSearchBar">End Search</m-list-item>
+                <m-list-item v-else @click="toggleSearchBar">Search Messages</m-list-item>
+              </m-list>
+            </m-menu>
+          </m-menu-anchor>
         </div>
 
         <div class="msg-display">
@@ -69,9 +83,9 @@
           <input v-model="to" placeholder="to?"/>
           <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
 
-          <div @click="send">
+          <button @click="send">
             <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
-          </div>
+          </button>
         </div>
       </div>
     </m-card>
@@ -81,24 +95,23 @@
 <script>
   import Vue from "vue";
   import Card from "material-components-vue/dist/card";
+  import Menu from "material-components-vue/dist/menu";
   import List from "material-components-vue/dist/list";
-  import TextField from "material-components-vue/dist/textfield";
   import NotchedOutline from "material-components-vue/dist/notched-outline";
-  import FloatingLabel from "material-components-vue/dist/floating-label";
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
 
   import MessageClient from "./client";
 
   Vue.use(Card);
+  Vue.use(Menu);
   Vue.use(List);
-  Vue.use(TextField);
   Vue.use(NotchedOutline);
-  Vue.use(FloatingLabel);
   Vue.use(Elevation);
   Vue.use(Icon);
 
   let messageClient;
+  const SCROLL_TIME = 100;
 
   function resize($window){
     let classes = [".msg-card", ".msg-select", ".msg-reader"];
@@ -129,6 +142,8 @@
   export default {
     data(){
       return {
+        openMenu: false,
+        showSearchBar: false,
         user: {},
         messages: [],
         found: [],
@@ -150,6 +165,16 @@
         return `/api/images/?userId=${id}`;
       },
 
+      toggleSearchBar(){
+        let self = this;
+
+        if(self.showSearchBar){
+          self.searchConvo = "";
+        }
+
+        self.showSearchBar = !self.showSearchBar;
+      },
+
       markFound(){
         let self = this;
 
@@ -165,7 +190,7 @@
         $elem.addClass(MARKED);
 
         if(offsetTop > $msgDisplay.height() || offsetTop < 0){
-          $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, 100);
+          $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, SCROLL_TIME);
         }
       },
 
@@ -189,8 +214,6 @@
 
       send(){
         let self = this;
-        let $msgDisplay = $("#msg-display");
-        const TIME = 100;
 
         if(!(self.message && self.to)) return;
 
@@ -198,8 +221,6 @@
 
         messageClient.send(data);
         self.message = "";
-
-        $msgDisplay.animate({scrollTop: $msgDisplay[0].scrollHeight}, TIME);
       }
     },
 
@@ -260,10 +281,11 @@
 
       msgList(){
         let self = this;
+        let $msgDisplay = $(".msg-display");
         let search = self.searchConvo ? new RegExp(escapeRegExp(self.searchConvo), "gi") : "";
-        let foundIndex = 1;
-        let closeMark = "</mark>";
         let result = [];
+        let foundIndex = 1;
+        const closeMark = "</mark>";
         let foundId;
         let openMark;
         let startIndex;
@@ -302,6 +324,10 @@
             self.currFound = self.found[self.found.length - 1];
           }
         }
+
+        self.$nextTick(() => {
+          $msgDisplay.animate({scrollTop: $msgDisplay.prop("scrollHeight")}, SCROLL_TIME);
+        });
 
         return result;
       },
@@ -361,10 +387,9 @@
 
 <style lang="scss">
   @import "../../../../../../node_modules/material-components-vue/dist/card/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/menu/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/list/styles";
-  @import "../../../../../../node_modules/material-components-vue/dist/textfield/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
-  @import "../../../../../../node_modules/material-components-vue/dist/floating-label/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/elevation/styles";
 
   #messages{
@@ -382,6 +407,17 @@
     display: flex;
   }
 
+  .msg-card button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
   .msg-card .msg-select{
     border-right: 1px solid #EDEFF0;
     flex: 1 1 482px;
@@ -394,6 +430,22 @@
 
   .msg-card .msg-reader{
     flex: 1.5 1.5 1450px;
+  }
+
+  .msg-reader .msg-reader-menu{
+    display: flex;
+    margin-left: auto;
+  }
+
+  .msg-reader-menu .material-icons{
+    color: #03A9F4 !important;
+    margin: 0 !important;
+  }
+
+  .msg-reader-menu .mdc-list-item{
+    font-size: 13px;
+    color: #546F7A;
+    height: 35px;
   }
 
   .msg-card .in:focus{
@@ -417,7 +469,7 @@
   }
 
   .msg-card-top{
-    width: 100%;
+    margin: 0 auto;
     height: 58px;
     min-height: 58px;
     display: flex;
@@ -426,7 +478,7 @@
   }
 
   .msg-card-top input{
-    width: 82%;
+    flex: 1;
     height: 48px;
     margin: 0;
     padding-top: 5px;
@@ -438,18 +490,16 @@
   }
 
   .msg-card-top .convo-search-bar{
-    width: 90%;
     display: flex;
     justify-content: space-between;
+    flex: 1;
   }
 
   .msg-card-top .convo-search-controls{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 15%;
-    min-width: 110px;
-    max-width: 150px;
+    flex-shrink: 0;
     margin-right: 15px;
     color: #CFD8DC;
   }
@@ -460,7 +510,7 @@
   }
 
   .convo-search-controls div{
-    display: flex;
+    margin-left: 5px;
   }
 
   .msg-select .mdc-list{
@@ -507,6 +557,7 @@
 
   .msg-reader .msg-card-top{
     border-bottom: none;
+    width: 96%;
   }
 
   .msg-reader .msg-display{

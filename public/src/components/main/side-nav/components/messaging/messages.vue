@@ -189,7 +189,8 @@
         $prevELem.removeClass(MARKED);
         $elem.addClass(MARKED);
 
-        if(offsetTop > $msgDisplay.height() || offsetTop < 0){
+        if(offsetTop > $msgDisplay.height() || offsetTop < -1){
+          console.log("offset", offsetTop);
           $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, SCROLL_TIME);
         }
       },
@@ -281,6 +282,9 @@
 
       msgList(){
         let self = this;
+
+        if(!self.selected) return;
+
         let $msgDisplay = $(".msg-display");
         let search = self.searchConvo ? new RegExp(escapeRegExp(self.searchConvo), "gi") : "";
         let result = [];
@@ -293,41 +297,40 @@
 
         self.found = [];
 
-        if(self.selected){
-          for(let msg of self.conversations[self.selected].messages){
-            if(search){
-              msg.foundText = msg.text;
+        for(let msg of self.conversations[self.selected].messages){
+          if(search){
+            msg.foundText = msg.text;
 
-              while(search.test(msg.foundText)){
-                foundId = `found-msg-${foundIndex}`;
-                openMark = `<mark id=${foundId}>`;
-                startIndex = search.lastIndex - search.source.length;
-                endIndex = search.lastIndex + openMark.length;
+            while(search.test(msg.foundText)){
+              foundId = `found-msg-${foundIndex}`;
+              openMark = `<mark id=${foundId}>`;
+              startIndex = search.lastIndex - search.source.length;
+              endIndex = search.lastIndex + openMark.length;
 
-                msg.foundText = msg.foundText.insert(startIndex, openMark);
-                msg.foundText = msg.foundText.insert(endIndex, closeMark);
-                search.lastIndex = endIndex + closeMark.length;
-                self.found.push(foundId);
-                foundIndex++;
-              }
+              msg.foundText = msg.foundText.insert(startIndex, openMark);
+              msg.foundText = msg.foundText.insert(endIndex, closeMark);
+              search.lastIndex = endIndex + closeMark.length;
+              self.found.push(foundId);
+              foundIndex++;
             }
-
-            if(!search || msg.foundText === msg.text){
-              msg.foundText = false;
-              self.currFound = "";
-            }
-
-            result.push(msg);
           }
 
-          if(self.found.length){
-            self.currFound = self.found[self.found.length - 1];
+          if(!search || msg.foundText === msg.text){
+            msg.foundText = false;
+            self.currFound = "";
           }
+
+          result.push(msg);
         }
 
-        self.$nextTick(() => {
-          $msgDisplay.animate({scrollTop: $msgDisplay.prop("scrollHeight")}, SCROLL_TIME);
-        });
+        if(self.found.length){
+          self.currFound = self.found[self.found.length - 1];
+        }
+        else{
+          self.$nextTick(() => {
+            $msgDisplay.animate({scrollTop: $msgDisplay.prop("scrollHeight")}, SCROLL_TIME);
+          });
+        }
 
         return result;
       },
@@ -440,12 +443,22 @@
   .msg-reader-menu .material-icons{
     color: #03A9F4 !important;
     margin: 0 !important;
+    position: relative;
+    left: 10px;
+  }
+
+  .msg-reader-menu .mdc-menu {
+    margin-top: 6px;
+  }
+
+  .msg-reader-menu .mdc-list {
+    padding: 5px 0;
   }
 
   .msg-reader-menu .mdc-list-item{
     font-size: 13px;
     color: #546F7A;
-    height: 35px;
+    height: 30px;
   }
 
   .msg-card .in:focus{
@@ -507,10 +520,8 @@
   .convo-search-controls .material-icons{
     font-size: 30px;
     margin: 0;
-  }
-
-  .convo-search-controls div{
-    margin-left: 5px;
+    position: relative;
+    right: 8px;
   }
 
   .msg-select .mdc-list{
@@ -557,7 +568,7 @@
 
   .msg-reader .msg-card-top{
     border-bottom: none;
-    width: 96%;
+    width: 90%;
   }
 
   .msg-reader .msg-display{

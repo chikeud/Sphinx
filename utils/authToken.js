@@ -3,6 +3,7 @@
  * @since 1/3/17
  */
 
+let Promise = require("bluebird");
 let jwt = Promise.promisifyAll(require("jsonwebtoken"));
 
 let config = require("../config");
@@ -84,3 +85,11 @@ exports.createToken = async (user) => {
 
   return await jwt.signAsync({_id, alias}, config.SECRET, {expiresIn: "168h"});
 };
+
+(async () => {
+  let t1 = await exports.createToken({_id: "5b2fc4f33141e90307ed83ec", alias: "dtiggy"});
+  let t2 = await exports.createToken({_id: "5b2fc55f3141e90307ed83f1", alias: "e-oj"});
+
+  console.log("dtiggy", t1, "\n");
+  console.log("e-oj", t2);
+})();

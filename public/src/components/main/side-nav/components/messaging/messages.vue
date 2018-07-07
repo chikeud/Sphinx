@@ -3,7 +3,9 @@
     <m-card class="msg-card">
       <div class="msg-select">
         <div class="msg-card-top">
-          <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
+          <button>
+            <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
+          </button>
           <input id="msg-search" class="in" type="text"
                  v-model="searchUser" placeholder="Search Inbox"/>
         </div>
@@ -29,15 +31,15 @@
 
       <div class="msg-reader">
         <div class="msg-card-top">
-          <div class="convo-search-bar">
+          <div class="convo-search-bar" v-show="showSearchBar">
             <div class="convo-search-controls">
-              <div @click="foundPrev">
+              <button @click="foundPrev">
                 <m-icon :style="{color : hasFoundPrev ? storBlue : iconGrey}" icon="keyboard_arrow_up"></m-icon>
-              </div>
+              </button>
 
-              <div @click="foundNext">
+              <button @click="foundNext">
                 <m-icon :style="{color : hasFoundNext ? storBlue : iconGrey}" icon="keyboard_arrow_down"></m-icon>
-              </div>
+              </button>
 
               <div>{{foundIndex}} of {{found.length}}</div>
             </div>
@@ -45,6 +47,18 @@
             <input id="convo-search" class="in" type="text"
                    v-model="searchConvo" placeholder="Search Messages"/>
           </div>
+
+          <m-menu-anchor class="msg-reader-menu">
+            <button @click="openMenu = !openMenu">
+              <m-icon icon="more_vert"></m-icon>
+            </button>
+            <m-menu v-model="openMenu">
+              <m-list>
+                <m-list-item v-if="showSearchBar" @click="toggleSearchBar">End Search</m-list-item>
+                <m-list-item v-else @click="toggleSearchBar">Search Messages</m-list-item>
+              </m-list>
+            </m-menu>
+          </m-menu-anchor>
         </div>
 
         <div class="msg-display">
@@ -67,12 +81,11 @@
 
         <div class="msg-new">
           <input v-model="to" placeholder="to?"/>
-          <textarea id="msg-text" rows="1" class="in"
-                    v-model="message" placeholder="Enter Message"></textarea>
+          <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
 
-          <div @click="send">
+          <button @click="send">
             <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
-          </div>
+          </button>
         </div>
       </div>
     </m-card>
@@ -81,27 +94,24 @@
 
 <script>
   import Vue from "vue";
-  import moment from "moment";
-  import autoSize from "autosize";
   import Card from "material-components-vue/dist/card";
+  import Menu from "material-components-vue/dist/menu";
   import List from "material-components-vue/dist/list";
-  import TextField from "material-components-vue/dist/textfield";
   import NotchedOutline from "material-components-vue/dist/notched-outline";
-  import FloatingLabel from "material-components-vue/dist/floating-label";
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
 
   import MessageClient from "./client";
 
   Vue.use(Card);
+  Vue.use(Menu);
   Vue.use(List);
-  Vue.use(TextField);
   Vue.use(NotchedOutline);
-  Vue.use(FloatingLabel);
   Vue.use(Elevation);
   Vue.use(Icon);
 
   let messageClient;
+  const SCROLL_TIME = 100;
 
   function resize($window){
     let classes = [".msg-card", ".msg-select", ".msg-reader"];
@@ -132,10 +142,13 @@
   export default {
     data(){
       return {
+        openMenu: false,
+        showSearchBar: false,
         user: {},
         messages: [],
         found: [],
         currFound: "",
+        foundTop: 0,
         selected: "",
         to: "",
         searchUser: "",
@@ -152,6 +165,16 @@
         return `/api/images/?userId=${id}`;
       },
 
+      toggleSearchBar(){
+        let self = this;
+
+        if(self.showSearchBar){
+          self.searchConvo = "";
+        }
+
+        self.showSearchBar = !self.showSearchBar;
+      },
+
       markFound(){
         let self = this;
 
@@ -160,9 +183,16 @@
         const MARKED = "marked";
         let $elem = $(`#${self.currFound}`);
         let $prevELem = $(`.${MARKED}`);
+        let $msgDisplay = $(".msg-display");
+        let offsetTop = $elem.position().top;
 
         $prevELem.removeClass(MARKED);
         $elem.addClass(MARKED);
+
+        if(offsetTop > $msgDisplay.height() || offsetTop < -1){
+          console.log("offset", offsetTop);
+          $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, SCROLL_TIME);
+        }
       },
 
       foundNext(){
@@ -172,13 +202,10 @@
 
         // self.foundIndex: 1 based index
         self.currFound = self.found[self.foundIndex];
-        console.log("next:", self.currFound)
       },
 
       foundPrev(){
         let self = this;
-
-        console.log("prev:", self.currFound);
 
         if(!self.hasFoundPrev) return;
 
@@ -255,10 +282,14 @@
 
       msgList(){
         let self = this;
+
+        if(!self.selected) return;
+
+        let $msgDisplay = $(".msg-display");
         let search = self.searchConvo ? new RegExp(escapeRegExp(self.searchConvo), "gi") : "";
-        let foundIndex = 1;
-        let closeMark = "</mark>";
         let result = [];
+        let foundIndex = 1;
+        const closeMark = "</mark>";
         let foundId;
         let openMark;
         let startIndex;
@@ -266,36 +297,39 @@
 
         self.found = [];
 
-        if(self.selected){
-          for(let msg of self.conversations[self.selected].messages){
-            if(search){
-              msg.foundText = msg.text;
+        for(let msg of self.conversations[self.selected].messages){
+          if(search){
+            msg.foundText = msg.text;
 
-              while(search.test(msg.foundText)){
-                foundId = `found-msg-${foundIndex}`;
-                openMark = `<mark id=${foundId}>`;
-                startIndex = search.lastIndex - search.source.length;
-                endIndex = search.lastIndex + openMark.length;
+            while(search.test(msg.foundText)){
+              foundId = `found-msg-${foundIndex}`;
+              openMark = `<mark id=${foundId}>`;
+              startIndex = search.lastIndex - search.source.length;
+              endIndex = search.lastIndex + openMark.length;
 
-                msg.foundText = msg.foundText.insert(startIndex, openMark);
-                msg.foundText = msg.foundText.insert(endIndex, closeMark);
-                search.lastIndex = endIndex + closeMark.length;
-                self.found.push(foundId);
-                foundIndex++;
-              }
+              msg.foundText = msg.foundText.insert(startIndex, openMark);
+              msg.foundText = msg.foundText.insert(endIndex, closeMark);
+              search.lastIndex = endIndex + closeMark.length;
+              self.found.push(foundId);
+              foundIndex++;
             }
-
-            if(!search || msg.foundText === msg.text){
-              msg.foundText = false;
-              self.currFound = "";
-            }
-
-            result.push(msg);
           }
 
-          if(self.found.length){
-            self.currFound = self.found[self.found.length - 1];
+          if(!search || msg.foundText === msg.text){
+            msg.foundText = false;
+            self.currFound = "";
           }
+
+          result.push(msg);
+        }
+
+        if(self.found.length){
+          self.currFound = self.found[self.found.length - 1];
+        }
+        else{
+          self.$nextTick(() => {
+            $msgDisplay.animate({scrollTop: $msgDisplay.prop("scrollHeight")}, SCROLL_TIME);
+          });
         }
 
         return result;
@@ -333,7 +367,8 @@
     mounted(){
       let self = this;
       let $window = $(window);
-      let $msgInput = $(".msg-new textarea");
+      let $msgText = $("#msg-text");
+      const ENTER_KEY = 13;
 
       messageClient = new MessageClient(self);
 
@@ -343,10 +378,11 @@
         resize($window);
       });
 
-      $msgInput.on("click.autoSize", () => {
-        autoSize($(".msg-new textarea"));
-
-        $msgInput.off("click.autoSize");
+      $msgText.keypress(e => {
+        if(e.which === ENTER_KEY){
+          console.log("yo!");
+          self.send();
+        }
       });
     }
   }
@@ -354,10 +390,9 @@
 
 <style lang="scss">
   @import "../../../../../../node_modules/material-components-vue/dist/card/styles";
+  @import "../../../../../../node_modules/material-components-vue/dist/menu/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/list/styles";
-  @import "../../../../../../node_modules/material-components-vue/dist/textfield/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
-  @import "../../../../../../node_modules/material-components-vue/dist/floating-label/styles";
   @import "../../../../../../node_modules/material-components-vue/dist/elevation/styles";
 
   #messages{
@@ -375,6 +410,17 @@
     display: flex;
   }
 
+  .msg-card button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
   .msg-card .msg-select{
     border-right: 1px solid #EDEFF0;
     flex: 1 1 482px;
@@ -387,6 +433,32 @@
 
   .msg-card .msg-reader{
     flex: 1.5 1.5 1450px;
+  }
+
+  .msg-reader .msg-reader-menu{
+    display: flex;
+    margin-left: auto;
+  }
+
+  .msg-reader-menu .material-icons{
+    color: #03A9F4 !important;
+    margin: 0 !important;
+    position: relative;
+    left: 10px;
+  }
+
+  .msg-reader-menu .mdc-menu {
+    margin-top: 6px;
+  }
+
+  .msg-reader-menu .mdc-list {
+    padding: 5px 0;
+  }
+
+  .msg-reader-menu .mdc-list-item{
+    font-size: 13px;
+    color: #546F7A;
+    height: 30px;
   }
 
   .msg-card .in:focus{
@@ -410,7 +482,7 @@
   }
 
   .msg-card-top{
-    width: 100%;
+    margin: 0 auto;
     height: 58px;
     min-height: 58px;
     display: flex;
@@ -419,7 +491,7 @@
   }
 
   .msg-card-top input{
-    width: 82%;
+    flex: 1;
     height: 48px;
     margin: 0;
     padding-top: 5px;
@@ -431,26 +503,25 @@
   }
 
   .msg-card-top .convo-search-bar{
-    width: 90%;
     display: flex;
     justify-content: space-between;
+    flex: 1;
   }
 
   .msg-card-top .convo-search-controls{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 15%;
+    flex-shrink: 0;
+    margin-right: 15px;
     color: #CFD8DC;
   }
 
   .convo-search-controls .material-icons{
     font-size: 30px;
     margin: 0;
-  }
-
-  .convo-search-controls div{
-    display: flex;
+    position: relative;
+    right: 8px;
   }
 
   .msg-select .mdc-list{
@@ -497,9 +568,11 @@
 
   .msg-reader .msg-card-top{
     border-bottom: none;
+    width: 90%;
   }
 
   .msg-reader .msg-display{
+    position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -564,6 +637,7 @@
 
   .msg-reader .msg-new{
     width: 90%;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -571,15 +645,15 @@
     border: 1px solid #EDEFF0;
   }
 
-  .msg-new textarea{
+  .msg-new #msg-text{
     width: 90%;
-    max-height: 120px;
     padding: 10px;
     border: none;
-    resize: none;
+    font-size: 14px;
+    color: #37474F;
   }
 
-  .msg-new textarea::placeholder{
+  .msg-new #msg-text::placeholder{
     color: #CFD8DC;
   }
 

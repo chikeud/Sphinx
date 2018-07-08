@@ -182,6 +182,7 @@
           reader.readAsDataURL(input.files[count]);
         }
         else{
+          input.value = "";
           resolve(result);
         }
       };

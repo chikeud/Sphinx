@@ -61,7 +61,7 @@
           </m-menu-anchor>
         </div>
 
-        <div class="msg-display">
+        <div class="msg-display" v-if="msgList">
           <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id">
             <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
                  @click="showDates = !showDates">
@@ -79,13 +79,32 @@
           </div>
         </div>
 
-        <div class="msg-new">
-          <input v-model="to" placeholder="to?"/>
-          <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
+        <div v-else>
+          Whoops! No messages to show here.
+        </div>
 
-          <button @click="send">
-            <m-icon :style="{color : message ? storBlue : iconGrey}" icon="send"></m-icon>
-          </button>
+        <div class="msg-new" v-if="selected">
+          <div class="msg-new-top" v-if="files.length">
+            <div v-for="(img, index) in files" :id="`img-${index}`" class="msg-img-preview">
+              <button @click="removeFile(index)"><m-icon icon="close"></m-icon></button>
+              <img :src="img.url" :alt="`img-${index}`"/>
+            </div>
+          </div>
+
+          <div class="msg-new-bottom">
+            <input v-model="to" placeholder="to"/>
+
+            <input @click="msgInputActive = true" id="msg-text" class="in" v-model="message" placeholder="Enter Message">
+
+            <input @change="addFile" type="file" multiple id="msg-upload"/>
+            <label for="msg-upload" id="msg-upload-label">
+              <m-icon icon="attachment"></m-icon>
+            </label>
+
+            <button @click="send">
+              <m-icon :style="{color : hasMessage ? storBlue : iconGrey}" icon="send"></m-icon>
+            </button>
+          </div>
         </div>
       </div>
     </m-card>
@@ -139,6 +158,55 @@
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
+  /**
+   * Reads an uploaded file
+   *
+   * @param input
+   */
+  function readFiles(input) {
+    const LENGTH = input.files.length;
+
+    if(!LENGTH) return;
+
+    let reader = new FileReader();
+    let result = [];
+    let count = 0;
+
+    return new Promise(function(resolve, reject){
+      let readNextFile = () => {
+        while(count < LENGTH && !(/\.(jpe?g|png|gif)$/i.test(input.files[count].name))){
+          count++
+        }
+
+        if(count < LENGTH) {
+          reader.readAsDataURL(input.files[count]);
+        }
+        else{
+          resolve(result);
+        }
+      };
+
+      reader.addEventListener("load", () => {
+        result.push({
+          file: input.files[count],
+          url: reader.result
+        });
+
+        count++;
+      });
+
+      reader.addEventListener("loadend", () => {
+        readNextFile();
+      });
+
+      reader.addEventListener("error", () => {
+        reject(reader.error);
+      });
+
+      readNextFile();
+    });
+  }
+
   export default {
     data(){
       return {
@@ -154,9 +222,10 @@
         searchUser: "",
         searchConvo: "",
         message: "",
+        files: [],
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC",
-        showDates: false
+        showDates: false,
       }
     },
 
@@ -189,7 +258,7 @@
         $prevELem.removeClass(MARKED);
         $elem.addClass(MARKED);
 
-        if(offsetTop > $msgDisplay.height() || offsetTop < -1){
+        if(offsetTop > $msgDisplay.height() || offsetTop < 0){
           console.log("offset", offsetTop);
           $msgDisplay.animate({scrollTop: offsetTop + $msgDisplay.scrollTop()}, SCROLL_TIME);
         }
@@ -211,6 +280,27 @@
 
         // self.foundIndex: 1 based index
         self.currFound = self.found[self.foundIndex - 2];
+      },
+
+      async addFile(event){
+        let self = this;
+
+        try{
+          let files = await readFiles(event.target);
+
+          for(let file of files){
+            self.files.push(file);
+          }
+
+          console.log(self.files);
+        }
+        catch(err){
+          console.log("File Upload Error:", err);
+        }
+      },
+
+      removeFile(index){
+        this.files.splice(index, 1);
       },
 
       send(){
@@ -355,6 +445,10 @@
         let self = this;
 
         return self.foundIndex > 1;
+      },
+
+      hasMessage(){
+        return this.message || this.files.length;
       }
     },
 
@@ -378,7 +472,7 @@
         resize($window);
       });
 
-      $msgText.keypress(e => {
+      $msgText.on("keypress", e => {
         if(e.which === ENTER_KEY){
           console.log("yo!");
           self.send();
@@ -403,7 +497,7 @@
 
   .msg-card{
     display: flex;
-    width: 90%;
+    flex: 1;
   }
 
   .msg-card > div{
@@ -432,7 +526,11 @@
   }
 
   .msg-card .msg-reader{
+    min-height: 420px;
+    display: flex;
     flex: 1.5 1.5 1450px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .msg-reader .msg-reader-menu{
@@ -556,16 +654,6 @@
     margin-right: 10px;
   }
 
-  .msg-card, .msg-select, .msg-reader{
-    min-height: 420px;
-  }
-
-  .msg-reader{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
   .msg-reader .msg-card-top{
     border-bottom: none;
     width: 90%;
@@ -636,28 +724,84 @@
   }
 
   .msg-reader .msg-new{
-    width: 90%;
-    min-height: 40px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-shrink: 0;
+    flex-direction: column;
+    width: 90%;
     margin: auto 0 35px;
+    padding: 8px 0 8px 8px;
     border: 1px solid #EDEFF0;
   }
 
-  .msg-new #msg-text{
+  .msg-new .msg-new-top{
+    display: flex;
+    width: 100%;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
+
+  .msg-new-top .msg-img-preview{
+    position: relative;
+    margin-right: 8px;
+  }
+
+  .msg-img-preview button{
+    position: absolute;
+    top: 2px;
+    left: 2px;
+  }
+
+  .msg-img-preview .material-icons{
+    background: black;
+    margin: 0;
+    border-radius: 50%;
+    opacity: 0.3;
+    border: 2px solid white;
+    font-size: 20px;
+  }
+
+  .msg-img-preview:hover .material-icons{
+    opacity: 0.8;
+  }
+
+  .msg-img-preview img{
+    height: 108px;
+  }
+
+  .msg-new .msg-new-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .msg-new-bottom #msg-text{
     width: 90%;
-    padding: 10px;
+    padding-left: 10px;
     border: none;
     font-size: 14px;
     color: #37474F;
   }
 
-  .msg-new #msg-text::placeholder{
+  .msg-new-bottom #msg-text::placeholder{
     color: #CFD8DC;
   }
 
-  .msg-new .material-icons{
+  .msg-new-bottom .material-icons{
     font-size: 20px;
+  }
+
+  .msg-new-bottom #msg-upload{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  #msg-upload-label .material-icons{
+    margin: 0;
+    font-size: 24px;
+    color: #03A9F4;
   }
 </style>

@@ -83,7 +83,7 @@
           Whoops! No messages to show here.
         </div>
 
-        <div class="msg-new" v-if="selected">
+        <div class="msg-new">
           <div class="msg-new-top" v-if="files.length">
             <div v-for="(img, index) in files" :id="`img-${index}`" class="msg-img-preview">
               <button @click="removeFile(index)"><m-icon icon="close"></m-icon></button>
@@ -94,7 +94,7 @@
           <div class="msg-new-bottom">
             <input v-model="to" placeholder="to"/>
 
-            <input @click="msgInputActive = true" id="msg-text" class="in" v-model="message" placeholder="Enter Message">
+            <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
 
             <input @change="addFile" type="file" multiple id="msg-upload"/>
             <label for="msg-upload" id="msg-upload-label">
@@ -175,7 +175,7 @@
     return new Promise(function(resolve, reject){
       let readNextFile = () => {
         while(count < LENGTH && !(/\.(jpe?g|png|gif)$/i.test(input.files[count].name))){
-          count++
+          count++;
         }
 
         if(count < LENGTH) {
@@ -191,11 +191,10 @@
           file: input.files[count],
           url: reader.result
         });
-
-        count++;
       });
 
       reader.addEventListener("loadend", () => {
+        count++;
         readNextFile();
       });
 
@@ -225,7 +224,7 @@
         files: [],
         storBlue: "#03A9F4",
         iconGrey: "#CFD8DC",
-        showDates: false,
+        showDates: false
       }
     },
 
@@ -291,8 +290,6 @@
           for(let file of files){
             self.files.push(file);
           }
-
-          console.log(self.files);
         }
         catch(err){
           console.log("File Upload Error:", err);
@@ -472,7 +469,7 @@
         resize($window);
       });
 
-      $msgText.on("keypress", e => {
+      $msgText.keypress(e => {
         if(e.which === ENTER_KEY){
           console.log("yo!");
           self.send();

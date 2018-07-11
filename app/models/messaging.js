@@ -11,10 +11,10 @@ let MessageSchema = new Schema({
   from: {type: Schema.ObjectId, ref: "users", required: REQUIRED},
   to: {type: Schema.ObjectId, ref: "users", required: REQUIRED},
   text: {type: String, required: REQUIRED},
-  img: {
+  images: [{
     id: Schema.ObjectId,
     file: {}
-  }
+  }]
 }, {timestamps: true});
 
 exports.Message = mongoose.model("messages", MessageSchema);

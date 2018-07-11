@@ -7,6 +7,7 @@ let socketIo = require("socket.io");
 
 let config = require("../../../config");
 let auth = require("../../../utils/authToken");
+let files = require("../../../utils/files");
 let Message = require("../../models/messaging").Message;
 let User = require("../../models/user").User;
 
@@ -75,7 +76,19 @@ class MessageServer{
 
         message.from = user._id;
         message.to = recipient._id;
-        message.text = msg.text;
+        message.text = msg.text || "";
+
+        if(msg.files && msg.files.length){
+          message.images = [];
+          msg.files = await files.uploadImages(msg.files);
+
+          for(let file of msg.files){
+            message.images.push({
+              id: file._id,
+              file: file
+            });
+          }
+        }
 
         message = await message.save();
         message = await message
@@ -90,6 +103,8 @@ class MessageServer{
         }
 
         respond(message);
+
+        console.log(message);
       }
       catch (err){
         self._fail(socket, err);

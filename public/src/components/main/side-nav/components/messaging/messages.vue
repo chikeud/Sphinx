@@ -304,12 +304,16 @@
       send(){
         let self = this;
 
-        if(!(self.message && self.to)) return;
+        if(!((self.message || self.files) && self.to)) return;
 
-        let data = {text: self.message, to: self.to};
+        let files = self.files.map(f => f.file);
+
+        let data = {text: self.message, to: self.to, files};
 
         messageClient.send(data);
+
         self.message = "";
+        self.files = [];
       }
     },
 

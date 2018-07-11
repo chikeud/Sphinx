@@ -79,6 +79,7 @@ class MessageServer{
         message.text = msg.text || "";
 
         if(msg.files && msg.files.length){
+          console.log(msg.files);
           message.images = [];
           msg.files = await files.uploadImages(msg.files);
 

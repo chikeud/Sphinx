@@ -16,6 +16,7 @@ import Favourites from "../components/main/side-nav/components/favourites.vue";
 import Help from "../components/main/side-nav/components/help.vue";
 import Settings from "../components/main/side-nav/components/settings.vue";
 import Verification from "../components/main/side-nav/components/verification.vue";
+import Login from "../components/login/login.vue";
 
 Vue.use(Router);
 
@@ -63,6 +64,10 @@ export default new Router({
           component: Verification
         },
       ]
+    },
+    {
+      path: "/login",
+      component: Login
     },
   ]
 });

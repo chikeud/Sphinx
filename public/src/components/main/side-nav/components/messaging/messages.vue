@@ -7,7 +7,7 @@
             <m-icon :style="{color : searchUser ? storBlue : iconGrey}" icon="search"></m-icon>
           </button>
           <input id="msg-search" class="in" type="text"
-                 v-model="searchUser" placeholder="Search Inbox"/>
+                 v-model="searchUser" placeholder="Find User"/>
         </div>
 
         <div class="msg-select-list">
@@ -62,18 +62,27 @@
         </div>
 
         <div class="msg-display" v-if="msgList">
-          <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id">
-            <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']"
-                 @click="showDates = !showDates">
-               <span v-if="msg.foundText" v-html="msg.foundText">
-                 {{msg.foundText}}
-               </span>
-               <span v-else>
-                 {{msg.text}}
-               </span>
+          <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id"
+               @click="showDates = !showDates">
+            <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']">
+              <div class="msg-body">
+                <span v-if="msg.foundText" v-html="msg.foundText">
+                  {{msg.foundText}}
+                </span>
+                  <span v-else>
+                  {{msg.text}}
+                </span>
+              </div>
             </div>
+
+            <div v-if="msg.images"
+                 :class="['msg-images', msg.from._id === user._id ? 'msg-self-align' : 'msg-partner-align']">
+
+              <img v-for="img in msg.images" :src="`/api/images/?imgId=${img.id}`">
+            </div>
+
             <div v-show="showDates"
-                 :class="['msg-time',msg.from._id === user._id ? 'msg-time-self' : 'msg-time-partner']">
+                 :class="['msg-time',msg.from._id === user._id ? 'msg-self-align' : 'msg-partner-align']">
               {{msg.at}}
             </div>
           </div>
@@ -120,6 +129,8 @@
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
 
+  import {readFiles, escapeRegExp} from "../../../../../public.utils.js"
+
   import MessageClient from "./client";
 
   Vue.use(Card);
@@ -147,64 +158,13 @@
     });
   }
 
-  function preview(messages){
-    let lastMsg = messages[messages.length - 1].text;
+  function preview(messages, user){
+    let msg = messages[messages.length - 1];
+    let lastMsg = msg.text;
     let preview = lastMsg.substr(0, 20);
+    preview = preview.length < lastMsg.length ? `${preview} . . .` : preview;
 
-    return preview.length < lastMsg.length ? `${preview} . . .` : preview;
-  }
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  }
-
-  /**
-   * Reads an uploaded file
-   *
-   * @param input
-   */
-  function readFiles(input) {
-    const LENGTH = input.files.length;
-
-    if(!LENGTH) return;
-
-    let reader = new FileReader();
-    let result = [];
-    let count = 0;
-
-    return new Promise(function(resolve, reject){
-      let readNextFile = () => {
-        while(count < LENGTH && !(/\.(jpe?g|png|gif)$/i.test(input.files[count].name))){
-          count++;
-        }
-
-        if(count < LENGTH) {
-          reader.readAsDataURL(input.files[count]);
-        }
-        else{
-          input.value = "";
-          resolve(result);
-        }
-      };
-
-      reader.addEventListener("load", () => {
-        result.push({
-          file: input.files[count],
-          url: reader.result
-        });
-      });
-
-      reader.addEventListener("loadend", () => {
-        count++;
-        readNextFile();
-      });
-
-      reader.addEventListener("error", () => {
-        reject(reader.error);
-      });
-
-      readNextFile();
-    });
+    return msg.from._id === user._id ? `You: ${preview}` : preview;
   }
 
   export default {
@@ -230,10 +190,18 @@
     },
 
     methods:{
+      /**
+       * Gets profile image url
+       * @param id user id
+       * @returns {string}
+       */
       profileImg(id){
         return `/api/images/?userId=${id}`;
       },
 
+      /**
+       * Toggles the message search bar
+       */
       toggleSearchBar(){
         let self = this;
 
@@ -244,6 +212,10 @@
         self.showSearchBar = !self.showSearchBar;
       },
 
+      /**
+       * Adds appropriate class to the current
+       * instance of found text.
+       */
       markFound(){
         let self = this;
 
@@ -264,6 +236,9 @@
         }
       },
 
+      /**
+       * Moves to the next instance of found text
+       */
       foundNext(){
         let self = this;
 
@@ -304,9 +279,21 @@
       send(){
         let self = this;
 
-        if(!((self.message || self.files) && self.to)) return;
+        if(!((self.message || self.files.length) && self.to)) return;
 
-        let files = self.files.map(f => f.file);
+        let files = self.files.map(f => {
+          let result = {};
+          let props = ["lastModified", "name", "size", "type"];
+
+          for(let prop of props){
+            result[prop] = f.file[prop];
+          }
+
+          result.buffer = f.file;
+
+          console.log(result);
+          return result;
+        });
 
         let data = {text: self.message, to: self.to, files};
 
@@ -363,7 +350,7 @@
           result.push({
             info,
             displayName: `${info.firstName} ${info.lastName[0]}`,
-            lastMsg: preview(self.conversations[partner].messages)
+            lastMsg: preview(self.conversations[partner].messages, self.user)
           });
         }
 
@@ -679,17 +666,35 @@
     min-height: fit-content;
     font-size: 13px;
     margin-top: 15px;
+    cursor: pointer;
   }
 
   .msg-reader .msg-unit:first-child{
     margin-top: 0;
   }
 
+  .msg-unit .msg-images{
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .msg-images img{
+    margin-bottom: 2px;
+    margin-left:inherit;
+    margin-right: inherit;
+    max-width: 330px; /* +30px to make up for msg-bx padding */
+    object-fit: contain;
+  }
+
+  .msg-images img:first-child{
+    margin-top: 2px;
+  }
+
   .msg-unit .msg-box{
     max-width: 300px;
     padding: 15px;
     line-height: 1.5;
-    cursor: pointer;
   }
 
   .msg-unit .msg-time{
@@ -697,11 +702,11 @@
     margin-top: 5px;
   }
 
-  .msg-unit .msg-time-self{
+  .msg-unit .msg-self-align{
     margin-left: auto;
   }
 
-  .msg-unit .msg-time-partner{
+  .msg-unit .msg-partner-align{
     margin-right: auto;
   }
 

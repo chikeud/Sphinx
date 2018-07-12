@@ -1,13 +1,18 @@
+/**
+ * @author emmanuelolaojo
+ * @since 7/12/18
+ */
 
 /**
- * Reads an uploaded file
+ * Reads files from a given input.
  *
- * @param input
+ * @param input - to read from
+ *
+ * @returns {Promise<Array>} - resolves with array of objects
+ *  containing the file and what's essentially a preview url
  */
 export function readFiles(input) {
   const LENGTH = input.files.length;
-
-  if(!LENGTH) return;
 
   let reader = new FileReader();
   let result = [];
@@ -48,6 +53,15 @@ export function readFiles(input) {
   });
 }
 
+/**
+ * Escapes special characters in a string to
+ * prep for usage as part of a regular expression.
+ *
+ * @param string - to be escaped
+ *
+ * @return {String} - escaped string
+ */
 export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+

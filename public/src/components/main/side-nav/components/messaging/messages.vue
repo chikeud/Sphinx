@@ -64,12 +64,13 @@
         <div class="msg-display" v-if="msgList">
           <div class="msg-unit" v-for="msg in msgList" :key="msg.id" :id="msg.id"
                @click="showDates = !showDates">
-            <div :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']">
+            <div v-if="msg.text"
+                 :class="['msg-box', msg.from._id === user._id ? 'msg-self' : 'msg-partner']">
               <div class="msg-body">
                 <span v-if="msg.foundText" v-html="msg.foundText">
                   {{msg.foundText}}
                 </span>
-                  <span v-else>
+                <span v-else>
                   {{msg.text}}
                 </span>
               </div>
@@ -105,7 +106,7 @@
 
             <input id="msg-text" class="in" v-model="message" placeholder="Enter Message">
 
-            <input @change="addFile" type="file" multiple id="msg-upload"/>
+            <input @change="addFiles" type="file" multiple id="msg-upload"/>
             <label for="msg-upload" id="msg-upload-label">
               <m-icon icon="attachment"></m-icon>
             </label>
@@ -192,8 +193,8 @@
     methods:{
       /**
        * Gets profile image url
-       * @param id user id
-       * @returns {string}
+       * @param id - user id
+       * @returns {string} - image url
        */
       profileImg(id){
         return `/api/images/?userId=${id}`;
@@ -248,6 +249,9 @@
         self.currFound = self.found[self.foundIndex];
       },
 
+      /**
+       * Moves to the previous instance of found text
+       */
       foundPrev(){
         let self = this;
 
@@ -257,7 +261,14 @@
         self.currFound = self.found[self.foundIndex - 2];
       },
 
-      async addFile(event){
+      /**
+       * Adds files from the input to internal list
+       * of files
+       *
+       * @param event - input change event
+       * @returns {Promise<void>}
+       */
+      async addFiles(event){
         let self = this;
 
         try{
@@ -272,10 +283,22 @@
         }
       },
 
+      /**
+       * Removes a file at the specified index
+       *
+       * @param index - remove from this index
+       */
       removeFile(index){
         this.files.splice(index, 1);
       },
 
+      /**
+       * Sends messages to the server through the message
+       * client. If there are files included, it extracts
+       * potentially useful information from the files and
+       * adds them to a new list of objects, along with the
+       * files which get converted into buffers by socket.io
+       */
       send(){
         let self = this;
 
@@ -305,6 +328,13 @@
     },
 
     computed: {
+      /**
+       * Organizes messages into conversations. Also
+       * handles user search by omitting partners whose
+       * names do not match the search term if it's present.
+       *
+       * @returns {Object} - Conversations object with partner id as key
+       */
       conversations(){
         let self = this;
 
@@ -338,6 +368,13 @@
         return convos;
       },
 
+      /**
+       * Gets all conversation partners, along with
+       * relevant information that could be displayed
+       * to the user or used internally.
+       *
+       * @returns {Array} - of partner objects
+       */
       partners(){
         let self = this;
         let partners = Object.keys(self.conversations);
@@ -359,6 +396,14 @@
         return result;
       },
 
+      /**
+       * Gets the list of messages from a conversation
+       * between the user and a selected partner. Also
+       * handles the message search feature by marking
+       * instances of found text if a search term is present
+       *
+       * @returns {*} - list of messages or void if no user is selected
+       */
       msgList(){
         let self = this;
 
@@ -414,6 +459,13 @@
         return result;
       },
 
+      /**
+       * Gets the 1-based index of the current
+       * instance of found text by parsing its
+       * id (format: found-msg-{index} e.g. found-msg-1)
+       *
+       * @return {number} - index of current instance of found text
+       */
       foundIndex(){
         let self = this;
 
@@ -424,29 +476,55 @@
         return parseInt(split[split.length - 1]);
       },
 
+      /**
+       * Checks if there's a next instance of
+       * found text
+       *
+       * @return {Boolean} - true/false
+       */
       hasFoundNext(){
         let self = this;
 
         return self.foundIndex && self.foundIndex < self.found.length;
       },
 
+      /**
+       * Checks if there's a previous instance of
+       * found text
+       *
+       * @return {boolean} - true/false
+       */
       hasFoundPrev(){
         let self = this;
 
         return self.foundIndex > 1;
       },
 
+      /**
+       * Checks if there's something to send
+       *
+       * @return {string|number} - as boolean => truthy/falsy
+       */
       hasMessage(){
         return this.message || this.files.length;
       }
     },
 
+    /**
+     * Marks instances of found text, if they
+     * exist, when the view is updated
+     */
     updated(){
       let self = this;
 
       self.$nextTick(self.markFound);
     },
 
+    /**
+     * Initializes the messageClient and attaches
+     * necessary event listeners once this component
+     * is mounted.
+     */
     mounted(){
       let self = this;
       let $window = $(window);
@@ -463,7 +541,6 @@
 
       $msgText.keypress(e => {
         if(e.which === ENTER_KEY){
-          console.log("yo!");
           self.send();
         }
       });

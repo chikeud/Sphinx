@@ -19,6 +19,11 @@ const ERR = "error";
 
 class MessageServer{
 
+  /**
+   * Initialize necessary variables
+   *
+   * @param server - app server
+   */
   constructor(server){
     let self = this;
     self.server = server;
@@ -26,6 +31,13 @@ class MessageServer{
     self.io = socketIo(server);
   }
 
+  /**
+   * Start listening for connections. When users
+   * connect, they are added to the "connected"
+   * object which is sort of a map of all the
+   * connected users and contains useful info
+   * about the users.
+   */
   start(){
     let self = this;
 
@@ -57,6 +69,17 @@ class MessageServer{
     });
   }
 
+  /**
+   * Listens for chat messages. When a message
+   * arrives, it's files are processed and stored
+   * along with other relevant properties. The created
+   * message is then pushed to the sender and the
+   * recipient, if the latter is online.
+   *
+   * @param socket - an instance of a connected socket
+   *
+   * @private - this function is private
+   */
   _listen(socket){
     let self = this;
 
@@ -112,6 +135,14 @@ class MessageServer{
     });
   }
 
+  /**
+   * Notifies the client of an error
+   *
+   * @param socket - an instance of a connected socket
+   * @param err - error to report
+   *
+   * @private - this function is private
+   */
   _fail(socket, err){
     err = err || {msg: config.AUTH_ERR_MSG};
 
@@ -145,6 +176,15 @@ async function saveFile(file){
   }
 }
 
+/**
+ * Saves a list of files to the file system
+ *
+ * @see saveFile
+ *
+ * @param fileList - List of files
+ *
+ * @return {Promise<*>} - resolves with list of saved files
+ */
 async function saveFiles(fileList){
   let result = [];
 
@@ -162,6 +202,13 @@ async function saveFiles(fileList){
   }
 }
 
+/**
+ * Gets all the messages related to a user
+ *
+ * @param user - to get messages for
+ *
+ * @return {Promise<*>} - resolves with all of user's messages
+ */
 async function getAllMessages(user){
   try{
     let messages = Message
@@ -178,6 +225,14 @@ async function getAllMessages(user){
   }
 }
 
+/**
+ * Verifies that an id or alias belongs to a
+ * user.
+ *
+ * @param id - or alias in question
+ *
+ * @return {Promise<*>} - resolves with found user
+ */
 async function verifyUser(id){
   try{
     return await User.findById(id).exec();

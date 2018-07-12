@@ -190,7 +190,6 @@ async function saveFiles(fileList){
 
   try{
     for(let file of fileList){
-      console.log(result);
       result.push(await saveFile(file));
     }
 

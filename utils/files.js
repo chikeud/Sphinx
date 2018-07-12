@@ -5,6 +5,7 @@
 
 let moduleId = "utils/files";
 
+// Max duration of uploaded video in seconds
 const MAX_DURATION = 20;
 
 let fs = Promise.promisifyAll(require("fs"));
@@ -78,6 +79,7 @@ exports.getImg = async (req, res) => {
 
   else respondErr(http.BAD_REQUEST, "Missing required id");
 };
+
 /**
  * Uploads an image to the db. Returns
  * null if the provided file is not an email
@@ -85,7 +87,7 @@ exports.getImg = async (req, res) => {
  * @param file - to be uploaded
  * @returns {Promise.<*>}
  */
-exports.uploadImage = async (file) => {
+let uploadImage = exports.uploadImage = async (file) => {
   let result = null;
 
   try{
@@ -106,6 +108,26 @@ exports.uploadImage = async (file) => {
   }
   catch(err){
     throw err;
+  }
+
+  return result;
+};
+
+/**
+ * Uploads images to the db. Returns
+ * null if the provided file is not an email
+ *
+ * @param files - to be uploaded
+ * @returns {Promise.<*>}
+ */
+exports.uploadImages = async files => {
+  let result = [];
+  let res;
+
+  for(let file of files){
+    res = await uploadImage(file);
+
+    if (res) result.push(res);
   }
 
   return result;

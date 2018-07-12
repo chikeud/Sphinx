@@ -53,20 +53,21 @@
   }
 
   #main .main-side-nav{
-    flex: 1;
-    min-width: 200px;
+    width: 268px;
+    flex-shrink: 0;
     border-right: none;
     background-color: transparent;
   }
 
   .main-content{
-    flex: 6;
+    flex: 1;
     display: flex;
     flex-direction: row;
   }
 
   .app-content{
-    flex: 3;
+    width: 90%;
+    margin: auto;
   }
 
   .app-auth{

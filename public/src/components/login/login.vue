@@ -1,164 +1,57 @@
 <template>
-  <m-card class="r-card">
-    <div class="r-title">
-      {{title}}
-
-      <div class="r-subtitle" v-if="subtitle">
-        {{subtitle}}
-      </div>
-    </div>
-
-    <div class="r-form">
-      <div class="r1" v-show="screen == 'r1'">
-        <div class="r-user-type r-section r-two-buttons">
-          <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
-            HOST
-          </button>
-          <button @click="setUserType('store')" id="r-store" class="r-button stor-blue">
-            RENT
-          </button>
-        </div>
-
-        <div v-for="section in screens.r1.sections"
-             :class="[section.id, 'r-section']"
-             :key="section.id">
-
-          <m-textfield v-for="field in section.fields"
-                       :type="field.type ? field.type : 'text'"
-                       :id="field.id"
-                       v-model="$data[field.id]"
-                       :key="field.id" outlined>
-
-            <m-floating-label :for="field.id">
-              {{field.label}}
-              <span class="r-error" v-show="r1Errs[field.id]">
-                {{r1Errs[field.id]}}
-              </span>
-            </m-floating-label>
-
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
-
-
-        <div class="r-terms r-section">
-          By clicking "create account" you agree to the
-          <router-link to="/">Terms and Conditions</router-link>
+  <div class="overall">
+    <m-card class="r-card">
+      <div class="r-title">
+        Login
+        <div class="r-subtitle" v-if="subtitle">
+          {{subtitle}}
         </div>
       </div>
 
-      <div class="r2" v-show="screen == 'r2'">
-        <div v-for="section in screens.r2.sections"
-             :class="[section.id, 'r-section']"
-             :key="section.id">
+      <div class="r-form">
+        <div class="r1">
+          <div v-for="section in screens.r1.sections"
+               :class="[section.id, 'r-section']"
+               :key="section.id">
 
-          <div v-if="section.heading" class="r-heading">
-            {{section.heading}}
+            <m-textfield v-for="field in section.fields"
+                         :type="field.type ? field.type : 'text'"
+                         :id="field.id"
+                         v-model="$data[field.id]"
+                         :key="field.id" outlined>
+
+              <m-floating-label :for="field.id">
+                {{field.label}}
+                <span class="r-error" v-show="r1Errs[field.id]">
+                  {{r1Errs[field.id]}}
+                </span>
+              </m-floating-label>
+
+              <m-notched-outline></m-notched-outline>
+            </m-textfield>
           </div>
 
-          <div v-if="section.subHeading" class="r-subheading">
-            {{section.subHeading}}
-          </div>
-          <!--TODO tie values to address model-->
-          <m-textfield v-for="field in section.fields"
-                       :id="field.id"
-                       v-model="$data[field.id]"
-                       :key="field.id" outlined>
-
-            <m-floating-label :for="field.id">
-              {{field.label}}
-              <span class="r-error" v-show="r2Errs[field.id]">
-                {{r2Errs[field.id]}}
-              </span>
-            </m-floating-label>
-
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
-
-      </div>
-
-      <div class="r3" v-show="screen == 'r3'">
-        <div v-for="section in screens.r3.sections"
-             :class="[section.id, 'r-section']"
-             :key="section.id">
-
-          <m-textfield v-for="field in section.fields"
-                       :id="field.id" v-model="$data[field.id]"
-                       :key="field.id" outlined>
-
-            <m-floating-label :for="field.id">
-              {{field.label}}
-              <span class="r-error" v-show="r3Errs[field.id]">
-                {{r3Errs[field.id]}}
-              </span>
-            </m-floating-label>
-
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>
-      </div>
-
-      <div class="r4" v-show="screen == 'r4'">
-        <div class="r-img r-section">
-          <div class="r-img-preview">
-            <img src="" onerror="this.style.opacity='0'">
-          </div>
-
-          <div class="r-upload">
-            <input id="r-upload-img" type="file"/>
-            <label for="r-upload-img" class="r-button stor-blue">
-              <m-icon icon="cloud_upload"></m-icon>
-              <span>Profile Image</span>
-            </label>
+          <div class="r-terms r-section">
+            By signing in you agree to the
+            <router-link to="/">Terms and Conditions</router-link>
           </div>
         </div>
 
-        <div v-for="section in screens.r4.sections"
-             :class="[section.id, 'r-section']"
-             :key="section.id">
-
-          <m-textfield v-for="field in section.fields"
-                       :id="field.id" v-model="$data[field.id]"
-                       :key="field.id" outlined>
-
-            <m-floating-label :for="field.id">
-              {{field.label}}
-              <span class="r-error" v-show="r4Errs[field.id]">
-                {{r4Errs[field.id]}}
-              </span>
-            </m-floating-label>
-
-            <m-notched-outline></m-notched-outline>
-          </m-textfield>
-        </div>      </div>
-
-      <div class="r5" v-show="screen == 'r5'">
-        <div class="r-final">
-          <img v-if="!loggedIn" src="/src/assets/stor-loading.gif"/>
-          <div v-else>
-            Welcome to Stör!
-          </div>
-          <div v-if="err" class="err">
-            {{err}}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="r-action" v-if="screen !== 'r5'">
-      <div class="r-sign-up" v-if="screen == 'r1'">
-        <button @click="next" class="r-button stor-blue">CREATE ACCOUNT</button>
       </div>
 
-      <div class="r-two-buttons" v-else>
-        <button @click="back" class="r-button stor-blue">BACK</button>
-
-        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">SUBMIT</button>
-        <button @click="next" class="r-button stor-blue" v-else>NEXT</button>
+      <div class="r-sign-up">
+        <a href="/api/u/auth/login"><button class="r-button stor-blue">SIGN IN</button></a>
       </div>
-    </div>
-  </m-card>
+      <div class="r-terms r-section">
+        Login or Create Account with
+      </div>
+      <div class="r-two-buttons">
+        <a href="/api/u/auth/google"><button class="r-button google-red">GOOGLE</button></a>
+
+        <a href="/api/u/auth/facebook"><button class="r-button facebook-blue">FACEBOOK</button></a>
+      </div>
+    </m-card>
+  </div>
 </template>
 
 <script>
@@ -171,6 +64,7 @@
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
   import validator from "validator";
+
 
   import config from "../../config";
   import httpStats from "../../../../utils/HttpStats";
@@ -214,29 +108,6 @@
     return regEx.test(date);
   }
 
-  /**
-   * Checks if a string is a valid US
-   * zip code
-   *
-   * @param zip zip code
-   *
-   * @returns {boolean}
-   */
-  function isValidUSZip(zip) {
-    return /^\d{5}(-\d{4})?$/.test(zip);
-  }
-
-  /**
-   * Checks if a string is a valid ssn
-   *
-   * @param ssn string to check
-   *
-   * @returns {boolean}
-   */
-  function isValidSSN(ssn) {
-    return /^\d{3}-?\d{2}-?\d{4}$/.test(ssn);
-  }
-
   export default {
     data(){
       return {
@@ -268,22 +139,7 @@
        */
       next(){
         let self = this;
-        let numScreens = 5;
-        let n = parseInt(self.screen[1]);
-        let next = n + 1;
-
         self.touchAll();
-
-        if(emptyObj(self[`${self.screen}Errs`]) && next <= numScreens){
-          let nextScreen = `r${next}`;
-          let props = rProps[nextScreen] || [];
-
-          if(props.includes("ssn") && self.userType !== "host"){
-            nextScreen = `r${next + 1}`
-          }
-
-          self.screen = nextScreen;
-        }
       },
 
       /**
@@ -312,14 +168,11 @@
        */
       async submit(){
         let self = this;
-
         self.next();
 
         let data = JSON.parse(JSON.stringify(self.$data));
         let keys = Object.keys(data);
         let exclude = new Set(["screen", "screens", "touched", "err", "userType"]);
-
-        let profileImage = $("#r-upload-img")[0].files[0];
 
         for(let key of keys){
           if(exclude.has(key)){
@@ -334,27 +187,9 @@
         data.address = self.address;
 
         try{
-          let res = await self.$http.post("/api/u", data);
-          let {token} = res.body.result;
+          let res = await self.$http.post("/api/u/auth/login", data);
+          let { token } = res.body.result;
 
-          if(profileImage){
-            let formData = new FormData();
-            let options = {headers:{}};
-
-            options.headers[config.AUTH_TOKEN] = token;
-
-            formData.append("profileImg", profileImage);
-
-            try{
-              await self.$http.post("/api/u/img", formData, options);
-            }
-            catch(err){
-              if(err.status === httpStats.BAD_REQUEST){
-                self.err = "invalid image"
-              }
-              else self.err = err.body.message;
-            }
-          }
           self.$store.commit("token", token);
         }
         catch(err){
@@ -363,40 +198,6 @@
           }
           else console.log(err);
         }
-      },
-
-      /**
-       * Sets the user type.
-       * Used for the "Store" and "Host"
-       * buttons
-       *
-       * @param type
-       */
-      setUserType(type){
-        let types = ["host", "store"];
-        let valid = new Set(types);
-
-        if (!valid.has(type)){
-          throw new Error("Invalid user type!");
-        }
-
-        let self = this;
-
-        if(type === self.userType){return;}
-
-        let elem = $(`#r-${type}`);
-        let other = type === types[0]? types[1] : types[0];
-        other = $(`#r-${other}`);
-
-        elem.removeClass("greyed-out");
-        elem.removeClass("active");
-        elem.addClass("stor-blue");
-
-        other.addClass("greyed-out");
-        other.addClass("active");
-        other.removeClass("stor-blue");
-
-        self.userType = type;
       },
 
       /**
@@ -433,31 +234,10 @@
     },
 
     computed: {
-      title(){
-        switch(this.screen){
-          case "r1": return "Sign Up Today";
-          case "r2": return "Address";
-          case "r3": return "SSN";
-          case "r4": return "Final Step"
-        }
-      },
-
       subtitle(){
         switch(this.screen){
           case "r2": return "Your address will never be shared without your consent";
           case "r3": return "Required for hosts";
-        }
-      },
-
-      address(){
-        let self = this;
-
-        return {
-          city: self.city,
-          street: self.street,
-          houseNum: self.suite,
-          state: self.state,
-          zip: self.zip
         }
       },
 
@@ -494,58 +274,6 @@
 
         return errs;
       },
-
-      /**
-       * Errors on the second registration
-       * screen
-       *
-       * @returns {{}}
-       */
-      r2Errs(){
-        let self = this;
-        let optional = new Set(["suite"]);
-        let required = rProps.r2.filter(prop => !optional.has(prop));
-        let errs = {};
-
-        if(self.touched.zip && !isValidUSZip(self.address.zip)){
-          errs.zip = INVALID;
-        }
-
-        self.checkRequired(required, errs);
-
-        return errs;
-      },
-
-      /**
-       * Errors on the third registration
-       * screen
-       *
-       * @returns {{}}
-       */
-      r3Errs(){
-        let self = this;
-        let required = rProps.r3;
-        let errs = {};
-
-        if(self.touched.ssn && !isValidSSN(self.ssn)){
-          errs.ssn = INVALID;
-        }
-
-        self.checkRequired(required, errs);
-
-        return errs;
-      },
-
-      r4Errs(){
-        let self =  this;
-        let errs = {};
-
-        if(self.touched.alias && self.alias.length < 2){
-          errs.alias = "(2 characters minimum)";
-        }
-
-        return errs;
-      }
     },
 
     mounted(){
@@ -604,12 +332,20 @@
   @import "../../../node_modules/material-components-vue/dist/floating-label/styles";
   @import "../../../node_modules/material-components-vue/dist/elevation/styles";
 
+  .overall{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
   .r-card{
     @include mdc-card-corner-radius(0);
 
     width: 330px;
     padding: 30px 30px;
     margin-right: 80px;
+    position: relative;
+    top: 100px;
+
   }
 
   .r-card button{
@@ -669,6 +405,14 @@
 
   .stor-blue{
     background: #03A9F4;
+  }
+
+  .google-red{
+    background: #dd4b39;
+  }
+
+  .facebook-blue{
+    background: #3B5998;
   }
 
   .r-card .mdc-text-field{

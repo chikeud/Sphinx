@@ -11,7 +11,7 @@ const Schema = mongoose.Schema;
 let BookingSchema = new Schema({
   pickup: { type: Date, required: ERR_REQUIRED }
   , delivery: { type: Date, required: ERR_REQUIRED }
-  , booking_description: {type: String }
+  , booking_description: {type: String}
   , size: { type: String, required: ERR_REQUIRED}
   , user: { type: Schema.Types.ObjectId, ref: "Users", required: ERR_REQUIRED }
   , host: { type: Schema.Types.ObjectId, ref: "Hosts", required: ERR_REQUIRED }

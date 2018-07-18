@@ -9,7 +9,7 @@
     </div>
 
     <div class="r-form">
-      <div class="r1" v-show="screen == 'r1'">
+      <div class="r1" v-show="screen === 'r1'">
         <div class="r-user-type r-section r-two-buttons">
           <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
             HOST
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="r2" v-show="screen == 'r2'">
+      <div class="r2" v-show="screen === 'r2'">
         <div v-for="section in screens.r2.sections"
              :class="[section.id, 'r-section']"
              :key="section.id">
@@ -78,7 +78,7 @@
 
       </div>
 
-      <div class="r3" v-show="screen == 'r3'">
+      <div class="r3" v-show="screen === 'r3'">
         <div v-for="section in screens.r3.sections"
              :class="[section.id, 'r-section']"
              :key="section.id">
@@ -99,7 +99,7 @@
         </div>
       </div>
 
-      <div class="r4" v-show="screen == 'r4'">
+      <div class="r4" v-show="screen === 'r4'">
         <div class="r-img r-section">
           <div class="r-img-preview">
             <img src="" onerror="this.style.opacity='0'">
@@ -133,7 +133,7 @@
           </m-textfield>
         </div>      </div>
 
-      <div class="r5" v-show="screen == 'r5'">
+      <div class="r5" v-show="screen === 'r5'">
         <div class="r-final">
           <img v-if="!loggedIn" src="/src/assets/stor-loading.gif"/>
           <div v-else>
@@ -147,14 +147,14 @@
     </div>
 
     <div class="r-action" v-if="screen !== 'r5'">
-      <div class="r-sign-up" v-if="screen == 'r1'">
+      <div class="r-sign-up" v-if="screen === 'r1'">
         <button @click="next" class="r-button stor-blue">CREATE ACCOUNT</button>
       </div>
 
       <div class="r-two-buttons" v-else>
         <button @click="back" class="r-button stor-blue">BACK</button>
 
-        <button @click="submit" class="r-button stor-blue" v-if="screen == 'r4'">SUBMIT</button>
+        <button @click="submit" class="r-button stor-blue" v-if="screen === 'r4'">SUBMIT</button>
         <button @click="next" class="r-button stor-blue" v-else>NEXT</button>
       </div>
     </div>

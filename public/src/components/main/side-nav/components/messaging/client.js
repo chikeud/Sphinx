@@ -13,6 +13,14 @@ const ALL_MSGS = "all-messages";
 const ERR = "error";
 
 export default class MessageClient{
+
+  /**
+   * Connects to MessageServer, initializes
+   * necessary variables, and listens for incoming
+   * messages.
+   *
+   * @param view - the message component's data object
+   */
   constructor(view){
     let token = localStorage.getItem(config.AUTH);
 
@@ -30,6 +38,11 @@ export default class MessageClient{
     this.listen();
   }
 
+  /**
+   * Sends provided data to the server
+   *
+   * @param data - to be sent
+   */
   send(data){
     let self = this;
     data[config.AUTH_TOKEN] = localStorage.getItem(config.AUTH);
@@ -39,6 +52,9 @@ export default class MessageClient{
     });
   }
 
+  /**
+   * Listens for incoming messages
+   */
   listen(){
     let self = this;
 
@@ -57,6 +73,11 @@ export default class MessageClient{
     });
   }
 
+  /**
+   * Adds a message to the view.
+   *
+   * @param msg - to add
+   */
   addMsg(msg){
     msg.at = moment(msg.createdAt).format("MMMM Do YYYY, h:mm a");
     this.view.messages.push(msg);

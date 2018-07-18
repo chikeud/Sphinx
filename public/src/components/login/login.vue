@@ -2,53 +2,58 @@
   <div class="overall">
     <m-card class="r-card">
       <div class="r-title">
-        Login
-        <div class="r-subtitle" v-if="subtitle">
-          {{subtitle}}
-        </div>
+       Sign In
       </div>
 
       <div class="r-form">
         <div class="r1">
-          <div v-for="section in screens.r1.sections"
-               :class="[section.id, 'r-section']"
-               :key="section.id">
+          <div class="r-section">
 
-            <m-textfield v-for="field in section.fields"
-                         :type="field.type ? field.type : 'text'"
-                         :id="field.id"
-                         v-model="$data[field.id]"
-                         :key="field.id" outlined>
+            <m-textfield v-model="alias" outlined>
 
-              <m-floating-label :for="field.id">
-                {{field.label}}
-                <span class="r-error" v-show="r1Errs[field.id]">
-                  {{r1Errs[field.id]}}
-                </span>
+              <m-floating-label>
+                Username
               </m-floating-label>
 
               <m-notched-outline></m-notched-outline>
             </m-textfield>
           </div>
 
-          <div class="r-terms r-section">
-            By signing in you agree to the
-            <router-link to="/">Terms and Conditions</router-link>
+          <div class="r-section">
+
+            <m-textfield type="password" v-model="password" outlined>
+
+              <m-floating-label>
+                Password
+
+              </m-floating-label>
+
+              <m-notched-outline></m-notched-outline>
+            </m-textfield>
           </div>
+
+          <span class="r-error r-terms r-section" v-if="errMsg">
+                  {{errMsg}}
+          </span>
+
         </div>
 
       </div>
 
       <div class="r-sign-up">
-        <a href="/api/u/auth/login"><button class="r-button stor-blue">SIGN IN</button></a>
+        <button @click="login" class="r-button stor-blue">SIGN IN</button>
       </div>
       <div class="r-terms r-section">
-        Login or Create Account with
+        Login with
       </div>
       <div class="r-two-buttons">
-        <a href="/api/u/auth/google"><button class="r-button google-red">GOOGLE</button></a>
-
         <a href="/api/u/auth/facebook"><button class="r-button facebook-blue">FACEBOOK</button></a>
+
+        <a href="/api/u/auth/google"><button class="r-button google-red">GOOGLE</button></a>
+      </div>
+      <div class="r-terms r-section">
+        Don't have an account?
+        <router-link to="/">Sign Up </router-link>
       </div>
     </m-card>
   </div>
@@ -66,9 +71,8 @@
   import validator from "validator";
 
 
-  import config from "../../config";
-  import httpStats from "../../../../utils/HttpStats";
-  import {rScreens, rProps} from "../main/registration/r.screens";
+  import config from "../../../../config";
+
 
   Vue.use(Card);
   Vue.use(Button);
@@ -78,125 +82,35 @@
   Vue.use(Elevation);
   Vue.use(Icon);
 
-  const INVALID = "(invalid)";
-
-  /**
-   * Checks if object is empty
-   *
-   * @param obj object to check
-   *
-   * @returns {boolean}
-   */
-  function emptyObj(obj){
-    if(!obj) return true;
-
-    return Object.keys(obj).length === 0;
-  }
-
-  /**
-   * Checks if date is valid
-   *
-   * @param date questionable date
-   *
-   * @returns {boolean}
-   */
-  function validDate(date){
-    let regEx = new RegExp("((0?[13578]|10|12)([-\/])((0[0-9])|([12])([0-9]?)" +
-      "|(3[01]?))([-\/])((\d{4})|(\d{2}))|(0?[2469]|11)([-\/])((0[0-9])|([12])" +
-      "([0-9]?)|(3[0]?))([-\/])((\d{4}|\d{2})))");
-
-    return regEx.test(date);
-  }
-
   export default {
-    data(){
+    data() {
       return {
-        screens: rScreens,
-        screen: "r1",
-        userType: "store",
-        fName: "",
-        lName: "",
-        email: "",
-        phone: "",
-        password: "",
-        street: "",
-        city: "",
-        state: "",
-        zip: "",
-        suite: "",
-        alias: "",
-        ssn: "",
-        invite: "",
-        touched: {},
-        err: null
+        alias: ""
+        , password: ""
+        , errMsg: ""
       }
     },
 
     methods: {
       /**
-       * Goes to the next screen in the
-       * registration form
+       * Submits the login form
        */
-      next(){
+      login: async function () {
         let self = this;
-        self.touchAll();
-      },
+        let {alias, password} = self;
 
-      /**
-       * Goes to the previous screen
-       * in the registration form
-       */
-      back(){
-        let self = this;
-        let n = parseInt(self.screen[1]);
-        let prev = n - 1;
+        try {
+          let credentials = {alias, password};
+          let loginRoute = `${config.BASE_URL}/api/u/auth/login`;
+          let res = await self.$http.post(loginRoute, credentials);
 
-        if (prev > 0){
-          let prevScreen = `r${prev}`;
-          let props = rProps[prevScreen] || [];
+          console.log(res);
 
-          if(props.includes("ssn") && self.userType !== "host"){
-            prevScreen = `r${prev - 1}`
-          }
-
-          self.screen = prevScreen;
+          self.loggedIn(res);
         }
-      },
-
-      /**
-       * Submits the sign up form.
-       */
-      async submit(){
-        let self = this;
-        self.next();
-
-        let data = JSON.parse(JSON.stringify(self.$data));
-        let keys = Object.keys(data);
-        let exclude = new Set(["screen", "screens", "touched", "err", "userType"]);
-
-        for(let key of keys){
-          if(exclude.has(key)){
-            delete data[key];
-          }
-        }
-
-        data.firstName = data.fName;
-        data.lastName = data.lName;
-        data.isRenter = self.userType === "store";
-        data.isHost = !data.isRenter;
-        data.address = self.address;
-
-        try{
-          let res = await self.$http.post("/api/u/auth/login", data);
-          let { token } = res.body.result;
-
-          self.$store.commit("token", token);
-        }
-        catch(err){
-          if(err.body){
-            self.err = err.body.message;
-          }
-          else console.log(err);
+        catch (err) {
+          self.errMsg = "Invalid Credentials";
+          console.log(err);
         }
       },
 
@@ -207,117 +121,37 @@
        * @param required list of required props
        * @param errs object containing found errors
        */
-      checkRequired(required, errs){
+      checkRequired(required, errs) {
         let self = this;
 
-        for(let prop of required){
-          if(self.touched[prop]){
-            if(!self[prop].trim()){
+        for (let prop of required) {
+          if (self.touched[prop]) {
+            if (!self[prop].trim()) {
               errs[prop] = "*";
             }
           }
         }
       },
-
-      /**
-       * Marks all fields as touched
-       */
-      touchAll(){
-        let self = this;
-
-        for(let prop of rProps[self.screen]){
-          if(!self.touched[prop]){
-            self.$set(self.touched, prop, true);
-          }
-        }
-      }
     },
 
     computed: {
-      subtitle(){
-        switch(this.screen){
-          case "r2": return "Your address will never be shared without your consent";
-          case "r3": return "Required for hosts";
-        }
-      },
-
-      loggedIn(){
+      loggedIn() {
         return this.$store.getters.loggedIn;
-      },
-
-      /**
-       * Errors on the first registration
-       * screen
-       *
-       * @returns {{}}
-       */
-      r1Errs(){
-        let self = this;
-        let touched = self.touched;
-        let optional = new Set(["invite"]);
-        let required = rProps.r1.filter(prop => !optional.has(prop));
-        let errs = {};
-
-        if(touched.email && !validator.isEmail(self.email)){
-          errs["email"] = INVALID;
-        }
-
-        if(touched.phone && !validator.isMobilePhone(self.phone, "en-US")){
-          errs.phone = INVALID
-        }
-
-        if(touched.password && self.password.length < config.MIN_PASS_LENGTH){
-          errs.password = `(${config.MIN_PASS_LENGTH} characters minimum)`
-        }
-
-        self.checkRequired(required, errs);
-
-        return errs;
-      },
+      }
     },
-
-    mounted(){
+    mounted() {
       let self = this;
 
       // mark field as touched once clicked
-      $(".mdc-text-field input").on("click.touched", function(){
+      $(".mdc-text-field input").on("click.touched", function () {
         let elem = this;
 
-        if(!self.touched[elem.id]){
+        if (!self.touched[elem.id]) {
           self.$set(self.touched, elem.id, true);
         }
 
         // remove click listener
         $(`.mdc-text-field #${elem.id}`).off("click.touched");
-      });
-
-      /**
-       * Reads an uploaded file
-       *
-       * @param input
-       */
-      function readURL(input) {
-        if (input.files && input.files[0]) {
-          let reader = new FileReader();
-          let img = $('.r-img-preview img');
-
-          reader.onload = function (e) {
-            img.attr('src', e.target.result);
-          };
-
-          reader.readAsDataURL(input.files[0]);
-        }
-      }
-
-      /**
-       * Updates the image when file input
-       * changes
-       */
-      $("#r-upload-img").change(function(){
-        let img = $('.r-img-preview img');
-
-        readURL(this);
-        img.css({opacity: 1});
       });
     }
   }
@@ -381,7 +215,7 @@
   }
 
   .r-card .r-user-type{
-    margin-bottom: 25px;
+    margin-bottom: 10px;
   }
 
   .r-two-buttons button{
@@ -569,7 +403,8 @@
 
   .r-card .r-error{
     color: red !important;
-    margin-right: 3px;
+
+
   }
 
   .r5 .r-final{

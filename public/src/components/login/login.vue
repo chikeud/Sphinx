@@ -1,25 +1,25 @@
 <template>
   <div class="overall">
-    <m-card class="r-card">
-      <div class="r-title">
+    <m-card class="l-card">
+      <div class="l-title">
        Sign In
       </div>
 
-      <div class="r-form">
+      <div class="l-form">
         <div class="r1">
-          <div class="r-section">
+          <div class="l-section">
 
             <m-textfield v-model="alias" outlined>
 
               <m-floating-label>
-                Username
+                Username or Email
               </m-floating-label>
 
               <m-notched-outline></m-notched-outline>
             </m-textfield>
           </div>
 
-          <div class="r-section">
+          <div class="l-section">
 
             <m-textfield type="password" v-model="password" outlined>
 
@@ -32,7 +32,7 @@
             </m-textfield>
           </div>
 
-          <span class="r-error r-terms r-section" v-if="errMsg">
+          <span class="l-error l-terms l-section" v-if="errMsg">
                   {{errMsg}}
           </span>
 
@@ -40,20 +40,20 @@
 
       </div>
 
-      <div class="r-sign-up">
-        <button @click="login" class="r-button stor-blue">SIGN IN</button>
+      <div class="l-sign-up">
+        <button @click="login" class="l-button stor-blue">SIGN IN</button>
       </div>
-      <div class="r-terms r-section">
-        Login with
+      <div class="l-terms l-terms-section">
+        or Login with
       </div>
-      <div class="r-two-buttons">
-        <a href="/api/u/auth/facebook"><button class="r-button facebook-blue">FACEBOOK</button></a>
+      <div class="l-two-buttons">
+        <a href="/api/u/auth/facebook"><button class="l-button facebook-blue">FACEBOOK</button></a>
 
-        <a href="/api/u/auth/google"><button class="r-button google-red">GOOGLE</button></a>
+        <a href="/api/u/auth/google"><button class="l-button google-red">GOOGLE</button></a>
       </div>
-      <div class="r-terms r-section">
+      <div class="l-terms">
         Don't have an account?
-        <router-link to="/">Sign Up </router-link>
+        <router-link to="/">Create Account</router-link>
       </div>
     </m-card>
   </div>
@@ -69,9 +69,6 @@
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
   import validator from "validator";
-
-
-  import config from "../../../../config";
 
 
   Vue.use(Card);
@@ -101,12 +98,10 @@
 
         try {
           let credentials = {alias, password};
-          let loginRoute = `${config.BASE_URL}/api/u/auth/login`;
+          let loginRoute = '/api/u/auth/login';
           let res = await self.$http.post(loginRoute, credentials);
-
-          console.log(res);
-
-          self.loggedIn(res);
+          self.$store.commit("token", res.body.result.token);
+          this.$router.push('/dashboard');
         }
         catch (err) {
           self.errMsg = "Invalid Credentials";
@@ -114,24 +109,6 @@
         }
       },
 
-      /**
-       * Validates required fields in
-       * the form
-       *
-       * @param required list of required props
-       * @param errs object containing found errors
-       */
-      checkRequired(required, errs) {
-        let self = this;
-
-        for (let prop of required) {
-          if (self.touched[prop]) {
-            if (!self[prop].trim()) {
-              errs[prop] = "*";
-            }
-          }
-        }
-      },
     },
 
     computed: {
@@ -139,21 +116,6 @@
         return this.$store.getters.loggedIn;
       }
     },
-    mounted() {
-      let self = this;
-
-      // mark field as touched once clicked
-      $(".mdc-text-field input").on("click.touched", function () {
-        let elem = this;
-
-        if (!self.touched[elem.id]) {
-          self.$set(self.touched, elem.id, true);
-        }
-
-        // remove click listener
-        $(`.mdc-text-field #${elem.id}`).off("click.touched");
-      });
-    }
   }
 
 </script>
@@ -171,54 +133,57 @@
     justify-content: center;
     align-content: center;
   }
-  .r-card{
+  .l-card{
     @include mdc-card-corner-radius(0);
 
     width: 330px;
-    padding: 30px 30px;
+    padding-top: 30px ;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 15px;
     margin-right: 80px;
     position: relative;
     top: 100px;
 
   }
 
-  .r-card button{
+  .l-card button{
     height: 40px;
   }
 
-  .r-card button:focus{
+  .l-card button:focus{
     outline: none;
   }
 
-  .r-title{
+  .l-title{
     text-align: left;
     font-size: 19px;
     color: #263238;
     margin-bottom: 25px;
   }
 
-  .r-subtitle{
+  .l-subtitle{
     width: 70%;
     margin-top: 6px;
     font-size: 10px;
     color: #B0BEC5;
   }
 
-  .r-two-buttons{
+  .l-two-buttons{
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .r-two-buttons:not(.r-user-type){
-    margin-bottom: 20px;
-  }
-
-  .r-card .r-user-type{
     margin-bottom: 10px;
   }
 
-  .r-two-buttons button{
+  .l-two-buttons:not(.r-user-type){
+    margin-bottom: 10px;
+  }
+
+  .l-card .r-user-type{
+    margin-bottom: 10px;
+  }
+
+  .l-two-buttons button{
     border: none;
     width: 128px;
     transition: color 0.2s ease, background-color 0.4s ease;
@@ -249,98 +214,102 @@
     background: #3B5998;
   }
 
-  .r-card .mdc-text-field{
+  .l-card .mdc-text-field{
     @include mdc-text-field-focused-outline-color(#00B0FF);
     @include mdc-text-field-outline-color(#EDEFF0);
 
     margin: 2px 0 0 !important;
   }
 
-  .r-card .mdc-text-field--outlined{
+  .l-card .mdc-text-field--outlined{
     height: 35px;
   }
 
-  .r-card .mdc-text-field__input{
+  .l-card .mdc-text-field__input{
     padding: 0 12px 2px;
   }
 
-  .r-card .mdc-text-field, .r-card .mdc-text-field__input{
+  .l-card .mdc-text-field, .r-card .mdc-text-field__input{
     height: 40px;
   }
 
-  .r-card .mdc-notched-outline{
+  .l-card .mdc-notched-outline{
     @include mdc-notched-outline-stroke-width(1px);
   }
 
-  .r-card .mdc-notched-outline,
-  .r-card .mdc-notched-outline__idle{
+  .l-card .mdc-notched-outline,
+  .l-card .mdc-notched-outline__idle{
     border-radius: 0;
   }
 
-  .r-card .mdc-notched-outline svg{
+  .l-card .mdc-notched-outline svg{
     position: relative;
   }
 
-  .r-card .mdc-floating-label{
+  .l-card .mdc-floating-label{
     color: #CFD8DC !important;
     bottom: 12px;
   }
 
-  .r-card .mdc-floating-label,
-  .r-card .mdc-text-field__input{
+  .l-card .mdc-floating-label,
+  .l-card .mdc-text-field__input{
     font-size: 13px;
   }
 
-  .r-card .mdc-floating-label--float-above{
+  .l-card .mdc-floating-label--float-above{
     transform: translateY(-82%) scale(0.75);
     color: #369FDA !important;
     background-color: white;
     z-index: 2;
   }
 
-  .r-section:not(.r-user-type){
+  .l-section:not(.r-user-type){
     margin-bottom: 13px;
   }
 
-  .r-form .mdc-text-field{
+  .l-terms-section{
+    padding-bottom: 6px;
+  }
+
+  .l-form .mdc-text-field{
     width: 100%;
   }
 
-  .r-name{
+  .l-name{
     display: flex;
     justify-content: space-between;
     flex-direction: row;
   }
 
-  .r-name .mdc-text-field, .r-name .mdc-text-field__input{
+  .l-name .mdc-text-field, .l-name .mdc-text-field__input{
     width: 134.5px;
   }
 
-  .r-action{
+  .l-action{
     margin-top: 20px;
   }
 
-  .r-action .r-two-buttons{
+  .l-action .l-two-buttons{
     margin: 0;
   }
 
-  .r-sign-up{
+  .l-sign-up{
     /*margin-bottom: 20px;*/
   }
 
-  .r-sign-up button{
+  .l-sign-up button{
     width: 100%;
     border: none;
   }
 
-  .r-button{
+  .l-button{
     color: white;
     font-size: 14px;
     font-weight: bolder;
     cursor: pointer;
   }
 
-  .r-heading{
+  .l-heading{
     text-align: left;
     font-size: 14px;
     color: #546F7A;
@@ -349,7 +318,7 @@
     margin-left: 15px;
   }
 
-  .r-subheading{
+  .l-subheading{
     text-align: left;
     font-size: 10px;
     color: #B0BEC5;
@@ -379,29 +348,7 @@
     font-size: 20px;
   }
 
-  #r-upload-img{
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
-  }
-
-  #r-upload-img + label{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 40px;
-    border: none;
-  }
-
-  #r-upload-img + label span{
-    margin: 0 8px;
-  }
-
-  .r-card .r-error{
+  .l-card .l-error{
     color: red !important;
 
 
@@ -426,7 +373,7 @@
     color: red;
   }
 
-  .r-terms{
+  .l-terms{
     font-size: 7px;
     font-weight: 100;
     text-align: center;
@@ -435,7 +382,7 @@
     padding-top: 6px;
   }
 
-  .r-terms a{
+  .l-terms a{
     color: #29B6F6;
   }
 

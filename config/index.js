@@ -9,7 +9,7 @@ const DB_ADDRESS = "mongodb://localhost:27017";
 const COLLECTION = process.env.COLLECTION || "Sphinx";
 
 exports.PORT = process.env.PORT || 8787;
-exports.BASE_URL = `localhost:${exports.PORT}`;
+exports.BASE_URL = `localhost:${process.env.PORT || 8787}`;
 exports.SECRET = "secret";
 exports.DB_URL = `${DB_ADDRESS}/${COLLECTION}`;
 exports.MONGO_ERR = "MongoError";

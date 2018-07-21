@@ -31,6 +31,7 @@ passport.use(new GoogleStrategy({
     //console.log(profile.id);
     User.findOne({ googleID: profile.id }).exec().then((currentUser) => {
       if (currentUser){
+        console.log(currentUser);
         done(null, currentUser);
       }
       else{
@@ -49,6 +50,7 @@ passport.use(new FacebookStrategy({
     console.log(profile.id);
     User.findOne({ facebookID: profile.id }).exec().then((currentUser) => {
       if (currentUser){
+        console.log(currentUser);
         done(null, currentUser);
       }
       else{

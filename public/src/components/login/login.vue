@@ -44,7 +44,7 @@
         <button @click="login" class="l-button stor-blue">SIGN IN</button>
       </div>
       <div class="l-terms l-terms-section">
-        or Login with
+        or Sign In with
       </div>
       <div class="l-two-buttons">
         <a href="/api/u/auth/facebook"><button class="l-button facebook-blue">FACEBOOK</button></a>

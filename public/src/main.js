@@ -18,6 +18,7 @@ Vue.http.interceptors.push((req, next) => {
   if(!exists) req.headers.set(config.AUTH_TOKEN, token);
 
   next(res => {
+    console.log(res);
     if(res.status === status.UNAUTHORIZED){
       store.commit("clearToken");
     }
@@ -71,10 +72,10 @@ let store = new Vuex.Store({
      * @param state
      */
     clearToken(state){
-      if(state.token){
-        localStorage.removeItem(config.AUTH);
-        state.token = "";
-      }
+      console.log("Clear Token");
+      localStorage.removeItem(config.AUTH);
+      state.token = "";
+      router.push("/");
     },
   }
 });

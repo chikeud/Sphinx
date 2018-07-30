@@ -10,6 +10,7 @@ let uniqueFilename = require("unique-filename");
 let config = require("../../../config");
 let auth = require("../../../utils/authToken");
 let files = require("../../../utils/files");
+let http = require("../../../utils/HttpStats");
 let Message = require("../../models/messaging").Message;
 let User = require("../../models/user").User;
 
@@ -144,9 +145,11 @@ class MessageServer{
    * @private - this function is private
    */
   _fail(socket, err){
-    err = err || {msg: config.AUTH_ERR_MSG};
+    err = err || {msg: config.AUTH_ERR_MSG, status: http.UNAUTHORIZED};
 
-    this.io.to(socket.id).emit(ERR, {err: err.message});
+    console.log(err);
+
+    this.io.to(socket.id).emit(ERR, {err: err.message, status: err.status});
   }
 }
 

@@ -338,7 +338,7 @@
       conversations(){
         let self = this;
 
-        if (!self.user) return;
+        if (!self.user) return null;
 
         let search = self.searchUser ? self.searchUser.toLowerCase() : "";
         let convos = {};

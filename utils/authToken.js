@@ -29,7 +29,7 @@ let validateToken = exports.validateToken = async (token) => {
     return user;
   }
   catch(err){
-    throw err;
+    return false;
   }
 };
 

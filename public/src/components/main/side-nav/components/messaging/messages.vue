@@ -629,6 +629,11 @@
     outline: none;
   }
 
+  .msg-card .in:focus::placeholder{
+    outline: none;
+    color: #03A9F4 !important;
+  }
+
   .msg-card .in{
     font-size: 16px;
     color: #546F7A;

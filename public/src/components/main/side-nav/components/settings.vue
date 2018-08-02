@@ -6,8 +6,8 @@
       <div class="settings-content">
         <hr>
 
-        <m-layout-grid>
-          <m-layout-grid-inner>
+        <m-layout-grid :align="'left'" class="grid image-settings-grid">
+          <m-layout-grid-inner class="inner-grid">
 
             <m-layout-grid-cell :span=12>
               <div class="settings-image">
@@ -32,14 +32,45 @@
 
         <hr>
 
-        <m-layout-grid>
-          <m-layout-grid-inner>
+        <m-layout-grid :align="'left'" class="grid info-settings-grid">
+          <m-layout-grid-inner class="inner-grid">
             <m-layout-grid-cell :span="12">
               <div class="prompt">
                 <div class="heading">Basic Information</div>
                 <span>Will only be shared with potential hosts and renters</span>
               </div>
             </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="firstName" id="firstname-settings">
+                <m-floating-label for="firstname-settings">
+                  First Name
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="lastName" id="lastname-settings">
+                <m-floating-label for="lastname-settings">
+                  Last Name
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="alias" id="alias-settings">
+                <m-floating-label for="alias-settings">
+                  Username
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
           </m-layout-grid-inner>
         </m-layout-grid>
 
@@ -59,6 +90,9 @@
   import Card from "material-components-vue/dist/card";
   import Elevation from "material-components-vue/dist/elevation"
   import LayoutGrid from "material-components-vue/dist/layout-grid"
+  import TextField from "material-components-vue/dist/textfield"
+  import FloatingLabel from "material-components-vue/dist/floating-label"
+  import NotchedOutline from "material-components-vue/dist/notched-outline"
   import Icon from "material-components-vue/dist/icon";
 
   import {readFiles} from "../../../../public.utils.js"
@@ -66,12 +100,18 @@
   Vue.use(Card);
   Vue.use(Elevation);
   Vue.use(LayoutGrid);
+  Vue.use(TextField);
+  Vue.use(FloatingLabel);
+  Vue.use(NotchedOutline);
   Vue.use(Icon);
 
   export default {
     data(){
       return {
-        profileImg: null
+        profileImg: null,
+        firstName: "",
+        lastName: "",
+        alias: ""
       };
     },
 
@@ -105,18 +145,30 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import "../../../../../node_modules/material-components-vue/dist/card/styles";
   @import "../../../../../node_modules/material-components-vue/dist/elevation/styles";
   @import "../../../../../node_modules/material-components-vue/dist/layout-grid/styles";
+  @import "../../../../../node_modules/material-components-vue/dist/textfield/styles";
+  @import "../../../../../node_modules/material-components-vue/dist/floating-label/styles";
+  @import "../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
+
+  $stor-blue: #03A9F4;
+  $item-gray: #EDEFF0;
+  $font-gray: #546F7A;
+  $text-font-size: 12px !important;
 
   #settings{
     font-size: 12px;
-    color: #546F7A;
+    color: $font-gray;
   }
 
   #settings .mdc-card{
     margin-bottom: 15px;
+  }
+
+  #settings .inner-grid{
+    grid-gap: 10px;
   }
 
   #settings .settings-title{
@@ -131,7 +183,7 @@
     border: none;
     margin: 0;
     height: 2px;
-    background: #EDEFF0;
+    background: $item-gray;
   }
 
   #settings .heading{
@@ -151,7 +203,7 @@
     height: 100px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: #EDEFF0;
+    background: $item-gray;
     margin-right: 16px;
     margin-bottom: 16px;
   }
@@ -184,12 +236,51 @@
     align-items: center;
     height: 30px;
     padding: 0 25px;
-    background: #EDEFF0;
+    background: $item-gray;
     cursor: pointer;
   }
 
   #settings #settings-img-upload+label:hover{
-    background: #03A9F4;
+    background: $stor-blue;
     color: white;
+  }
+
+  #settings .info-settings-grid{
+    max-width: 530px;
+  }
+
+  #settings .info-settings-grid .prompt{
+    margin-bottom: 10px;
+  }
+
+  #settings .settings-input{
+    @include mdc-text-field-outline-corner-radius_(0px);
+  }
+
+  #settings .mdc-text-field--outlined{
+    min-width: 150px;
+    height: 35px;
+    margin: 0;
+  }
+
+  #settings .settings-input .mdc-floating-label{
+    font-size: $text-font-size;
+    line-height: normal;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  #settings .mdc-text-field__input{
+    font-size: $text-font-size;
+    padding: 4px 12px;
+  }
+
+  #settings .mdc-floating-label--float-above{
+    @include mdc-floating-label-ink-color($stor-blue);
+    transform: translateY(-90%) translateX(4%) scale(0.75);
+  }
+
+  #settings .settings-input-outline{
+    @include mdc-notched-outline-color($stor-blue);
   }
 </style>

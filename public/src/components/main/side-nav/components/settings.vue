@@ -71,6 +71,14 @@
               </m-textfield>
             </m-layout-grid-cell>
 
+            <m-layout-grid-cell :span="12">
+              <m-textfield textarea v-model="bio" id="bio-settings">
+                <m-floating-label for="bio-settings">
+                  Bio (500 char  max)
+                </m-floating-label>
+              </m-textfield>
+            </m-layout-grid-cell>
+
           </m-layout-grid-inner>
         </m-layout-grid>
 
@@ -111,7 +119,8 @@
         profileImg: null,
         firstName: "",
         lastName: "",
-        alias: ""
+        alias: "",
+        bio: ""
       };
     },
 
@@ -270,12 +279,12 @@
     bottom: 12px;
   }
 
-  #settings .mdc-text-field__input{
+  #settings .settings-input .mdc-text-field__input{
     font-size: $text-font-size;
     padding: 4px 12px;
   }
 
-  #settings .mdc-floating-label--float-above{
+  #settings .settings-input .mdc-floating-label--float-above{
     @include mdc-floating-label-ink-color($stor-blue);
     transform: translateY(-90%) translateX(4%) scale(0.75);
   }
@@ -283,4 +292,39 @@
   #settings .settings-input-outline{
     @include mdc-notched-outline-color($stor-blue);
   }
+
+  #settings .mdc-text-field--focused{
+    @include mdc-text-field-textarea-stroke-color($stor-blue);
+  }
+
+  #settings .mdc-text-field--textarea{
+    @include mdc-text-field-textarea-corner-radius(0);
+
+    border-color: #bfbfbf;
+    width: 100%;
+    overflow: visible;
+  }
+
+  #settings .mdc-text-field--textarea textarea{
+    height: 150px;
+    font-size: $text-font-size;
+    padding: 4px 12px;
+  }
+
+  #settings .mdc-text-field--textarea .mdc-floating-label{
+    font-size: $text-font-size;
+    line-height: normal;
+    z-index: -1;
+    padding: 0;
+    margin: 0;
+    top: 10px;
+    left: 12px;
+  }
+
+  #settings .mdc-text-field--textarea .mdc-floating-label--float-above{
+    @include mdc-floating-label-ink-color($font-gray);
+
+    transform: translateY(-190%) scale(0.9);
+  }
+
 </style>

@@ -82,6 +82,12 @@
           </m-layout-grid-inner>
         </m-layout-grid>
 
+        <hr>
+
+        <div class="settings-submit">
+          <button>SAVE</button>
+        </div>
+
       </div>
     </m-card>
     <m-card class="private-settings">
@@ -325,6 +331,28 @@
     @include mdc-floating-label-ink-color($font-gray);
 
     transform: translateY(-190%) scale(0.9);
+  }
+
+  #settings .settings-submit{
+    display: flex;
+    align-items: center;
+    height: 56px;
+  }
+
+  #settings .settings-submit button{
+    width: 120px;
+    height: 30px;
+    outline: none;
+    border: none;
+    margin-left: auto;
+    margin-right: 12px;
+    background: $item-gray;
+    cursor: pointer;
+  }
+
+  #settings .settings-submit button:hover{
+    background: $stor-blue;
+    color: white;
   }
 
 </style>

@@ -20,7 +20,7 @@ export function readFiles(input) {
 
   return new Promise(function(resolve, reject){
     let readNextFile = () => {
-      while(count < LENGTH && !(/\.(jpe?g|png|gif)$/i.test(input.files[count].name))){
+      while(count < LENGTH && !(/\.(jpe?g|png|gif|webp)$/i.test(input.files[count].name))){
         count++;
       }
 

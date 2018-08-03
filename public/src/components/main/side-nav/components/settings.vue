@@ -1,9 +1,11 @@
 <template>
   <div id="settings">
     <m-card class="public-settings">
-      <div class="settings-title">Public</div>
+      <div class="settings-title" @click="active = 'public-settings'">
+        Public
+      </div>
 
-      <div class="settings-content">
+      <div class="settings-content" v-show="active === 'public-settings'">
         <hr>
 
         <m-layout-grid :align="'left'" class="grid image-settings-grid">
@@ -91,7 +93,131 @@
       </div>
     </m-card>
     <m-card class="private-settings">
-      <div class="settings-title">Private</div>
+      <div class="settings-title" @click="active = 'private-settings'">
+        Private
+      </div>
+
+      <div class="settings-content" v-show="active === 'private-settings'">
+
+        <hr>
+
+        <m-layout-grid :align="'left'" class="grid address-settings-grid">
+          <m-layout-grid-inner class="inner-grid">
+            <m-layout-grid-cell :span="12">
+              <div class="prompt">
+                <div class="heading">Address Information</div>
+                <span>Will only be shared with your renters</span>
+              </div>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="address.street" id="street-settings">
+                <m-floating-label for="street-settings">
+                  Street
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="address.suite" id="suite-settings">
+                <m-floating-label for="suite-settings">
+                  Suite (Optional)
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="address.city" id="city-settings">
+                <m-floating-label for="city-settings">
+                  City
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="address.zip" id="zip-settings">
+                <m-floating-label for="zip-settings">
+                  Zip Code
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="address.state" id="state-settings">
+                <m-floating-label for="state-settings">
+                  State
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+          </m-layout-grid-inner>
+        </m-layout-grid>
+
+        <hr>
+
+        <m-layout-grid :align="'left'" class="grid password-settings-grid">
+          <m-layout-grid-inner class="inner-grid">
+            <m-layout-grid-cell :span="12">
+              <div class="prompt">
+                <div class="heading">Change Password</div>
+                <span>
+                  For the safety of your account, choose a sufficiently long password
+                </span>
+              </div>
+            </m-layout-grid-cell>
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="currPassword" id="curr-password">
+                <m-floating-label for="curr-password">
+                  Current Password
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="newPassword" id="new-password">
+                <m-floating-label for="new-password">
+                  New Password
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+
+            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-textfield class="settings-input" outlined v-model="confirmPassword" id="confirm-password">
+                <m-floating-label for="confirm-password">
+                  Confirm Password
+                </m-floating-label>
+
+                <m-notched-outline class="settings-input-outline"></m-notched-outline>
+              </m-textfield>
+            </m-layout-grid-cell>
+
+          </m-layout-grid-inner>
+        </m-layout-grid>
+
+        <hr>
+
+        <div class="settings-submit">
+          <button>SAVE</button>
+        </div>
+
+      </div>
     </m-card>
     <m-card class="payment-settings">
       <div class="settings-title">Payment</div>
@@ -122,11 +248,22 @@
   export default {
     data(){
       return {
+        active: "public-settings",
         profileImg: null,
         firstName: "",
         lastName: "",
         alias: "",
-        bio: ""
+        bio: "",
+        address: {
+          street: "",
+          suite: "",
+          city: "",
+          state: "",
+          zip: ""
+        },
+        currPassword: "",
+        newPassword: "",
+        confirmPassword: ""
       };
     },
 
@@ -180,6 +317,7 @@
 
   #settings .mdc-card{
     margin-bottom: 15px;
+    max-width: 1200px;
   }
 
   #settings .inner-grid{
@@ -189,9 +327,11 @@
   #settings .settings-title{
     display: flex;
     align-items: center;
-    padding: 15px;
+    height: 56px;
+    padding: 0 15px;
     font-size: 14px;
     color: black;
+    cursor: pointer;
   }
 
   #settings hr{
@@ -260,7 +400,9 @@
     color: white;
   }
 
-  #settings .info-settings-grid{
+  #settings .info-settings-grid,
+  #settings .address-settings-grid,
+  #settings .password-settings-grid{
     max-width: 530px;
   }
 
@@ -355,4 +497,7 @@
     color: white;
   }
 
+  #settings .address-settings-grid .mdc-text-field--outlined{
+    margin-bottom: 12px;
+  }
 </style>

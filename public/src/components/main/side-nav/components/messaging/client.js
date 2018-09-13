@@ -24,14 +24,18 @@ export default class MessageClient{
   constructor(view){
     let token = localStorage.getItem(config.AUTH);
 
-    if(!view.$store.getters.loggedIn){
-      throw new Error("Not Logged In!!");
+    if(token && !view.$store.getters.loggedIn){
+      view.$store.commit("clearToken");
     }
 
     this.view = view;
     this.socket = io.connect(`/?${config.AUTH_TOKEN}=${token}`);
 
     this.socket.on(ERR, function(err){
+      if(err.status === 401){
+        view.$store.commit("clearToken");
+      }
+
       console.log("error", err);
     });
 

@@ -95,9 +95,11 @@
       login: async function () {
         let self = this;
         let {alias, password} = self;
+        //console.log(self);
 
         try {
           let credentials = {alias, password};
+          console.log(credentials);
           let loginRoute = '/api/u/auth/login';
           let res = await self.$http.post(loginRoute, credentials);
           self.$store.commit("token", res.body.result.token);
@@ -350,6 +352,7 @@
 
   .l-card .l-error{
     color: red !important;
+    align-content: center;
 
 
   }

@@ -28,7 +28,7 @@ passport.use(new GoogleStrategy({
     clientSecret: auth.googleAuth.clientSecret,
     callbackURL: '/api/u/auth/google/redirect'
   }, (accessToken, refreshToken, profile, done) => {
-    //console.log(profile.id);
+    console.log(profile.id);
     User.findOne({ googleID: profile.id }).exec().then((currentUser) => {
       if (currentUser){
         console.log(currentUser);
@@ -36,6 +36,7 @@ passport.use(new GoogleStrategy({
       }
       else{
         done(null, false);
+        //next();
       }
     });
 

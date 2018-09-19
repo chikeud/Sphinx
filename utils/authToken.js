@@ -93,3 +93,10 @@ exports.createToken = async (user) => {
   console.log("dtiggy", t1, "\n");
   console.log("e-oj", t2);
 })();
+
+exports.generateToken = (req, res, next) => {
+  req.token = jwt.signAsync({
+    id: req.user._id,
+  }, config.SECRET, { expiresIn: "168h" });
+  next();
+};

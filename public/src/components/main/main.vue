@@ -5,7 +5,7 @@
     <div class="main-content">
       <div class="app-content">
         <router-view>
-
+          <sign-up></sign-up>
         </router-view>
       </div>
 

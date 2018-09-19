@@ -68,7 +68,6 @@
   import FloatingLabel from "material-components-vue/dist/floating-label";
   import Elevation from "material-components-vue/dist/elevation";
   import Icon from "material-components-vue/dist/icon";
-  import validator from "validator";
 
 
   Vue.use(Card);

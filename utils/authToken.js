@@ -94,33 +94,9 @@ exports.createToken = async (user) => {
   console.log("e-oj", t2);
 })();
 
-exports.serialize = (req, res, next) => {
-  db.updateOrCreate(req.user, function(err, user){
-    if(err) {return next(err);}
-    // we store the updated information in req.user again
-    req.user = {
-      id: user.id
-    };
-    next();
-  });
-};
-const db = {
-  updateOrCreate: function(user, cb){
-    // db dummy, we just cb the user
-    cb(null, user);
-  }
-};
-
 exports.generateToken = (req, res, next) => {
   req.token = jwt.signAsync({
-    id: req.user.id,
+    id: req.user._id,
   }, config.SECRET, { expiresIn: "168h" });
   next();
-};
-
-exports.respond = (req, res) => {
-  res.status(200).json({
-    user: req.user,
-    token: req.token
-  });
 };

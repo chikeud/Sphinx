@@ -21,7 +21,7 @@ userRouter.get('/auth/google', passport.authenticate('google', {
   scope: ['profile'],
   session: false
 }));
-userRouter.get('/auth/google/redirect', passport.authenticate('google', { session: false, failureRedirect: '/' }), auth.serialize, auth.generateToken, auth.respond);
+userRouter.get('/auth/google/redirect', passport.authenticate('google', { session: false, failureRedirect: '/login' }));
 
 //userRouter.post("/login", user.login);
 //userRouter.get('/logout');

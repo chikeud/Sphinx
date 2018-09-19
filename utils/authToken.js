@@ -88,7 +88,7 @@ exports.createToken = async (user) => {
 
 (async () => {
   let t1 = await exports.createToken({_id: "5b2fc4f33141e90307ed83ec", alias: "dtiggy"});
-  let t2 = await exports.createToken({_id: "5b2fc55f3141e90307ed83f1", alias: "e-oj"});
+  let t2 = await exports.createToken({_id: "5b7322d1d1d84b02b80b06aa", alias: "e-oj"});
 
   console.log("dtiggy", t1, "\n");
   console.log("e-oj", t2);

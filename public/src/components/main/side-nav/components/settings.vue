@@ -130,14 +130,18 @@
               </m-textfield>
             </m-layout-grid-cell>
 
-            <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
-              <m-textfield class="settings-input" outlined v-model="address.city" id="city-settings">
-                <m-floating-label for="city-settings">
+            <m-layout-grid-cell class="city-select" :spanDesktop="4" :spanTablet="5" :spanPhone="4">
+              <m-select outlined v-model="address.city" id="city-settings">
+                <option :key="'rochester'"
+                        :value="'Rochester'">Rochester</option>
+
+                <m-floating-label
+                  slot="label">
                   City
                 </m-floating-label>
 
-                <m-notched-outline class="settings-input-outline"></m-notched-outline>
-              </m-textfield>
+                <m-notched-outline class="select-input-outline" slot="line"></m-notched-outline>
+              </m-select>
             </m-layout-grid-cell>
 
             <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
@@ -177,7 +181,7 @@
             </m-layout-grid-cell>
 
             <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
-              <m-textfield class="settings-input" outlined v-model="currPassword" id="curr-password">
+              <m-textfield class="settings-input" outlined type="password" v-model="currPassword" id="curr-password">
                 <m-floating-label for="curr-password">
                   Current Password
                 </m-floating-label>
@@ -188,7 +192,7 @@
 
 
             <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
-              <m-textfield class="settings-input" outlined v-model="newPassword" id="new-password">
+              <m-textfield class="settings-input" outlined type="password" v-model="newPassword" id="new-password">
                 <m-floating-label for="new-password">
                   New Password
                 </m-floating-label>
@@ -199,7 +203,7 @@
 
 
             <m-layout-grid-cell :spanDesktop="4" :spanTablet="5" :spanPhone="4">
-              <m-textfield class="settings-input" outlined v-model="confirmPassword" id="confirm-password">
+              <m-textfield class="settings-input" outlined type="password" v-model="confirmPassword" id="confirm-password">
                 <m-floating-label for="confirm-password">
                   Confirm Password
                 </m-floating-label>
@@ -231,6 +235,7 @@
   import Elevation from "material-components-vue/dist/elevation"
   import LayoutGrid from "material-components-vue/dist/layout-grid"
   import TextField from "material-components-vue/dist/textfield"
+  import Select from "material-components-vue/dist/select"
   import FloatingLabel from "material-components-vue/dist/floating-label"
   import NotchedOutline from "material-components-vue/dist/notched-outline"
   import Icon from "material-components-vue/dist/icon";
@@ -241,6 +246,7 @@
   Vue.use(Elevation);
   Vue.use(LayoutGrid);
   Vue.use(TextField);
+  Vue.use(Select);
   Vue.use(FloatingLabel);
   Vue.use(NotchedOutline);
   Vue.use(Icon);
@@ -302,6 +308,7 @@
   @import "../../../../../node_modules/material-components-vue/dist/elevation/styles";
   @import "../../../../../node_modules/material-components-vue/dist/layout-grid/styles";
   @import "../../../../../node_modules/material-components-vue/dist/textfield/styles";
+  @import "../../../../../node_modules/material-components-vue/dist/select/styles";
   @import "../../../../../node_modules/material-components-vue/dist/floating-label/styles";
   @import "../../../../../node_modules/material-components-vue/dist/notched-outline/styles";
 
@@ -499,5 +506,39 @@
 
   #settings .address-settings-grid .mdc-text-field--outlined{
     margin-bottom: 12px;
+  }
+
+  #settings .city-select select{
+    font-size: $text-font-size;
+    padding: 0 12px;
+    height: 33px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+  }
+
+  #settings .city-select select::-ms-expand {
+    display: none;
+  }
+
+  #settings .city-select .mdc-select--outlined{
+    height: 35px;
+    min-width: 150px;
+  }
+
+  #settings .city-select .mdc-floating-label{
+    font-size: $text-font-size;
+    line-height: normal;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  #settings .city-select .mdc-floating-label--float-above{
+    @include mdc-floating-label-ink-color($stor-blue);
+    transform: translateY(-90%) translateX(4%) scale(0.75);
+  }
+
+  #settings .select-input-outline{
+    @include mdc-select-outline-corner-radius(0);
+    @include mdc-notched-outline-color($stor-blue);
   }
 </style>

@@ -5,7 +5,7 @@
  * @since 4/21/18
  */
 
-let moduleId = "users/user";
+let moduleId = "user/user";
 
 let bcrypt = require("bcrypt");
 let mongoose = require("mongoose");

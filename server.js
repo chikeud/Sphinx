@@ -6,7 +6,6 @@ let logger = require("morgan");
 let bodyParser = require("body-parser");
 let compress = require("compression");
 let mongoose = require("mongoose");
-const passportSetup = require('./config/passport');
 let Fawn = require("fawn");
 
 mongoose.Promise = global.Promise = require("bluebird");

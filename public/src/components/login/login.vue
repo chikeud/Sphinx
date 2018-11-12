@@ -43,14 +43,7 @@
       <div class="l-sign-up">
         <button @click="login" class="l-button stor-blue">SIGN IN</button>
       </div>
-      <div class="l-terms l-terms-section">
-        or Sign In with
-      </div>
-      <div class="l-two-buttons">
-        <a href="/api/u/auth/facebook"><button class="l-button facebook-blue">FACEBOOK</button></a>
 
-        <a href="/api/u/auth/google"><button class="l-button google-red">GOOGLE</button></a>
-      </div>
       <div class="l-terms">
         Don't have an account?
         <router-link to="/">Create Account</router-link>

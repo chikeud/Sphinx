@@ -14,8 +14,6 @@ let Schema = mongoose.Schema;
 
 let UserSchema = new Schema({
   alias: {type: String, unique: true, required: REQUIRED},
-  facebookID :{ type: String},
-  googleID: { type: String},
   profileImg: {
     id: Schema.Types.ObjectId,
     file: {}

@@ -53,7 +53,24 @@ module.exports = describe("Authentication Tests", () => {
       expect(decoded._id).to.equal(user._id);
     });
   });
+  context("Login Auth test", () => {
+    it("should return a user and jwt with _id and alias", async () => {
 
+      let res = await request
+        .post("/api/u/auth/login")
+        .send({ alias: "e-oj",
+                password: "password"
+        });
+
+      let {user, token} = res.body.result;
+      let fname = user["firstName"];
+      let lname = user["lastName"];
+
+      expect(res).to.have.status(http.OK);
+      expect(fname).to.equal("Emmanuel");
+      expect(lname).to.equal("Olaojo");
+    });
+  });
   context("Profile Image Upload", () => {
     it("should set a user's profile image", async () => {
       let filename = "user1.jpg";

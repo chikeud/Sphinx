@@ -19,6 +19,10 @@ userRouter.post("/auth/login", user.login, function(req, res){
   res.redirect("/");
 });
 
+userRouter.route("/")
+  .post(user.createUser)
+  .put(auth.checkToken, user.editUser)
+  .get(auth.checkToken, user.getUser);
 userRouter.post("/img", uploadImg, auth.checkToken, user.setProfileImg);
 
 module.exports = userRouter;

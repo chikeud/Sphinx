@@ -41,6 +41,8 @@ let UserSchema = new Schema({
   lastName: {type: String, required: REQUIRED},
   ssn: String,
   stripeId: {type: String},
+  facebookId: {type: String},
+  googleId: {type: String},
   phone: {
     type: String,
     required: REQUIRED,

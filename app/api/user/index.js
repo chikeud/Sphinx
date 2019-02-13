@@ -14,6 +14,9 @@ let http = require("../../../utils/HttpStats");
 let userRouter = express.Router();
 let upload = multer({dest: "uploads/"});
 let uploadImg = upload.single("profileImg");
+let authRouter = require("./auth");
+
+userRouter.use("/auth", authRouter);
 
 userRouter.post("/auth/login", user.login, function(req, res){
   res.redirect("/");

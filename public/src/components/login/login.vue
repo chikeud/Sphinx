@@ -1,55 +1,62 @@
 <template>
-  <div class="overall">
+  <div class="big">
     <m-card class="l-card">
       <div class="l-title">
-       Sign In
+        Sign In
       </div>
 
-      <div class="l-form">
-        <div class="r1">
-          <div class="l-section">
+      <form @submit.prevent="login" class="l-form">
+        <div class="l-section">
 
-            <m-textfield v-model="alias" outlined>
+          <m-textfield v-model="alias" outlined>
 
-              <m-floating-label>
-                Username or Email
-              </m-floating-label>
+            <m-floating-label>
+              Username or Email
+            </m-floating-label>
 
-              <m-notched-outline></m-notched-outline>
-            </m-textfield>
-          </div>
-
-          <div class="l-section">
-
-            <m-textfield type="password" v-model="password" outlined>
-
-              <m-floating-label>
-                Password
-
-              </m-floating-label>
-
-              <m-notched-outline></m-notched-outline>
-            </m-textfield>
-          </div>
-
-          <span class="l-error l-terms l-section" v-if="errMsg">
-                  {{errMsg}}
-          </span>
-
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
         </div>
 
-      </div>
+        <div class="l-section">
 
-      <div class="l-sign-up">
-        <button @click="login" class="l-button stor-blue">SIGN IN</button>
-      </div>
+          <m-textfield type="password" v-model="password" outlined>
 
-      <div class="l-terms">
-        Don't have an account?
-        <router-link to="/">Create Account</router-link>
-      </div>
+            <m-floating-label>
+              Password
+
+            </m-floating-label>
+
+            <m-notched-outline></m-notched-outline>
+          </m-textfield>
+        </div>
+
+        <div class="l-error l-terms l-section" v-if="errMsg">
+          {{errMsg}}
+        </div>
+
+
+        <div class="l-sign-up">
+          <button type="submit" class="l-button stor-blue">SIGN IN</button>
+        </div>
+
+        <div class="l-terms">
+          Don't have an account?
+          <router-link to="/">Sign Up</router-link>
+
+
+        </div>
+        <div class="l-terms">
+          Or Sign In with
+        </div>
+        <div class="l-social">
+          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button google-red" ><a style="color: white; text-decoration: none !important;" href="/api/u/auth/google">Google</a></div>
+          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button facebook-blue" ><a style="color: white; text-decoration: none !important;" href="/api/u/auth/facebook">Facebook</a></div>
+        </div>
+      </form>
     </m-card>
   </div>
+
 </template>
 
 <script>
@@ -122,23 +129,31 @@
   @import "../../../node_modules/material-components-vue/dist/floating-label/styles";
   @import "../../../node_modules/material-components-vue/dist/elevation/styles";
 
-  .overall{
-    display: flex;
-    justify-content: center;
-    align-content: center;
+
+  .big{
+    background-image: url("../../assets/stor-home.jpg");
+    background-size: 100%;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
   }
+
   .l-card{
     @include mdc-card-corner-radius(0);
 
-    width: 330px;
+    width: 350px;
+    height: 350px;
     padding-top: 30px ;
     padding-left: 30px;
     padding-right: 30px;
     padding-bottom: 15px;
     margin-right: 80px;
-    position: relative;
-    top: 100px;
-
+    margin-top: 20%;
+    margin-left: 33%;
+    margin-bottom: 30%;
+    position: absolute;
   }
 
   .l-card button{
@@ -289,6 +304,19 @@
 
   .l-sign-up{
     /*margin-bottom: 20px;*/
+    margin-top: 5px;
+  }
+
+  .l-social{
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+  }
+
+  .l-social button{
+    border: none;
   }
 
   .l-sign-up button{
@@ -301,6 +329,7 @@
     font-size: 14px;
     font-weight: bolder;
     cursor: pointer;
+    border-radius: 4px
   }
 
   .l-heading{
@@ -369,7 +398,7 @@
   }
 
   .l-terms{
-    font-size: 7px;
+    font-size: 10px;
     font-weight: 100;
     text-align: center;
     color: #B0BEC5;

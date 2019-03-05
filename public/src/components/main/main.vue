@@ -1,6 +1,8 @@
 <template>
   <div id="main">
-    <side-nav class="main-side-nav"></side-nav>
+    <div v-if="loggedIn">
+      <side-nav class="main-side-nav"></side-nav>
+    </div>
 
     <div class="main-content">
       <div class="app-content">

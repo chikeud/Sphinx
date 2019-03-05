@@ -11,7 +11,7 @@
       <router-link to="/" slot="actions">STORY</router-link>
       <router-link to="/" slot="actions">FAQ</router-link>
       <router-link v-if="!loggedIn" to="/login" slot="actions">SIGN IN</router-link>
-      <!--<router-link v-if="loggedIn" to="/login" slot="actions">SIGN OUT</router-link>-->
+      <router-link v-if="loggedIn" to="/login" slot="actions">SIGN OUT</router-link>
 
     </m-top-app-bar>
   </div>
@@ -23,7 +23,14 @@
 
   Vue.use(TopAppBar);
 
-  export default {}
+
+  export default {
+    computed: {
+      loggedIn(){
+        return this.$store.getters.loggedIn;
+      }
+    },
+  }
 </script>
 
 <style lang="scss">

@@ -26,8 +26,14 @@
 
   export default {
     methods: {
-      logout() {
-        this.$store.commit('clearSession');
+      async logout() {
+        let self = this;
+        try{
+          let res = await self.$http.get('/api/u/auth/logout');
+          self.$store.commit('clearSession');
+        } catch(err) {
+          console.log(err);
+        }
       }
     },
     computed: {

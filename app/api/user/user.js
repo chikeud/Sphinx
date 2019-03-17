@@ -227,3 +227,9 @@ exports.setProfileImg = async (req, res) => {
     throw err;
   }
 };
+
+
+exports.signout = function(req, res) {
+  req.logout();
+  res.redirect('/');
+};

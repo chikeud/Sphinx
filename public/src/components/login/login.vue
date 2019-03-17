@@ -102,6 +102,7 @@
           let loginRoute = '/api/u/auth/login';
           let res = await self.$http.post(loginRoute, credentials);
           self.$store.commit("token", res.body.result.token);
+          self.$store.commit("user", res.body.result.user);
           this.$router.push('/dashboard');
         }
         catch (err) {

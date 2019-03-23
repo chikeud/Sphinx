@@ -47,7 +47,7 @@
 <style lang="scss">
   #main{
     display: flex;
-    align-items: flex-start;
+    // align-items: flex-start;
     position: relative;
     top: 140px;
     margin: 0;
@@ -55,7 +55,7 @@
   }
 
   #main .main-side-nav{
-    width: 268px;
+    width: 200px;
     flex-shrink: 0;
     border-right: none;
     background-color: transparent;

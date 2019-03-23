@@ -20,7 +20,7 @@ Vue.http.interceptors.push((req, next) => {
   next(res => {
     console.log(res);
     if(res.status === status.UNAUTHORIZED){
-      store.commit("clearToken");
+      store.commit("clearSession");
     }
   });
 });
@@ -90,7 +90,7 @@ let store = new Vuex.Store({
       localStorage.removeItem(config.USER);
       state.token = "";
       state.user = null;
-      router.push("/");
+      // router.push("/");
     },
   }
 });

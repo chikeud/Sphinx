@@ -15,14 +15,20 @@ let userRouter = express.Router();
 let upload = multer({dest: "uploads/"});
 let uploadImg = upload.single("profileImg");
 let authRouter = require("./auth");
+let passRouter = require('./password');
 
 userRouter.use("/auth", authRouter);
+userRouter.use('/', passRouter);
 
-userRouter.post("/auth/login", user.login, function(req, res){
+userRouter.post("/auth/login", user.login, function(_req, res){
   res.redirect("/");
 });
 
-userRouter.get("/auth/logout", user.signout, function(req, res){
+userRouter.post("/auth/loginn", user.loginn, function(_req, res){
+  res.redirect("/");
+});
+
+userRouter.get("/auth/logout", user.signout, function(_req, res){
   res.redirect("/");
 });
 

@@ -161,6 +161,11 @@
 
     &.get-verified {
       background: #a1dc556e;
+      img {
+        width: 60px;
+        height: 60px;
+        margin-right: 40px;
+      }
     }
 
     &.setting {
@@ -168,11 +173,6 @@
       margin-bottom: 40px;;
     }
 
-    img {
-      width: 60px;
-      height: 60px;
-      margin-right: 40px;
-    }
 
     &.get-verified {
       width: 100%;

@@ -6,6 +6,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const crypto = require('crypto');
 
 let config = require("../../config");
 
@@ -64,7 +65,9 @@ let UserSchema = new Schema({
     },
     street: {type: String, required: REQUIRED},
     houseNum: {type: String}
-  }
+  },
+  resetPasswordToken: {type: String},
+  resetPasswordExpires: {type: Date}
 });
 
 UserSchema.pre("save", async function(next){
@@ -123,4 +126,8 @@ UserSchema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);
 };
 
-exports.User = mongoose.model("users", UserSchema);
+UserSchema.methods.setPassword = function(password){
+  this.password = crypto.pbkdf2Sync(password, crypto.randomBytes(128).toString('base64'), 1000, 64, 512, 'sha512').toString('hex');
+};
+
+exports.User = mongoose.model("users", UserSchema);``

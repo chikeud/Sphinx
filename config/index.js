@@ -20,4 +20,13 @@ exports.DEFAULT_ERR_MSG = "OOPS! Sumfin goofed!!";
 exports.AUTH_ERR_MSG = "Authentication Failed!";
 exports.MAX_PAYLOAD = "50mb";
 exports.MIN_PASS_LENGTH = 8;
+exports.SMTP = {
+  pool: true,
+  host: process.env.MAILER_HOST,
+  port: process.env.MAILER_PORT,
+  auth: {
+      user: process.env.MAILER_SMTP_USER,
+      pass: process.env.MAILER_SMTP_PASS
+  }
+}
 

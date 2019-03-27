@@ -10,6 +10,8 @@ let moduleId = "user/user";
 let bcrypt = require("bcrypt");
 let mongoose = require("mongoose");
 let Grid = require("gridfs-stream");
+let passport = require('passport');
+let LocalStrategy = require('passport-local').Strategy;
 
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
@@ -103,6 +105,7 @@ exports.login = async (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   let {alias, password} = req.body;
+  console.log(alias);
 
   try{
     let user = await User.findOne({$or: [{alias}, {email:alias}]}).select("+password").exec();
@@ -125,6 +128,42 @@ exports.login = async (req, res) => {
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);
   }
+};
+
+/**
+ * Login route handler
+ *
+ * @param req request
+ * @param res response
+ *
+ * @returns {Promise.<*>}
+ */
+exports.loginn = (req, res) => {
+  // let respond = response.success(res);
+  // let respondErr = response.failure(res, moduleId);
+  let {alias, password} = req.body;
+  // console.log(alias);
+  passport.use(new LocalStrategy({
+    usernameField: 'alias'
+  }, (user, password, done) => {
+    console.log(user);
+    done(null, user);
+    // if (err || !user) {
+    //   return done(err);
+    //     // res.status(400).send(info);
+    // } else {
+    //   console.log(user);
+    //   // Remove sensitive data before login
+    //   // user.dataValues.password = undefined;
+    //   // user.dataValues.salt = undefined;
+    //   // user.dataValues.reset_password_expires = undefined;
+    //   // user.dataValues.reset_password_token = undefined;
+
+    //   // let token = await auth.createToken(user);
+    //   if(!user.validPass(password)) return done(null, false)
+    //   return done(null, user);
+    // }
+  }))
 };
 
 /**
@@ -229,7 +268,7 @@ exports.setProfileImg = async (req, res) => {
 };
 
 
-exports.signout = function(req, res) {
+exports.signout = (req, res) => {
   req.logout();
   res.redirect('/');
 };

@@ -4,16 +4,11 @@
 
 let moduleId = "item/item";
 
-let bcrypt = require("bcrypt");
-let mongoose = require("mongoose");
-let Grid = require("gridfs-stream");
-
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
 let User = require("../../models/user").User;
 let Item = require("../../models/item").Item;
 let auth = require("../../../utils/authToken");
-// let files = require("../../../utils/files");
 
 /**
  * Route handler to create an item
@@ -23,7 +18,7 @@ let auth = require("../../../utils/authToken");
  *
  * @returns {Promise.<void>}
  */
-exports.createItem = (req, res) => {
+exports.create = (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   let owner = req.user._id;
@@ -85,6 +80,7 @@ exports.edit = (req, res) => {
 
 
   Item.findOneAndUpdate({_id: req.params.id}, update, (err, item) => {
+    if(item._id !== req.user._id) return respondErr(http.UNAUTHORIZED, 'Unauthorized access', err);
     if(err) respondErr(http.BAD_REQUEST, 'Error updating item', err);
     else respond(http.OK, 'Item successfully updated');
   })
@@ -96,6 +92,7 @@ exports.delete = (req, res) => {
 
 
   Item.deleteOne({_id: req.params.id}, (err, _) => {
+    if(item._id !== req.user._id) return respondErr(http.UNAUTHORIZED, 'Unauthorized access', err);
     if(err) respondErr(http.BAD_REQUEST, 'Error deleting item', err);
     else respond(http.OK, 'Item successfully deleted');
   })

@@ -5,8 +5,8 @@
 
 // Facebook credentials
 exports.facebook = {
-  clientID: "1097633663710306",
-  clientSecret: "edc22e0ea7e1de98964a35c222191248",
+  clientID: "2029960987311296",
+  clientSecret: "745d0cd27fb78b2d7df9c57d41b139a3",
   callbackURL: "/api/user/auth/facebook/callback",
   profileFields: ["email", "first_name", "last_name"],
 };

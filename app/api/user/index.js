@@ -9,6 +9,7 @@ let express = require("express");
 let multer = require("multer");
 let user = require("./user");
 let auth = require("../../../utils/authToken");
+let passport = require("passport");
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
 let userRouter = express.Router();
@@ -20,16 +21,21 @@ let passRouter = require('./password');
 userRouter.use("/auth", authRouter);
 userRouter.use('/', passRouter);
 
-userRouter.post("/auth/login", user.login, function(_req, res){
-  res.redirect("/");
-});
+// userRouter.post("/auth/login", user.login, function(_req, res){
+//   res.redirect("/");
+// });
 
-userRouter.post("/auth/loginn", user.loginn, function(_req, res){
-  res.redirect("/");
+userRouter.post("/auth/login", user.login, function(_req, res){
+  res.redirect("/settings");
 });
 
 userRouter.get("/auth/logout", user.signout, function(_req, res){
   res.redirect("/");
+});
+
+userRouter.get("/facebook", passport.authenticate("facebook"));
+userRouter.get("/facebook/callback", passport.authenticate("facebook", {session: false, failureRedirect: '/login' }), (req, res) => {
+  res.redirect('/dashboard');
 });
 
 userRouter.route("/")

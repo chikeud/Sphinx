@@ -38,7 +38,6 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(STATIC));
 
 app.use(cors());
-app.use("/api",apiRouter);
 
 
 app.use(session({
@@ -47,12 +46,15 @@ app.use(session({
   secret: config.SECRET
 }));
 
+require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/api", apiRouter);
 app.use("*", (req, res) => {
   res.sendFile(`${STATIC}/index.html`);
 });
+
 
 if (app.get("env") === "development") {
   app.use(function(err, req, res, next) {

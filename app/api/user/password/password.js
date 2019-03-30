@@ -40,7 +40,7 @@ exports.forgotPassword = (req, res, next) => {
       if(req.body.email) {
         try{
           let user = await User.findOne({email: req.body.email}).exec();
-          console.log(user);
+          // console.log(user);
           if(!user) respondErr(http.BAD_REQUEST, 'User not found');
           user.resetPasswordToken = token;
           user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -98,7 +98,8 @@ exports.reset = (req, res, next) => {
       try{
         let user = await User.findOne({ resetPasswordToken: req.param.token, resetPasswordExpires: { $gt: Date.now() } }).exec();
         if(user && pwdDetails.newPwd === pwdDetails.verifyPwd) {
-          user.setPassword(pwdDetails.newPwd);
+          user.password = pwdDetails.newPwd;
+          await user.save();
           user.resetPasswordToken = null;
           user.resetPasswordExpires = null;
           await user.save();
@@ -134,24 +135,43 @@ exports.reset = (req, res, next) => {
 }
 
 exports.change = async (req, res) => {
+  console.log('change password');
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   let pwdDetails = req.body;
-  console.log(req);
+  // console.log(req);
   if(!req.user) respondErr(http.UNAUTHORIZED, 'User not signed in');
   else {
     if(!pwdDetails.newPwd) respondErr(http.BAD_REQUEST, 'Please provide a password');
+    else if(pwdDetails.oldPwd === pwdDetails.newPwd) respondErr(http.BAD_REQUEST, 'New password cannot be same as current');
+    else if(pwdDetails.newPwd !== pwdDetails.verifyPwd) return respondErr(http.BAD_REQUEST, 'Password do not match');
     else {
       try{
-        let user = await User.findById({_id: req.params.id}).exec();
+        let user = await User.findById({_id: req.user._id}).exec();
+        console.log(user.password, 'before save');
         if(!user) return respondErr(http.BAD_REQUEST, 'Account not found');
-        if(!user.validPass(pwdDetails.oldPwd)) return respondErr(http.BAD_REQUEST, 'Current password is incorrect');
-        if(pwdDetails.newPwd !== pwdDetails.verifyPwd) return respondErr(http.BAD_REQUEST, 'Password do not match');
-        else user.setPassword(pwdDetails.newPwd);  
-        await user.save();
-        await req.login(user);
-        return respond(http.OK, 'Password successfully changed', res)
+        // TODO: refactor
+        user.validPass(pwdDetails.oldPwd).then(match => {
+          if(!match) return respondErr(http.BAD_REQUEST, 'Current password is incorrect');
+          else {
+            user.password = pwdDetails.newPwd;
+            user.save(err => {
+              if(err) return respondErr(http.SERVER_ERROR, 'Saving failed');
+              else {
+                console.log(user.password, 'after save')
+                req.login(user, err => {
+                  if(err) return respondErr(http.SERVER_ERROR, 'login failed');
+                  return respond(http.OK, 'Password successfully changed');
+                })
+              }
+            });
+            
+          }
+        }).catch(err => {
+          console.log(err);
+        })
       } catch(err) {
+        console.log(err)
         respondErr(http.SERVER_ERROR, 'Something went wrong')
       }
     }

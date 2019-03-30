@@ -35,7 +35,7 @@ let UserSchema = new Schema({
   password: {
     type: String,
     required: REQUIRED,
-    select: false,
+    // select: false,
     minlength: config.MIN_PASS_LENGTH
   },
   firstName: {type: String, required: REQUIRED},
@@ -126,8 +126,23 @@ UserSchema.methods.validPass = async function(pass){
   return await bcrypt.compare(pass, this.password);
 };
 
-UserSchema.methods.setPassword = function(password){
-  this.password = crypto.pbkdf2Sync(password, crypto.randomBytes(128).toString('base64'), 1000, 64, 512, 'sha512').toString('hex');
-};
+UserSchema.methods.setPassword = (pass) => {
+  this.password = bcrypt.hashSync(pass, 10);
+  // console.log(this.password);
+}
 
-exports.User = mongoose.model("users", UserSchema);``
+UserSchema.methods.findOrCreate = (q, data, cb) => {
+  console.log(q)
+  this.find(q, (err, result) => {
+    if(err) return cb(err);
+    else if(result.length) return cb(false, result[0]);
+    else {
+      this.create(data, function(err, user){
+        if(err) return cb(err)
+        return cb(false, user);  
+      });
+    }
+  });
+}
+
+exports.User = mongoose.model("users", UserSchema);

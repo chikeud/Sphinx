@@ -4,10 +4,12 @@
  */
 
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const ItemSchema = new mongoose.Schema({
+  owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true }
-  , description: { type: Boolean, default: false }
+  , description: { type: String, require: true }
   , dimensions: {
     length:{ type: Number }
     ,width:{ type: Number }

@@ -50,8 +50,8 @@
           Or Sign In with
         </div>
         <div class="l-social">
-          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button google-red" ><a style="color: white; text-decoration: none !important;" href="/api/u/auth/google">Google</a></div>
-          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button facebook-blue" ><a style="color: white; text-decoration: none !important;" href="/api/u/auth/facebook">Facebook</a></div>
+          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button google-red" ><a style="color: white; text-decoration: none !important;" href="/api/u/google">Google</a></div>
+          <div style="padding: 7px; text-align: center; width: 48%; margin-right: 5px;" class="l-button facebook-blue" ><a style="color: white; text-decoration: none !important;" href="/api/u/facebook">Facebook</a></div>
         </div>
       </form>
     </m-card>
@@ -101,6 +101,7 @@
           console.log(credentials);
           let loginRoute = '/api/u/auth/login';
           let res = await self.$http.post(loginRoute, credentials);
+          console.log(res, 'result');
           self.$store.commit("token", res.body.result.token);
           self.$store.commit("user", res.body.result.user);
           this.$router.push('/dashboard');

@@ -101,34 +101,34 @@ exports.createUser = async (req, res) => {
  *
  * @returns {Promise.<*>}
  */
-exports.login = async (req, res) => {
-  let respond = response.success(res);
-  let respondErr = response.failure(res, moduleId);
-  let {alias, password} = req.body;
-  console.log(alias);
+// exports.login = async (req, res) => {
+//   let respond = response.success(res);
+//   let respondErr = response.failure(res, moduleId);
+//   let {alias, password} = req.body;
+//   console.log(alias);
 
-  try{
-    let user = await User.findOne({$or: [{alias}, {email:alias}]}).select("+password").exec();
-    if(!user){
-      return respondErr(http.BAD_REQUEST, "Incorrect Username");
-    }
+//   try{
+//     let user = await User.findOne({$or: [{alias}, {email:alias}]}).exec();
+//     if(!user){
+//       return respondErr(http.BAD_REQUEST, "Incorrect Username");
+//     }
+//     console.log(user);
+//     let authorized = await bcrypt.compare(password, user.password);
 
-    let authorized = await bcrypt.compare(password, user.password);
+//     if(!authorized){
+//       return respondErr(http.BAD_REQUEST, "Incorrect Password");
+//     }
 
-    if(!authorized){
-      return respondErr(http.BAD_REQUEST, "Incorrect Password");
-    }
+//     let token = await auth.createToken(user);
 
-    let token = await auth.createToken(user);
+//     delete user.password;
 
-    delete user.password;
-
-    respond(http.OK, "Logged In!", {token, user});
-  }
-  catch(err){
-    respondErr(http.SERVER_ERROR, err.message, err);
-  }
-};
+//     respond(http.OK, "Logged In!", {token, user});
+//   }
+//   catch(err){
+//     respondErr(http.SERVER_ERROR, err.message, err);
+//   }
+// };
 
 /**
  * Login route handler
@@ -138,32 +138,31 @@ exports.login = async (req, res) => {
  *
  * @returns {Promise.<*>}
  */
-exports.loginn = (req, res) => {
-  // let respond = response.success(res);
-  // let respondErr = response.failure(res, moduleId);
-  let {alias, password} = req.body;
-  // console.log(alias);
-  passport.use(new LocalStrategy({
-    usernameField: 'alias'
-  }, (user, password, done) => {
-    console.log(user);
-    done(null, user);
-    // if (err || !user) {
-    //   return done(err);
-    //     // res.status(400).send(info);
-    // } else {
-    //   console.log(user);
-    //   // Remove sensitive data before login
-    //   // user.dataValues.password = undefined;
-    //   // user.dataValues.salt = undefined;
-    //   // user.dataValues.reset_password_expires = undefined;
-    //   // user.dataValues.reset_password_token = undefined;
+exports.login = (req, res) => {
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
+  passport.authenticate('local', async (err, user, info) => {
+    // If Passport throws/catches an error
+    if (err) {
+        return respondErr(http.SERVER_ERROR, 'Something went wrong', info);
+    }
 
-    //   // let token = await auth.createToken(user);
-    //   if(!user.validPass(password)) return done(null, false)
-    //   return done(null, user);
-    // }
-  }))
+    // If a user is found
+    if (user) {
+      let token;
+      try {
+        token = await auth.createToken(user);
+      } catch (error) {
+        console.log(error);
+      }
+
+      delete user.password;
+      respond(http.OK, "Logged In!", {token, user});
+
+    } else {
+      respondErr(http.BAD_REQUEST, info.message);
+    }
+  })(req, res);
 };
 
 /**

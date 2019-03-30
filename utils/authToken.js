@@ -45,7 +45,7 @@ let validateToken = exports.validateToken = async (token) => {
  */
 exports.checkToken = async (req, res, next) => {
   let respondErr = response.failure(res, moduleId);
-  let authToken = req.get(config.AUTH_TOKEN);
+  let authToken = req.body.token || req.query.token || req.headers['x-access-token'];
   let fail = () => respondErr(http.UNAUTHORIZED, config.AUTH_ERR_MSG);
 
   if(!authToken) return fail();

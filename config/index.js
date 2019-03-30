@@ -28,5 +28,11 @@ exports.SMTP = {
       user: process.env.MAILER_SMTP_USER,
       pass: process.env.MAILER_SMTP_PASS
   }
+};
+exports.FACEBOOK_CREDENTIALS = {
+  clientID: "2029960987311296",
+  clientSecret: "745d0cd27fb78b2d7df9c57d41b139a3",
+  callbackURL: "/auth/facebook/callback",
+  profileFields: ["email", "first_name", "last_name"],
 }
 

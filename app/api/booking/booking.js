@@ -6,7 +6,7 @@ let moduleId = "booking/bookng";
 
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
-let Item = require("../../models/item").Item;
+let Listing = require("../../models/listing").Listing;
 let Booking = require('../../models/booking').Booking;
 // let auth = require("../../../utils/authToken");
 
@@ -22,18 +22,18 @@ exports.create = async (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   let user = req.user._id;
-  let itemId = req.params.id;
+  let listingId = req.params.id;
   let {pickup, delivery, description, size} = req.body;
 
   if(!req.user) respondErr(http.UNAUTHORIZED, 'You need to sign in to continue');
 
   let booking = new Booking({
-    pickup, delivery, description, size, user, item: itemId
+    pickup, delivery, description, size, user, listing: listingId
   });
   try {
-    let item = await Item.findOne({_id: itemId}).exec();
+    let listing = await Listing.findOne({_id: listingId}).exec();
     // should not allow users to book their own listings
-    if(item.owner.toString() === user.toString()) return respondErr(http.UNAUTHORIZED, 'Booking not allowed');
+    if(listing.owner.toString() === user.toString()) return respondErr(http.UNAUTHORIZED, 'Booking not allowed');
     await booking.save()
     return respond(http.CREATED, 'Booking successfully created', booking);
   } catch(err) {
@@ -109,7 +109,7 @@ exports.edit = (req, res) => {
 }
 
 /**
- * Route handler to delete a user item
+ * Route handler to delete a user listing
  *
  * @param req request
  * @param res response

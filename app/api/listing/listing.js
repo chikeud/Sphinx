@@ -2,15 +2,15 @@
  * @dejijaye
  */
 
-let moduleId = "item/item";
+let moduleId = "listing/listing";
 
 let response = require("../../../utils/response");
 let http = require("../../../utils/HttpStats");
-let Item = require("../../models/item").Item;
+let Listing = require("../../models/listing").Listing;
 
 
 /**
- * Route handler to create an item
+ * Route handler to create an listing
  *
  * @param req request
  * @param res response
@@ -25,19 +25,19 @@ exports.create = (req, res) => {
 
   if(!req.user) respondErr(http.UNAUTHORIZED, 'You need to sign in to continue');
 
-  let item = new Item({
+  let listing = new Listing({
     name, description, dimension, owner
   });
 
-  item.save(err => {
-    if(err) respondErr(http.BAD_REQUEST, 'Error saving item', err);
-    else respond(http.CREATED, 'Item successfully created', item);
+  listing.save(err => {
+    if(err) respondErr(http.BAD_REQUEST, 'Error saving listing', err);
+    else respond(http.CREATED, 'listing successfully created', listing);
   });
 
 }
 
 /**
- * Route handler to get all a user's items
+ * Route handler to get all a user's listings
  *
  * @param req request
  * @param res response
@@ -52,17 +52,17 @@ exports.findAll = async (req, res) => {
   if(!req.user) respondErr(http.UNAUTHORIZED, 'You need to sign in to continue');
 
   try{
-    let items = await Item.find({owner: owner});
-    if(items.length > 0) respond(http.OK, 'Items successfully fetched', items);
-    else return respond(http.OK, 'No item found');
+    let listings = await Listing.find({owner: owner});
+    if(listings.length > 0) respond(http.OK, 'Listings successfully fetched', listings);
+    else return respond(http.OK, 'No listing found');
 
   } catch(err) {
-    respondErr(http.BAD_REQUEST, 'Error fetching items', err);
+    respondErr(http.BAD_REQUEST, 'Error fetching listings', err);
   }
 }
 
 /**
- * Route handler to get a single item
+ * Route handler to get a single listing
  *
  * @param req request
  * @param res response
@@ -75,17 +75,17 @@ exports.findOne = async (req, res) => {
   let respondErr = response.failure(res, moduleId);
 
   try {
-    let item = await Item.findOne({_id: req.params.id}).exec();
-    if(item) respond(http.OK, 'Item successfully fetched', item);
-    else return respond(http.OK, 'No item found');
+    let listing = await Listing.findOne({_id: req.params.id}).exec();
+    if(listing) respond(http.OK, 'Listing successfully fetched', listing);
+    else return respond(http.OK, 'No listing found');
   } catch(err) {
     console.log(err);
-    respondErr(http.BAD_REQUEST, 'Error fetching item', err);
+    respondErr(http.BAD_REQUEST, 'Error fetching listing', err);
   }
 }
 
 /**
- * Route handler to edit a user item
+ * Route handler to edit a user listing
  *
  * @param req request
  * @param res response
@@ -98,14 +98,14 @@ exports.edit = (req, res) => {
   let respondErr = response.failure(res, moduleId);
   let update = {name, description} = req.body;
 
-  Item.findOneAndUpdate({_id: req.params.id}, update, (err) => {
-    if(err) respondErr(http.BAD_REQUEST, 'Error updating item', err);
-    else respond(http.OK, 'Item successfully updated');
+  Listing.findOneAndUpdate({_id: req.params.id}, update, (err) => {
+    if(err) respondErr(http.BAD_REQUEST, 'Error updating listing', err);
+    else respond(http.OK, 'Listing successfully updated');
   })
 }
 
 /**
- * Route handler to delete a user item
+ * Route handler to delete a user listing
  *
  * @param req request
  * @param res response
@@ -117,9 +117,9 @@ exports.delete = (req, res) => {
   let respond = response.success(res);
   let respondErr = response.failure(res, moduleId);
   
-  Item.deleteOne({_id: req.params.id}, (err, _) => {
-    if(err) respondErr(http.BAD_REQUEST, 'Error deleting item', err);
-    else respond(http.OK, 'Item successfully deleted');
+  Listing.deleteOne({_id: req.params.id}, (err, _) => {
+    if(err) respondErr(http.BAD_REQUEST, 'Error deleting listing', err);
+    else respond(http.OK, 'listing successfully deleted');
   })  
 }
 
@@ -128,8 +128,8 @@ exports.hasAuthorization = async (req, res, next) => {
   let user = req.user;
   if(!user) respondErr(http.UNAUTHORIZED, 'You need to sign in to continue');
   try {
-    let item = await Item.findOne({_id: req.params.id}).exec();
-    if(user._id.toString() === item.owner.toString()) next();
+    let listing = await Listing.findOne({_id: req.params.id}).exec();
+    if(user._id.toString() === listing.owner.toString()) next();
     else return respondErr(http.UNAUTHORIZED, 'User is unauthorized')
   } catch (err) {
     return respondErr(http.SERVER_ERROR, 'Something went wrong.')

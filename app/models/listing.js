@@ -6,7 +6,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const ItemSchema = new mongoose.Schema({
+const ListingSchema = new mongoose.Schema({
   owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true }
   , description: { type: String, require: true }
@@ -18,4 +18,4 @@ const ItemSchema = new mongoose.Schema({
 });
 
 
-exports.Item = mongoose.model("Item", ItemSchema);
+exports.Listing = mongoose.model("Item", ListingSchema);

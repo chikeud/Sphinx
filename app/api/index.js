@@ -10,7 +10,7 @@ let response = require("../../utils/response");
 let http = require("../../utils/HttpStats");
 let files = require("../../utils/files");
 let userRouter = require("./user");
-let itemRouter = require('./item');
+let listingRouter = require('./listing');
 let bookingRouter = require('./booking');
 
 
@@ -18,7 +18,7 @@ let apiRouter = express.Router();
 
 apiRouter.use("/u", userRouter);
 
-apiRouter.use('/u/item', itemRouter);
+apiRouter.use('/u/item', listingRouter);
 
 apiRouter.use('/u', bookingRouter);
 

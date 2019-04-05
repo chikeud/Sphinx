@@ -65,6 +65,7 @@
     bottom: 5px;
     height: 25px;
     display: flex;
+    max-width: unset; // vue-material sets this as 100% causes the logo to be skewed
   }
 
   .nav a{

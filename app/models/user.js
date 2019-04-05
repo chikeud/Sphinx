@@ -145,4 +145,4 @@ UserSchema.methods.findOrCreate = (q, data, cb) => {
   });
 }
 
-exports.User = mongoose.model("users", UserSchema);
+exports.User = mongoose.model("User", UserSchema);

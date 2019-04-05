@@ -30,4 +30,4 @@ MessageSchema.pre("save", function(next){
   next(new Error("Image or Text must be present in message!"));
 });
 
-exports.Message = mongoose.model("messages", MessageSchema);
+exports.Message = mongoose.model("Messages", MessageSchema);

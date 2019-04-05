@@ -79,8 +79,7 @@ module.exports = (passport) => {
     clientSecret: config.FACEBOOK_CREDENTIALS.clientSecret,
     callbackURL: config.FACEBOOK_CREDENTIALS.callbackURL,
     profileFields: ['id', 'email', 'name']
-  },
-    (token, tokenSecret, profile, done) => {
+  },(token, tokenSecret, profile, done) => {
       console.log(profile);
       const data = {
         'email': profile._json.email,

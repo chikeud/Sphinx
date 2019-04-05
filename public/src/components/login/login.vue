@@ -146,11 +146,7 @@
     @include mdc-card-corner-radius(0);
 
     width: 350px;
-    height: 350px;
-    padding-top: 30px ;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 15px;
+    padding: 30px;
     margin-right: 80px;
     margin-top: 20%;
     margin-left: 33%;

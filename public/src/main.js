@@ -28,7 +28,8 @@ Vue.http.interceptors.push((req, next) => {
 let store = new Vuex.Store({
   state: {
     token: "",
-    user: null
+    user: null,
+    showLogin: false,
   },
 
   getters: {
@@ -44,6 +45,10 @@ let store = new Vuex.Store({
       }
 
       return !!state.token;
+    },
+
+    showLogin(state){
+      return state.showLogin;
     },
 
     user(state){
@@ -92,6 +97,10 @@ let store = new Vuex.Store({
       state.user = null;
       router.push("/");
     },
+
+    showLogin(state, show){
+      state.showLogin = show;
+    }
   }
 });
 

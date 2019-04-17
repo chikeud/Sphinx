@@ -5,7 +5,8 @@
         <img src="/src/assets/logo.png">
       </router-link>
 
-      <router-link to="/" class="nav-link">Rent</router-link>
+      <router-link v-if="!loggedIn" to="/login"  class="nav-link">Book Now</router-link>
+      <router-link v-if="loggedIn" to="/booking"  class="nav-link">Book Now</router-link>
       <!--<router-link to="/">Host</router-link> -->
 
       <router-link to="/" slot="actions" class="nav-link">STORY</router-link>

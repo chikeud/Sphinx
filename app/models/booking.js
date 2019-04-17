@@ -12,13 +12,6 @@ let BookingSchema = new Schema({
   , delivery: {type: Schema.Types.ObjectId, ref: "deliveries", required: ERR_REQUIRED}
   , size: {type:String, required: ERR_REQUIRED}
   , user: {type: Schema.Types.ObjectId, ref: "users", required: ERR_REQUIRED}
-  , items: {
-    type: [{
-      name: {type: String, required: ERR_REQUIRED}
-      , description: {type: String, required: true}
-    }]
-    , required: ERR_REQUIRED
-  }
 });
 
 exports.Booking = mongoose.model("Booking", BookingSchema);

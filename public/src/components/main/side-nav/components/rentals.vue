@@ -1,7 +1,23 @@
 <template>
   <div id="overall">
     <div id="stor">
-      <div class="md-layout-item md-size-70">
+      <div class="md-layout-item md-size-100">
+        <md-content class="md-elevation-3">
+          <!-- <img src="/assets/examples/avatar.png" alt="Avatar"> -->
+          <img src="https://placehold.it/60x60" alt="welcome">
+          <div class="welcome-text">
+            <h3 class="md-body-2">
+              Welcome to Stor!
+            </h3>
+            <span class="md-caption">
+              This is your account dashboard where you can stay up to date with everything relating to your account
+            </span>
+
+          </div>
+        </md-content>
+      </div>
+
+      <div class="md-layout-item md-size-100">
         <md-content class="timeline md-elevation-3">
           Timeline
         </md-content>

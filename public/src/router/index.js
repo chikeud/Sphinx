@@ -7,7 +7,6 @@ import Vue from "vue";
 import Router from "vue-router";
 
 import Main from "../components/main/main.vue";
-import Info from "../components/main/info.vue";
 import Dashboard from "../components/main/side-nav/components/dashboard.vue";
 import Rentals from "../components/main/side-nav/components/rentals.vue";
 import Messages from "../components/main/side-nav/components/messaging/messages.vue";
@@ -15,6 +14,7 @@ import Help from "../components/main/side-nav/components/help.vue";
 import Settings from "../components/main/side-nav/components/settings.vue";
 import Verification from "../components/main/side-nav/components/verification.vue";
 import Login from "../components/login/login.vue";
+import Booking from "../components/booking/booking.vue";
 
 Vue.use(Router);
 
@@ -25,10 +25,7 @@ export default new Router({
       path: "/",
       component: Main,
       children: [
-        {
-          path: "/",
-          component: Info
-        },
+
         {
           path: "/dashboard",
           component: Dashboard
@@ -60,6 +57,10 @@ export default new Router({
     {
       path: "/login",
       component: Login
+    },
+    {
+      path: "/booking",
+      component: Booking
     },
   ]
 });

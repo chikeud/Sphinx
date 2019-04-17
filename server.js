@@ -6,11 +6,17 @@ let logger = require("morgan");
 let bodyParser = require("body-parser");
 let compress = require("compression");
 let mongoose = require("mongoose");
+let passport = require("passport");
+let cors = require("cors");
 let Fawn = require("fawn");
+let https = require("https");
+let session = require("express-session");
+let fs = require("fs");
 
 mongoose.Promise = global.Promise = require("bluebird");
 
 let {DB_URL, PORT} = require("./config/index.js");
+let config = require("./config");
 let apiRouter = require("./app/api");
 let MessageServer = require("./app/api/messaging");
 
@@ -28,16 +34,18 @@ app.use(bodyParser.json());
 
 app.use(express.static(STATIC));
 
-// CORS
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,HEAD,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,Authorization,x-access-token");
-  res.setHeader("X-Powered-By", "The tears of children");
-  next();
-});
-
+app.use(cors());
 app.use("/api",apiRouter);
+
+
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: config.SECRET
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("*", (req, res) => {
   res.sendFile(`${STATIC}/index.html`);
@@ -62,9 +70,18 @@ if (app.get("env") === "development") {
 })();
 
 // start the server
-let server = app.listen(PORT, "0.0.0.0");
-let messageServer = new MessageServer(server);
 
+let options = {
+  key: fs.readFileSync( './config/https/localhost.key' ),
+  cert: fs.readFileSync( './config/https/localhost.cert' ),
+  requestCert: false,
+  rejectUnauthorized: false
+};
+let server = https.createServer( options, app );
+//let server = app.listen(PORT, "0.0.0.0");
+server.listen(PORT);
+
+let messageServer = new MessageServer(server);
 messageServer.start();
 
 server.on("close", async err => {

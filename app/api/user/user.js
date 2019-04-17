@@ -5,7 +5,7 @@
  * @since 4/21/18
  */
 
-let moduleId = "users/user";
+let moduleId = "user/user";
 
 let bcrypt = require("bcrypt");
 let mongoose = require("mongoose");
@@ -87,7 +87,6 @@ exports.createUser = async (req, res) => {
     respond(http.CREATED, "User Created", {user, token});
   }
   catch(err){
-    console.log(err);
     respondErr(http.BAD_REQUEST, err.message, err);
   }
 };
@@ -101,20 +100,27 @@ exports.createUser = async (req, res) => {
  * @returns {Promise.<*>}
  */
 exports.login = async (req, res) => {
-  const respond = response.success(res);
-  const respondErr = response.failure(res, moduleId);
+  let respond = response.success(res);
+  let respondErr = response.failure(res, moduleId);
   let {alias, password} = req.body;
-  let fail = () => respondErr(http.UNAUTHORIZED, "Invalid User");
 
   try{
-    let user = await User.findOne({alias}).exec();
-    if(!user) return fail();
+    let user = await User.findOne({$or: [{alias}, {email:alias}]}).select("+password").exec();
+    if(!user){
+      return respondErr(http.BAD_REQUEST, "Incorrect Username");
+    }
 
-    let validPass = await bcrypt.compare(password, user.password);
-    if(!validPass) return fail();
+    let authorized = await bcrypt.compare(password, user.password);
+
+    if(!authorized){
+      return respondErr(http.BAD_REQUEST, "Incorrect Password");
+    }
 
     let token = await auth.createToken(user);
-    return respond(http.OK, "Logged In!", {token});
+
+    delete user.password;
+
+    respond(http.OK, "Logged In!", {token, user});
   }
   catch(err){
     respondErr(http.SERVER_ERROR, err.message, err);
@@ -220,4 +226,9 @@ exports.setProfileImg = async (req, res) => {
   catch(err){
     throw err;
   }
+};
+
+exports.logout = function(req, res) {
+  req.logout();
+  res.redirect('/');
 };

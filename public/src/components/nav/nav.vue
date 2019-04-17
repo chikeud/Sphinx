@@ -5,12 +5,16 @@
         <img src="/src/assets/logo.png">
       </router-link>
 
-      <router-link to="/">Rent</router-link>
-      <router-link to="/">Host</router-link>
+      <router-link v-if="!loggedIn" to="/login"  class="nav-link">Book Now</router-link>
+      <router-link v-if="loggedIn" to="/booking"  class="nav-link">Book Now</router-link>
+      <!--<router-link to="/">Host</router-link> -->
 
-      <router-link to="/" slot="actions">STORY</router-link>
-      <router-link to="/" slot="actions">FAQ</router-link>
-      <router-link to="/" slot="actions">SIGN IN</router-link>
+      <router-link to="/" slot="actions" class="nav-link">STORY</router-link>
+      <router-link to="/" slot="actions" class="nav-link">FAQ</router-link>
+      <router-link v-if="!loggedIn" to="/login" slot="actions" class="nav-link">SIGN IN</router-link>
+      <router-link v-if="loggedIn" to="/" v-on:click.native="logout()" slot="actions" class="nav-link">SIGN OUT</router-link>
+
+
     </m-top-app-bar>
   </div>
 </template>
@@ -21,7 +25,25 @@
 
   Vue.use(TopAppBar);
 
-  export default {}
+
+  export default {
+    methods: {
+      async logout() {
+        let self = this;
+        try {
+          let res = await self.$http.get('/api/u/auth/logout');
+          self.$store.commit('clearSession');
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    computed: {
+      loggedIn(){
+        return this.$store.getters.loggedIn;
+      }
+    },
+  }
 </script>
 
 <style lang="scss">
@@ -30,7 +52,7 @@
   .nav{
     @include mdc-top-app-bar-fill-color(white);
 
-    z-index: 1;
+    z-index: 9999;
     height: 70px;
     margin: 0;
     padding-left: 50px;
@@ -38,6 +60,11 @@
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
       0px 4px 5px 0px rgba(0, 0, 0, 0.14),
       0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+    text-decoration: none !important;
+  }
+
+  .nav-link{
+    text-decoration: none !important;
   }
 
   .nav img{
@@ -45,6 +72,7 @@
     bottom: 5px;
     height: 25px;
     display: flex;
+    max-width: unset; // vue-material sets this as 100% causes the logo to be skewed
   }
 
   .nav a{

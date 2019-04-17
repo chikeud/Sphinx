@@ -18,6 +18,7 @@ Vue.http.interceptors.push((req, next) => {
   if(!exists) req.headers.set(config.AUTH_TOKEN, token);
 
   next(res => {
+    console.log(res);
     if(res.status === status.UNAUTHORIZED){
       store.commit("clearToken");
     }
@@ -27,7 +28,8 @@ Vue.http.interceptors.push((req, next) => {
 let store = new Vuex.Store({
   state: {
     token: "",
-    user: null
+    user: null,
+    showLogin: false,
   },
 
   getters: {
@@ -43,6 +45,10 @@ let store = new Vuex.Store({
       }
 
       return !!state.token;
+    },
+
+    showLogin(state){
+      return state.showLogin;
     },
 
     user(state){
@@ -65,17 +71,36 @@ let store = new Vuex.Store({
     },
 
     /**
+     * Sets the value of user in the store
+     * and localStorage
+     *
+     * @param state global state
+     * @param user auth user
+     */
+    user(state, user) {
+      localStorage.setItem(config.USER, user);
+
+      state.user = user;
+    },
+
+    /**
      * Clears the auth token from localStorage
      * and in the store.
      *
      * @param state
      */
-    clearToken(state){
-      if(state.token){
-        localStorage.removeItem(config.AUTH);
-        state.token = "";
-      }
+    clearSession(state){
+      console.log("Clear Token");
+      localStorage.removeItem(config.AUTH);
+      localStorage.removeItem(config.USER);
+      state.token = "";
+      state.user = null;
+      router.push("/");
     },
+
+    showLogin(state, show){
+      state.showLogin = show;
+    }
   }
 });
 

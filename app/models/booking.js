@@ -1,23 +1,21 @@
-
 /**
  * @author Chike Udenze
- * @since 04/08/18 MM/DD/YY
+ * @since 04/08/2018
  */
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 const ERR_REQUIRED = `required`;
-const Schema = mongoose.Schema;
+let Schema = mongoose.Schema;
 
 let BookingSchema = new Schema({
-  pickup: { type: Date, required: ERR_REQUIRED }
-  , delivery: { type: Date, required: ERR_REQUIRED }
-  , booking_description: {type: String}
-  , size: { type: String, required: ERR_REQUIRED}
-  , user: { type: Schema.Types.ObjectId, ref: "Users", required: ERR_REQUIRED }
-  , host: { type: Schema.Types.ObjectId, ref: "Hosts", required: ERR_REQUIRED }
+  pickup: {type: Schema.Types.ObjectId, ref: "pickups", required: ERR_REQUIRED}
+  , delivery: {type: Schema.Types.ObjectId, ref: "deliveries", required: ERR_REQUIRED}
+  , size: {type:String, required: ERR_REQUIRED}
+  , user: {type: Schema.Types.ObjectId, ref: "users", required: ERR_REQUIRED}
   , items: {
     type: [{
-      item: { type: Schema.Types.ObjectId, ref: "Item", required: ERR_REQUIRED }
+      name: {type: String, required: ERR_REQUIRED}
+      , description: {type: String, required: true}
     }]
     , required: ERR_REQUIRED
   }

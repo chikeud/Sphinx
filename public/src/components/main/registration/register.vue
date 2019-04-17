@@ -10,15 +10,6 @@
 
     <div class="r-form">
       <div class="r1" v-show="screen === 'r1'">
-        <div class="r-user-type r-section r-two-buttons">
-          <button @click="setUserType('host')" id="r-host" class="r-button greyed-out active">
-            HOST
-          </button>
-          <button @click="setUserType('store')" id="r-store" class="r-button stor-blue">
-            RENT
-          </button>
-        </div>
-
         <div v-for="section in screens.r1.sections"
              :class="[section.id, 'r-section']"
              :key="section.id">

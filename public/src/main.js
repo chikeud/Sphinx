@@ -66,15 +66,30 @@ let store = new Vuex.Store({
     },
 
     /**
+     * Sets the value of user in the store
+     * and localStorage
+     *
+     * @param state global state
+     * @param user auth user
+     */
+    user(state, user) {
+      localStorage.setItem(config.USER, user);
+
+      state.user = user;
+    },
+
+    /**
      * Clears the auth token from localStorage
      * and in the store.
      *
      * @param state
      */
-    clearToken(state){
+    clearSession(state){
       console.log("Clear Token");
       localStorage.removeItem(config.AUTH);
+      localStorage.removeItem(config.USER);
       state.token = "";
+      state.user = null;
       router.push("/");
     },
   }

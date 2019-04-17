@@ -50,30 +50,16 @@
   export default {
     data(){
       return {
-        on: "dashboard",
+        on: "rentals",
 
-        topItems: [{
-          id: "dashboard",
-          text: "Dashboard",
-          icon: "view_compact",
-          url: "/dashboard"
+        topItems: [ {
+          id: "rentals",
+          text: "My Stor",
+          icon: "view_module",
+          url: "/rentals"
         }],
 
         midItems: [
-          {
-            id: "rentals",
-            text: "My Rentals",
-            icon: "view_module",
-            url: "/rentals"
-          },
-
-          {
-            id: "listings",
-            text: "My Listings",
-            icon: "home",
-            url: "/listings"
-          },
-
           {
             id: "messages",
             text: "Messages",
@@ -82,21 +68,14 @@
           },
 
           {
-            id: "favourites",
-            text: "Favourites",
-            icon: "favorites",
-            url: "/favourites"
-          }
-        ],
-
-        bottomItems: [
-          {
             id: "help",
             text: "Help",
             icon: "help",
             url: "/help"
           },
+        ],
 
+        bottomItems: [
           {
             id: "settings",
             text: "Settings",

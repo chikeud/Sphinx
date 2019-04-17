@@ -22,6 +22,10 @@ userRouter.post("/auth/login", user.login, function(req, res){
   res.redirect("/");
 });
 
+userRouter.get("/auth/logout", user.logout, function(req, res){
+  res.redirect("/");
+});
+
 userRouter.route("/")
   .post(user.createUser)
   .put(auth.checkToken, user.editUser)
